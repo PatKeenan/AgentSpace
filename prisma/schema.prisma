@@ -1,0 +1,270 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgres"
+    url      = env("DATABASE_URL")
+}
+
+model PersonOnShowing {
+    id          String              @id @default(cuid())
+    personId    String
+    person      Person              @relation(fields: [personId], references: [id])
+    role        PersonOnShowingRole
+    Showing     Showing?            @relation(fields: [showingId], references: [id])
+    showingId   String?
+    workspace   Workspace           @relation(fields: [workspaceId], references: [id])
+    workspaceId String
+}
+
+model Showing {
+    id             String            @id @default(cuid())
+    createdAt      DateTime          @default(now())
+    updatedAt      DateTime          @default(now())
+    workspace      Workspace         @relation(fields: [workspaceId], references: [id])
+    workspaceId    String
+    createdBy      User              @relation(fields: [createdById], references: [id])
+    createdById    String
+    place          Place             @relation(fields: [placeId], references: [id])
+    placeId        String
+    date           DateTime
+    status         ShowingStatus     @default(NO_STATUS)
+    assignedTo     UserOnWorkspace?  @relation(fields: [assignedToId], references: [id])
+    assignedToId   String?
+    stopNumber     Int
+    showingGroup   ShowingGroup      @relation(fields: [showingGroupId], references: [id])
+    showingGroupId String
+    note           String?
+    tags           Tag[]
+    deleted        Boolean?          @default(false)
+    deletedAt      DateTime?
+    people         PersonOnShowing[]
+}
+
+model ShowingGroup {
+    id          String           @id @default(cuid())
+    createdAt   DateTime         @default(now())
+    workspace   Workspace        @relation(fields: [workspaceId], references: [id])
+    workspaceId String
+    createdBy   User             @relation(fields: [createdById], references: [id])
+    createdById String
+    showings    Showing[]
+    title       String
+    date        DateTime?
+    type        ShowingGroupType
+    tags        Tag[]
+    deleted     Boolean?         @default(false)
+    deletedAt   DateTime?
+}
+
+model Place {
+    id          String    @id @default(cuid())
+    createdAt   DateTime  @default(now())
+    workspace   Workspace @relation(fields: [workspaceId], references: [id])
+    createdBy   User      @relation(fields: [createdById], references: [id])
+    createdById String
+    workspaceId String
+    showings    Showing[]
+    address1    String
+    address2    String?
+    deleted     Boolean?  @default(false)
+    deletedAt   DateTime?
+    tags        Tag[]
+    note        String?
+    people      Person[]
+}
+
+model Tag {
+    id            String         @id @default(cuid())
+    createdAt     DateTime       @default(now())
+    createdBy     User           @relation(fields: [createdById], references: [id])
+    createdById   String
+    title         String
+    people        Person[]
+    workspace     Workspace      @relation(fields: [workspaceId], references: [id])
+    workspaceId   String
+    showings      Showing[]
+    places        Place[]
+    showingGroups ShowingGroup[]
+    deleted       Boolean?       @default(false)
+    deletedAt     DateTime?
+}
+
+model PersonMeta {
+    id             String    @id @default(cuid())
+    socail         Json?
+    primaryEmail   String?
+    secondaryEmail String?
+    primaryPhone   String?
+    secondaryPhone String?
+    person         Person    @relation(fields: [personId], references: [id])
+    personId       String    @unique
+    deleted        Boolean?  @default(false)
+    deletedAt      DateTime?
+}
+
+model PersonCategory {
+    id          String    @id @default(cuid())
+    createdAt   DateTime  @default(now())
+    deleted     Boolean?  @default(false)
+    deletedAt   DateTime?
+    createdBy   User      @relation(fields: [createdById], references: [id])
+    createdById String
+    title       String    @unique @default(cuid())
+    people      Person[]
+}
+
+model Person {
+    id              String            @id @default(cuid())
+    createdAt       DateTime          @default(now())
+    name            String
+    deleted         Boolean?          @default(false)
+    deletedAt       DateTime?
+    createdBy       User              @relation(fields: [createdById], references: [id])
+    createdById     String
+    personMeta      PersonMeta?
+    workspace       Workspace         @relation(fields: [workspaceId], references: [id])
+    workspaceId     String
+    tags            Tag[]
+    categories      PersonCategory[]
+    places          Place[]
+    personOnShowing PersonOnShowing[]
+}
+
+model Workspace {
+    id               String                   @id @default(cuid())
+    title            String                   @default("Untitled Workspace")
+    createdAt        DateTime                 @default(now())
+    workspaceUsers   UserOnWorkspace[]
+    subscription     SubscriptionOnWorkspace?
+    workspaceMeta    WorkspaceMeta?
+    people           Person[]
+    tags             Tag[]
+    places           Place[]
+    showings         Showing[]
+    showingGroup     ShowingGroup[]
+    peopleOnShowings PersonOnShowing[]
+}
+
+model WorkspaceMeta {
+    id          String    @id @default(cuid())
+    workspaceId String    @unique
+    workspace   Workspace @relation(fields: [workspaceId], references: [id])
+}
+
+model UserOnWorkspace {
+    id               String     @id @default(cuid())
+    role             ROLE       @default(USER)
+    workspace        Workspace? @relation(fields: [workspaceId], references: [id])
+    workspaceId      String?
+    user             User       @relation(fields: [userId], references: [id])
+    userId           String
+    assignedShowings Showing[]
+}
+
+model SubscriptionOnWorkspace {
+    id                   String            @id @default(cuid())
+    stripeSubscriptionId String
+    isActive             Boolean           @default(false)
+    createdAt            DateTime          @default(now())
+    type                 SUBSCRIPTION_TYPE @default(INDIVIDUAL)
+    ownerId              String
+    owner                User              @relation(fields: [ownerId], references: [id])
+    workspaceId          String            @unique
+    workspace            Workspace         @relation(fields: [workspaceId], references: [id])
+    seats                Int               @default(1) // More than one seat requires a Team or Brokerage Subsription
+}
+
+///// Next Auth
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+}
+
+model User {
+    id               String                    @id @default(cuid())
+    name             String?
+    brokerage        String?
+    email            String?                   @unique
+    emailVerified    DateTime?
+    image            String?
+    stripeCustomerId String?                   @unique
+    accounts         Account[]
+    sessions         Session[]
+    isRegistered     Boolean                   @default(false)
+    subscriptions    SubscriptionOnWorkspace[]
+    workspaceMeta    UserOnWorkspace[]
+    people           Person[]
+    tags             Tag[]
+    showings         Showing[]
+    ShowingGroup     ShowingGroup[]
+    places           Place[]
+    PersonCategory   PersonCategory[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+enum ROLE {
+    WORKSPACE_OWNER
+    ADMIN
+    USER
+}
+
+enum SUBSCRIPTION_TYPE {
+    INDIVIDUAL
+    TEAM
+    BROKERAGE
+}
+
+enum ShowingStatus {
+    NO_STATUS
+    CONFIRMED
+    CANCELED
+    RESCHEDULED
+    PENDING
+    DENIED
+}
+
+enum ShowingGroupType {
+    SINGLE
+    GROUP
+}
+
+enum PersonOnShowingRole {
+    Agent
+    Client
+}
