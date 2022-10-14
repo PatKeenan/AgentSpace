@@ -1,14 +1,13 @@
 import type { NextPageExtended } from "types/index";
 
-import { SettingsLayout } from "components-layout/SettingsLayout";
+import {
+    getSettingsBreadCrumb,
+    SettingsLayout,
+} from "components-layout/SettingsLayout";
 
 const WorkspaceSettings: NextPageExtended = () => {
     return (
-        <SettingsLayout
-            breadcrumbItems={[
-                { href: "/settings/workspaces", title: "Workspaces" },
-            ]}
-        >
+        <SettingsLayout breadcrumbItems={[getSettingsBreadCrumb("workspaces")]}>
             <h2> Settings Workspace section</h2>
         </SettingsLayout>
     );

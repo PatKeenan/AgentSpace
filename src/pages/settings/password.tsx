@@ -1,14 +1,13 @@
 import type { NextPageExtended } from "types/index";
 
-import { SettingsLayout } from "components-layout/SettingsLayout";
+import {
+    getSettingsBreadCrumb,
+    SettingsLayout,
+} from "components-layout/SettingsLayout";
 
 const PasswordSettings: NextPageExtended = () => {
     return (
-        <SettingsLayout
-            breadcrumbItems={[
-                { href: "/settings/password", title: "Password" },
-            ]}
-        >
+        <SettingsLayout breadcrumbItems={[getSettingsBreadCrumb("password")]}>
             <h2> Settings Password section</h2>
         </SettingsLayout>
     );

@@ -1,12 +1,13 @@
 import type { NextPageExtended } from "types/index";
 
-import { SettingsLayout } from "components-layout/SettingsLayout";
+import {
+    getSettingsBreadCrumb,
+    SettingsLayout,
+} from "components-layout/SettingsLayout";
 
 const PlanSettings: NextPageExtended = () => {
     return (
-        <SettingsLayout
-            breadcrumbItems={[{ href: "/settings/plan", title: "Plan" }]}
-        >
+        <SettingsLayout breadcrumbItems={[getSettingsBreadCrumb("plan")]}>
             <h2> Settings Plan section</h2>
         </SettingsLayout>
     );
