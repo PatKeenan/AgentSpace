@@ -1,0 +1,6 @@
+export * from './SettingsBilling'
+export * from  './SettingsGeneral'
+export * from './SettingsNotifications'
+export * from './SettingsPassword'
+export * from './SettingsPlan'
+export * from './SettingsWorkspaces'

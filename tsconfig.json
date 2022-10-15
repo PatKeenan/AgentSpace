@@ -20,6 +20,7 @@
       "server/*": ["server/*"],
       "components-common/*": ["components-common/*"],
       "components-layout/*": ["components-layout/*"],
+      "components-core/*": ["components-core/*"],
       "types/*": ["types/*"],
       "utils/*": ["utils/*"],
       "env/*": ["env/*"],
