@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import clsx from "clsx";
 import { useRouter } from "next/router";
+import { NextLink } from "components-common/NextLink";
 
 const navigation = [
     { name: "Home", href: "/", icon: HomeIcon },
@@ -116,38 +117,35 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     <nav className="px-2">
                                         <div className="space-y-1">
                                             {navigation.map((item) => (
-                                                <Link
+                                                <NextLink
                                                     href={item.href}
                                                     key={item.name}
+                                                    className={clsx(
+                                                        router.pathname ==
+                                                            item.href
+                                                            ? "bg-gray-100 text-gray-900"
+                                                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                                                        "group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
+                                                    )}
+                                                    aria-current={
+                                                        router.pathname ==
+                                                        item.href
+                                                            ? "page"
+                                                            : undefined
+                                                    }
                                                 >
-                                                    <a
+                                                    <item.icon
                                                         className={clsx(
                                                             router.pathname ==
                                                                 item.href
-                                                                ? "bg-gray-100 text-gray-900"
-                                                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                                                            "group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
+                                                                ? "text-gray-500"
+                                                                : "text-gray-400 group-hover:text-gray-500",
+                                                            "mr-3 h-6 w-6 flex-shrink-0"
                                                         )}
-                                                        aria-current={
-                                                            router.pathname ==
-                                                            item.href
-                                                                ? "page"
-                                                                : undefined
-                                                        }
-                                                    >
-                                                        <item.icon
-                                                            className={clsx(
-                                                                router.pathname ==
-                                                                    item.href
-                                                                    ? "text-gray-500"
-                                                                    : "text-gray-400 group-hover:text-gray-500",
-                                                                "mr-3 h-6 w-6 flex-shrink-0"
-                                                            )}
-                                                            aria-hidden="true"
-                                                        />
-                                                        {item.name}
-                                                    </a>
-                                                </Link>
+                                                        aria-hidden="true"
+                                                    />
+                                                    {item.name}
+                                                </NextLink>
                                             ))}
                                         </div>
                                         <div className="mt-8">
@@ -163,7 +161,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 aria-labelledby="mobile-teams-headline"
                                             >
                                                 {teams.map((team) => (
-                                                    <a
+                                                    <NextLink
                                                         key={team.name}
                                                         href={team.href}
                                                         className="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -178,7 +176,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         <span className="truncate">
                                                             {team.name}
                                                         </span>
-                                                    </a>
+                                                    </NextLink>
                                                 ))}
                                             </div>
                                         </div>
@@ -247,7 +245,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                 <div className="py-1">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <a
+                                            <NextLink
                                                 href="#"
                                                 className={clsx(
                                                     active
@@ -257,48 +255,44 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 )}
                                             >
                                                 View profile
-                                            </a>
+                                            </NextLink>
                                         )}
                                     </Menu.Item>
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <Link href="/settings">
-                                                <a
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Settings
-                                                </a>
-                                            </Link>
-                                        )}
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <Link
-                                                href={"/settings/notifications"}
+                                            <NextLink
+                                                href="/settings"
+                                                className={clsx(
+                                                    active
+                                                        ? "bg-gray-100 text-gray-900"
+                                                        : "text-gray-700",
+                                                    "block px-4 py-2 text-sm"
+                                                )}
                                             >
-                                                <a
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Notifications
-                                                </a>
-                                            </Link>
+                                                Settings
+                                            </NextLink>
+                                        )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <NextLink
+                                                href={"/settings/notifications"}
+                                                className={clsx(
+                                                    active
+                                                        ? "bg-gray-100 text-gray-900"
+                                                        : "text-gray-700",
+                                                    "block px-4 py-2 text-sm"
+                                                )}
+                                            >
+                                                Notifications
+                                            </NextLink>
                                         )}
                                     </Menu.Item>
                                 </div>
                                 <div className="py-1">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <a
+                                            <NextLink
                                                 href="#"
                                                 className={clsx(
                                                     active
@@ -308,12 +302,12 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 )}
                                             >
                                                 Get desktop app
-                                            </a>
+                                            </NextLink>
                                         )}
                                     </Menu.Item>
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <a
+                                            <NextLink
                                                 href="#"
                                                 className={clsx(
                                                     active
@@ -323,14 +317,14 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 )}
                                             >
                                                 Support
-                                            </a>
+                                            </NextLink>
                                         )}
                                     </Menu.Item>
                                 </div>
                                 <div className="py-1">
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <a
+                                            <NextLink
                                                 href="#"
                                                 className={clsx(
                                                     active
@@ -340,7 +334,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 )}
                                             >
                                                 Logout
-                                            </a>
+                                            </NextLink>
                                         )}
                                     </Menu.Item>
                                 </div>
@@ -375,32 +369,32 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                     <nav className="mt-6 px-3">
                         <div className="space-y-1">
                             {navigation.map((item) => (
-                                <Link key={item.name} href={item.href}>
-                                    <a
+                                <NextLink
+                                    key={item.name}
+                                    href={item.href}
+                                    className={clsx(
+                                        router.pathname == item.href
+                                            ? "bg-gray-200 text-gray-900"
+                                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                                        "group flex items-center rounded-md px-2 py-2 text-sm font-medium"
+                                    )}
+                                    aria-current={
+                                        router.pathname == item.href
+                                            ? "page"
+                                            : undefined
+                                    }
+                                >
+                                    <item.icon
                                         className={clsx(
                                             router.pathname == item.href
-                                                ? "bg-gray-200 text-gray-900"
-                                                : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
-                                            "group flex items-center rounded-md px-2 py-2 text-sm font-medium"
+                                                ? "text-gray-500"
+                                                : "text-gray-400 group-hover:text-gray-500",
+                                            "mr-3 h-6 w-6 flex-shrink-0"
                                         )}
-                                        aria-current={
-                                            router.pathname == item.href
-                                                ? "page"
-                                                : undefined
-                                        }
-                                    >
-                                        <item.icon
-                                            className={clsx(
-                                                router.pathname == item.href
-                                                    ? "text-gray-500"
-                                                    : "text-gray-400 group-hover:text-gray-500",
-                                                "mr-3 h-6 w-6 flex-shrink-0"
-                                            )}
-                                            aria-hidden="true"
-                                        />
-                                        {item.name}
-                                    </a>
-                                </Link>
+                                        aria-hidden="true"
+                                    />
+                                    {item.name}
+                                </NextLink>
                             ))}
                         </div>
                         <div className="mt-8">
@@ -417,7 +411,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                 aria-labelledby="desktop-teams-headline"
                             >
                                 {teams.map((team) => (
-                                    <a
+                                    <NextLink
                                         key={team.name}
                                         href={team.href}
                                         className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
@@ -432,7 +426,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         <span className="truncate">
                                             {team.name}
                                         </span>
-                                    </a>
+                                    </NextLink>
                                 ))}
                             </div>
                         </div>
@@ -512,7 +506,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         <div className="py-1">
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <a
+                                                    <NextLink
                                                         href="#"
                                                         className={clsx(
                                                             active
@@ -522,13 +516,13 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         )}
                                                     >
                                                         View profile
-                                                    </a>
+                                                    </NextLink>
                                                 )}
                                             </Menu.Item>
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <a
-                                                        href="#"
+                                                    <NextLink
+                                                        href="/settings"
                                                         className={clsx(
                                                             active
                                                                 ? "bg-gray-100 text-gray-900"
@@ -537,12 +531,12 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         )}
                                                     >
                                                         Settings
-                                                    </a>
+                                                    </NextLink>
                                                 )}
                                             </Menu.Item>
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <a
+                                                    <NextLink
                                                         href="#"
                                                         className={clsx(
                                                             active
@@ -552,14 +546,14 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         )}
                                                     >
                                                         Notifications
-                                                    </a>
+                                                    </NextLink>
                                                 )}
                                             </Menu.Item>
                                         </div>
                                         <div className="py-1">
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <a
+                                                    <NextLink
                                                         href="#"
                                                         className={clsx(
                                                             active
@@ -569,25 +563,24 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         )}
                                                     >
                                                         Support
-                                                    </a>
+                                                    </NextLink>
                                                 )}
                                             </Menu.Item>
                                         </div>
                                         <div className="py-1">
                                             <Menu.Item>
                                                 {({ active }) => (
-                                                    <Link href="/api/auth/signout">
-                                                        <a
-                                                            className={clsx(
-                                                                active
-                                                                    ? "bg-gray-100 text-gray-900"
-                                                                    : "text-gray-700",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            Logout
-                                                        </a>
-                                                    </Link>
+                                                    <NextLink
+                                                        href="/api/auth/signout"
+                                                        className={clsx(
+                                                            active
+                                                                ? "bg-gray-100 text-gray-900"
+                                                                : "text-gray-700",
+                                                            "block px-4 py-2 text-sm"
+                                                        )}
+                                                    >
+                                                        Logout
+                                                    </NextLink>
                                                 )}
                                             </Menu.Item>
                                         </div>

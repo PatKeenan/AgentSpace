@@ -2,19 +2,20 @@ import * as React from "react";
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid";
 
 import { Breadcrumb } from "components-layout/Breadcrumb";
-import {
-    HomeModernIcon,
-    PencilIcon,
-    PlusIcon,
-    TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, PlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { SectionHeading } from "components-layout/SectionHeading";
 import { useRouter } from "next/router";
 
 import type { FC } from "react";
 import { PageBody } from "components-layout/PageBody";
-import { Badge } from "components-common/Badge";
 import clsx from "clsx";
+import {
+    EmptyData,
+    ShowingDetailList,
+    ShowingDetailMap,
+} from "./showing-detail-components";
+import { Button } from "components-common/Button";
+import { useShowingDetailUI } from "./useShowingDetailUI";
 
 type SubHeadingProps = {
     text: string;
@@ -45,14 +46,10 @@ export const ShowingDetailContainer = () => {
         },
     ];
 
-    const tabs = [
-        { name: "ListView", href: "#", current: false },
-        { name: "MapView", href: "#", current: true },
-    ];
     return (
         <>
             <Breadcrumb items={breadCrumbItems} />
-            <PageBody>
+            <PageBody fullHeight>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>
@@ -75,33 +72,18 @@ export const ShowingDetailContainer = () => {
                     <SectionHeading.Actions>
                         <div className="flex">
                             <span className="hidden sm:block">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                >
+                                <Button variant="outlined">
                                     <PencilIcon
                                         className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                                         aria-hidden="true"
                                     />
                                     Edit
-                                </button>
-                            </span>
-                            <span className="hidden sm:ml-3 sm:block">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                >
-                                    <PlusIcon
-                                        className="-ml-1 mr-2 h-5 w-5"
-                                        aria-hidden="true"
-                                    />
-                                    Add New
-                                </button>
+                                </Button>
                             </span>
                         </div>
                     </SectionHeading.Actions>
                 </SectionHeading>
-                <div className="relative mt-8">
+                {/* <div className="relative mt-8">
                     <div className="sm:hidden">
                         <label htmlFor="current-tab" className="sr-only">
                             Select a tab
@@ -140,31 +122,21 @@ export const ShowingDetailContainer = () => {
                             ))}
                         </nav>
                     </div>
+                </div> */}
+
+                <div className="mt-4 flex-grow lg:grid lg:grid-cols-12 lg:gap-x-4">
+                    <div className="mt-4 h-full lg:col-span-7">
+                        <ShowingDetailList />
+                    </div>
+                    <div className="relative mt-4 lg:col-start-8 lg:col-end-13">
+                        <ShowingDetailMap />
+                    </div>
                 </div>
-                <div className="mt-8">
+                {/* <div className="mt-8">
                     <EmptyData />
-                </div>
+                </div> */}
             </PageBody>
         </>
-    );
-};
-
-const EmptyData = () => {
-    return (
-        <div className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 ">
-            <HomeModernIcon className="mx-auto h-10 w-10 text-gray-700" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No stops</h3>
-            <p className="mt-1 text-sm text-gray-500">
-                Get started by adding a stop.
-            </p>
-            <button
-                type="button"
-                className="mt-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-                <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-                Add Stop
-            </button>
-        </div>
     );
 };
 

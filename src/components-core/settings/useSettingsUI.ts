@@ -6,12 +6,12 @@ const settingsTabs = ['General', 'Password', 'Notifications', 'Billing', 'Plan',
 
 type SettingsTab = typeof settingsTabs[number]
 
-type SettingsState = {
+type SettingsUIState = {
     activeTab: SettingsTab
     setActiveTab: (tab: SettingsTab) => void
 }
 
-export const useSettings = create<SettingsState>()(
+export const useSettingsUI = create<SettingsUIState>()(
     devtools(
         (set) => ({
            activeTab: 'General', 

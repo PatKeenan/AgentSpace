@@ -2,7 +2,7 @@ import { SectionHeading } from "components-layout/SectionHeading";
 import { Breadcrumb } from "components-layout/Breadcrumb";
 import { PageBody } from "components-layout/PageBody";
 import { Tabs } from "components-common/Tabs";
-import { useSettings } from "./useSettings";
+import { useSettingsUI } from "./useSettingsUI";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
@@ -46,7 +46,7 @@ const SettingsWorkspaces = dynamic(
 );
 
 export const SettingsContainer: NextPageExtended = () => {
-    const { activeTab, setActiveTab } = useSettings();
+    const { activeTab, setActiveTab } = useSettingsUI();
 
     const activeSettingsView: { [key in typeof activeTab]: JSX.Element } = {
         General: <SettingsGeneral />,
@@ -84,7 +84,7 @@ export const SettingsContainer: NextPageExtended = () => {
                         id="settings-tabs"
                         tabs={settingsTabs}
                         onTabClick={handleTabClick}
-                        activeTab={activeTab as string}
+                        activeTab={activeTab}
                     />
 
                     <div className="mt-10 divide-y divide-gray-200">
