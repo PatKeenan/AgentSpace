@@ -1,4 +1,5 @@
 import { DashboardLayout } from "components-layout/DashboardLayout";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "types/index";
 import { AppType } from "next/app";
@@ -13,15 +14,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
     pageProps: { session, ...pageProps },
 }: AppProps) => {
     return (
-        <SessionProvider session={session}>
-            {Component.layout == "dashboard" ? (
-                <DashboardLayout>
+        <ErrorBoundary>
+            <SessionProvider session={session}>
+                {Component.layout == "dashboard" ? (
+                    <DashboardLayout>
+                        <Component {...pageProps} />
+                    </DashboardLayout>
+                ) : (
                     <Component {...pageProps} />
-                </DashboardLayout>
-            ) : (
-                <Component {...pageProps} />
-            )}
-        </SessionProvider>
+                )}
+            </SessionProvider>
+        </ErrorBoundary>
     );
 };
 

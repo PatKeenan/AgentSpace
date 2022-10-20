@@ -9,7 +9,6 @@ const Dashboard: NextPageExtended = () => {
                     <SectionHeading.Title>Dashboard</SectionHeading.Title>
                 </SectionHeading.TitleContainer>
             </SectionHeading>
-            page
         </PageBody>
     );
 };

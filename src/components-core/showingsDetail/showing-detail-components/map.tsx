@@ -9,7 +9,7 @@ const Map = () => {
             style={{
                 height: "100%",
             }}
-            className="rounded-md opacity-0"
+            className="rounded-md"
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

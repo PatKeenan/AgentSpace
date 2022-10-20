@@ -96,7 +96,7 @@ model Tag {
 
 model PersonMeta {
     id             String    @id @default(cuid())
-    socail         Json?
+    social         Json?
     primaryEmail   String?
     secondaryEmail String?
     primaryPhone   String?

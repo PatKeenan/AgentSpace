@@ -14,10 +14,11 @@ import {
     ChevronUpDownIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
-import Link from "next/link";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 import { NextLink } from "components-common/NextLink";
+import { signIn, useSession } from "next-auth/react";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 const navigation = [
     { name: "Home", href: "/", icon: HomeIcon },
@@ -46,9 +47,18 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
     const { children = false } = props;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    const { status } = useSession({
+        required: true,
+        onUnauthenticated() {
+            signIn();
+        },
+    });
+
     const router = useRouter();
 
-    return (
+    return status === "loading" ? (
+        <div>loading session</div>
+    ) : (
         <div className="min-h-full">
             <Transition.Root show={sidebarOpen} as={Fragment}>
                 <Dialog
