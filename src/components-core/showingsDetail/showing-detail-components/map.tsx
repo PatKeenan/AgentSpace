@@ -8,6 +8,7 @@ const Map = () => {
             zoom={16}
             style={{
                 height: "100%",
+                zIndex: 0,
             }}
             className="rounded-md"
         >

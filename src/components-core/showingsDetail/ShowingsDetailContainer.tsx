@@ -70,7 +70,7 @@ export const ShowingDetailContainer = () => {
                         </SectionHeading.Subtitle>
                     </SectionHeading.TitleContainer>
                     <SectionHeading.Actions>
-                        <div className="flex">
+                        <div className="flex pr-1">
                             <span className="hidden sm:block">
                                 <Button variant="outlined">
                                     <PencilIcon
@@ -83,52 +83,12 @@ export const ShowingDetailContainer = () => {
                         </div>
                     </SectionHeading.Actions>
                 </SectionHeading>
-                {/* <div className="relative mt-8">
-                    <div className="sm:hidden">
-                        <label htmlFor="current-tab" className="sr-only">
-                            Select a tab
-                        </label>
-                        <select
-                            id="current-tab"
-                            name="current-tab"
-                            className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            //@ts-ignore
-                            defaultValue={tabs.find((tab) => tab.current).name}
-                        >
-                            {tabs.map((tab) => (
-                                <option key={tab.name}>{tab.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="hidden sm:block">
-                        <nav className="-mb-px flex space-x-8">
-                            {tabs.map((tab) => (
-                                <a
-                                    key={tab.name}
-                                    href={tab.href}
-                                    className={clsx(
-                                        tab.current
-                                            ? "border-indigo-500 text-indigo-600"
-                                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                                        "whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium"
-                                    )}
-                                    aria-current={
-                                        tab.current ? "page" : undefined
-                                    }
-                                >
-                                    {tab.name}
-                                </a>
-                            ))}
-                        </nav>
-                    </div>
-                </div> */}
 
-                <div className="mt-4 flex-grow lg:grid lg:grid-cols-12 lg:gap-x-4">
-                    <div className="mt-4 h-full lg:col-span-7">
+                <div className="flex flex-grow flex-col-reverse p-1  lg:mt-4 lg:grid lg:grid-cols-12 lg:gap-x-4">
+                    <div className=" mt-4 h-2/3 lg:col-span-7 lg:h-full">
                         <ShowingDetailList />
                     </div>
-                    <div className="relative mt-4 lg:col-start-8 lg:col-end-13">
+                    <div className="relative  mt-4 h-1/3 lg:col-start-8 lg:col-end-13 lg:h-full">
                         <ShowingDetailMap />
                     </div>
                 </div>

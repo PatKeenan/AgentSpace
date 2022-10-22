@@ -159,12 +159,13 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             ))}
                                         </div>
                                         <div className="mt-8">
-                                            <h3
+                                            <NextLink
+                                                href="/tags"
                                                 className="px-3 text-sm font-medium text-gray-500"
                                                 id="mobile-teams-headline"
                                             >
                                                 Tags
-                                            </h3>
+                                            </NextLink>
                                             <div
                                                 className="mt-1 space-y-1"
                                                 role="group"
@@ -335,7 +336,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <NextLink
-                                                href="#"
+                                                href="/api/auth/signout"
                                                 className={clsx(
                                                     active
                                                         ? "bg-gray-100 text-gray-900"
@@ -409,12 +410,13 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         </div>
                         <div className="mt-8">
                             {/* Secondary navigation */}
-                            <h3
+                            <NextLink
+                                href="/tags"
                                 className="px-3 text-sm font-medium text-gray-500"
                                 id="desktop-teams-headline"
                             >
                                 Tags
-                            </h3>
+                            </NextLink>
                             <div
                                 className="mt-1 space-y-1"
                                 role="group"
