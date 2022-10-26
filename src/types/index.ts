@@ -2,6 +2,7 @@ import type { NextComponentType, NextPage, NextPageContext } from "next";
 import type { AppInitialProps } from "next/app";
 import type { Router } from "next/router";
 
+
 /**
  *
  * Provides typeSafety for choosing the correct layout on a page component
