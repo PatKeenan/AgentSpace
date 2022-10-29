@@ -1,9 +1,10 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
+import * as React from "react";
 import clsx from "clsx";
 
 type AutoCompleteProps<T, K> = {
-    options: T[] | undefined;
+    options: T[] | undefined | null;
     label: string;
     query: string;
     setQuery: (q: string) => void;
@@ -12,6 +13,7 @@ type AutoCompleteProps<T, K> = {
     displayField: K;
     icon?: boolean;
     multiple?: boolean;
+    name?: string;
 };
 
 export function AutoComplete<
@@ -27,20 +29,17 @@ export function AutoComplete<
         displayField,
         options,
         icon = true,
+        name,
     } = props;
 
     return (
-        <Combobox
-            as="div"
-            value={selected}
-            onChange={onSelect}
-            className="pt-2"
-        >
+        <Combobox as="div" value={selected} onChange={onSelect}>
             <Combobox.Label className="block text-sm font-medium text-gray-700">
                 {label}
             </Combobox.Label>
             <div className="relative mt-1">
                 <Combobox.Input
+                    name={name}
                     value={query}
                     className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                     onChange={(event) => setQuery(event.target.value)}

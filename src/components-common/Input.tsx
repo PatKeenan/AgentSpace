@@ -10,7 +10,7 @@ type InputProps = {
 export const Input = (props: InputProps) => {
     const { label, name, className, id, ...htmlProps } = props;
     return (
-        <div className="pt-2">
+        <>
             <label
                 htmlFor={name}
                 className="block text-sm font-medium text-gray-700"
@@ -28,6 +28,6 @@ export const Input = (props: InputProps) => {
                     {...htmlProps}
                 />
             </div>
-        </div>
+        </>
     );
 };

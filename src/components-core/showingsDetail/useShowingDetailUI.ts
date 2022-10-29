@@ -10,7 +10,7 @@ export const useShowingDetailUI = create<ShowingsDetailState>()(
     devtools(
         (set) => ({
             editSliderOpen: false,
-            setEditSliderOpen: (val) => set(() => ({editSliderOpen: val}) )
+            setEditSliderOpen: (val) => set(() => ({editSliderOpen: val}))
         })
     )
   )

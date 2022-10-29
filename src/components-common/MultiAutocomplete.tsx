@@ -1,7 +1,6 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import clsx from "clsx";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type MultiAutoCompleteProps<T, K> = {
     options: T[] | [];
@@ -30,22 +29,19 @@ export function MultiAutoComplete<
     } = props;
 
     return (
-        <Combobox
-            as="div"
-            value={selected}
-            onChange={onSelect}
-            multiple
-            className="pt-2"
-        >
+        <Combobox as="div" value={selected} onChange={onSelect} multiple>
             <Combobox.Label className="block text-sm font-medium text-gray-700">
                 {label}
             </Combobox.Label>
             <div className="relative mt-1">
                 <Combobox.Input
+                    onChange={(e) => e}
                     className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                     autoComplete="off"
                     displayValue={(options: T[]) =>
-                        options?.map((i: T) => i[displayField]).join(", ")
+                        displayField
+                            ? options?.map((i: T) => i[displayField]).join(", ")
+                            : ""
                     }
                 />
                 {icon && (

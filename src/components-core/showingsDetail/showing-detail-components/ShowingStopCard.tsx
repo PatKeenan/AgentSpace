@@ -14,8 +14,14 @@ import {
     UserIcon,
     UsersIcon,
 } from "@heroicons/react/24/outline";
+import { ModalState } from "./AddShowingModal";
 
-export const ShowingStopCard = ({ showing }: { showing: number }) => {
+type ShowingStopCardProps = {
+    showing: number;
+} & ModalState;
+
+export const ShowingStopCard = (props: ShowingStopCardProps) => {
+    const { showing, ...rest } = props;
     return (
         <div className="block py-6 text-gray-500">
             <div className="flex items-center justify-between text-sm ">
@@ -23,9 +29,7 @@ export const ShowingStopCard = ({ showing }: { showing: number }) => {
                     <h3 className="mr-4 text-sm font-semibold text-purple-600">
                         Showing {showing + 1}
                     </h3>
-                    <time dateTime="2022-01-10T17:00" className="">
-                        5:30pm to 6:00pm
-                    </time>
+                    <time dateTime="2022-01-10T17:00">5:30pm to 6:00pm</time>
                 </div>
 
                 <Menu as="div" className="relative ml-auto">
