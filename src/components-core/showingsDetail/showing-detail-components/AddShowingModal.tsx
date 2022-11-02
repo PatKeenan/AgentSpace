@@ -48,10 +48,13 @@ const showingFormReducer = (
 
 type AddShowingModalProps = {
     showing?: ShowingFormState;
+    handleAddShowing: React.Dispatch<
+        React.SetStateAction<ShowingFormState[] | undefined>
+    >;
 };
 
 export const AddShowingModal = (props: AddShowingModalProps) => {
-    const { showing } = props;
+    const { showing, handleAddShowing } = props;
 
     const { editSliderOpen, setEditSliderOpen } = useShowingDetailUI();
 
@@ -79,6 +82,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        handleAddShowing((prev) => (prev ? [...prev, state] : [state]));
     };
 
     const baseTopPadding = "pt-2";

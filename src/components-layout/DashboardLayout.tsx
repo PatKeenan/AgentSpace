@@ -4,8 +4,6 @@ import {
     Bars3CenterLeftIcon,
     HomeIcon,
     XMarkIcon,
-    HomeModernIcon,
-    BanknotesIcon,
     UserGroupIcon,
     TruckIcon,
     RectangleGroupIcon,
@@ -18,20 +16,7 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import { NextLink } from "components-common/NextLink";
 import { signIn, useSession } from "next-auth/react";
-import { ErrorBoundary } from "components-core/ErrorBoundary";
-
-const navigation = [
-    { name: "Home", href: "/", icon: HomeIcon },
-    { name: "Showings", href: "/showings", icon: TruckIcon },
-    {
-        name: "Projects",
-        href: "/projects",
-        icon: RectangleGroupIcon,
-    },
-    { name: "Places", href: "/places", icon: HomeModernIcon },
-    { name: "People", href: "/people", icon: UserGroupIcon },
-    { name: "Finances", href: "/people", icon: BanknotesIcon },
-];
+import { useGlobalStore } from "global-store/useGlobalStore";
 
 const teams = [
     { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
@@ -55,6 +40,30 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
     });
 
     const router = useRouter();
+    const { activeWorkspaceId } = useGlobalStore();
+
+    const navigation = [
+        {
+            name: "Home",
+            href: `/workspace/${activeWorkspaceId}`,
+            icon: HomeIcon,
+        },
+        {
+            name: "Showings",
+            href: `/workspace/${activeWorkspaceId}/showings`,
+            icon: TruckIcon,
+        },
+        {
+            name: "Projects",
+            href: `/workspace/${activeWorkspaceId}/projects`,
+            icon: RectangleGroupIcon,
+        },
+        {
+            name: "People",
+            href: `/workspace/${activeWorkspaceId}/people`,
+            icon: UserGroupIcon,
+        },
+    ];
 
     return status === "loading" ? (
         <div>loading session</div>
@@ -160,7 +169,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         </div>
                                         <div className="mt-8">
                                             <NextLink
-                                                href="/tags"
+                                                href={`/workspace/${activeWorkspaceId}/tags`}
                                                 className="px-3 text-sm font-medium text-gray-500"
                                                 id="mobile-teams-headline"
                                             >
@@ -411,7 +420,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         <div className="mt-8">
                             {/* Secondary navigation */}
                             <NextLink
-                                href="/tags"
+                                href={`workspace/${activeWorkspaceId}/tags`}
                                 className="px-3 text-sm font-medium text-gray-500"
                                 id="desktop-teams-headline"
                             >

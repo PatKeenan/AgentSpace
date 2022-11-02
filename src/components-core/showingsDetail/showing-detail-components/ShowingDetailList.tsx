@@ -1,18 +1,25 @@
 import { useShowingDetailUI } from "../useShowingDetailUI";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { AddShowingModal, ModalState } from "./AddShowingModal";
+import { AddShowingModal } from "./AddShowingModal";
 import { ShowingStopCard } from "./ShowingStopCard";
 import { Button } from "components-common/Button";
 import * as React from "react";
+import { ShowingFormState } from "../types";
 
-export const ShowingDetailList = () => {
+type ShowingDetailListProps = {
+    handleAddShowing: React.Dispatch<
+        React.SetStateAction<ShowingFormState[] | undefined>
+    >;
+    showings: ShowingFormState[] | undefined;
+};
+export const ShowingDetailList = (props: ShowingDetailListProps) => {
+    const { handleAddShowing, showings } = props;
+
     const { setEditSliderOpen } = useShowingDetailUI();
-
-    const [showings, setShowings] = React.useState<ModalState[] | undefined>();
 
     return (
         <>
-            <AddShowingModal />
+            <AddShowingModal handleAddShowing={handleAddShowing} />
             <div className="block">
                 <Button
                     variant="outlined"
@@ -27,8 +34,12 @@ export const ShowingDetailList = () => {
                 </Button>
 
                 <ol className="mt-3 divide-y divide-gray-100">
-                    {showings?.map((i, index) => (
-                        <ShowingStopCard key={index} showing={i} />
+                    {showings?.map((showing, index) => (
+                        <ShowingStopCard
+                            key={index}
+                            showing={showing}
+                            index={index}
+                        />
                     ))}
                 </ol>
             </div>

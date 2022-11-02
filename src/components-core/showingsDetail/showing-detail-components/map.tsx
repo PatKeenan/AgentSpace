@@ -2,6 +2,7 @@ import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import getCenter from "geolib/es/getCenter";
 import "leaflet/dist/leaflet.css";
+import { MapboxPlaces } from "types/map-box";
 
 const cords = [
     { latitude: -74.9466, longitude: 39.9091 },
@@ -11,15 +12,32 @@ const cords = [
 
 const icon = L.icon({ iconUrl: "/images/marker-icon.png" });
 
-const Map = () => {
-    const center = getCenter(cords) as {
+const Map = ({
+    cords,
+}: {
+    cords:
+        | {
+              latitude: number | undefined;
+              longitude: number | undefined;
+          }[]
+        | undefined;
+}) => {
+    const center = getCenter(
+        cords ?? [
+            {
+                latitude: 39.9091,
+                longitude: -74.9466,
+            },
+        ]
+    ) as {
         latitude: number;
         longitude: number;
     };
+    console.log(center);
     return (
         <MapContainer
-            center={[center.longitude, center.latitude]}
-            zoom={8}
+            center={[center.latitude, center.longitude]}
+            zoom={cords ? 12 : 8}
             style={{
                 height: "100%",
                 zIndex: 0,
@@ -30,11 +48,11 @@ const Map = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {cords.map((i) => {
+            {cords?.map((i, index) => {
                 return (
                     <Marker
-                        key={i.longitude}
-                        position={[i.longitude, i.latitude]}
+                        key={index}
+                        position={[i.longitude as number, i.latitude as number]}
                         icon={icon}
                     />
                 );

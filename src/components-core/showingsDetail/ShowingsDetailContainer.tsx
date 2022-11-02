@@ -16,6 +16,7 @@ import {
 } from "./showing-detail-components";
 import { Button } from "components-common/Button";
 import { useShowingDetailUI } from "./useShowingDetailUI";
+import { ShowingFormState } from "./types";
 
 type SubHeadingProps = {
     text: string;
@@ -37,6 +38,9 @@ const SubHeadingItem = (props: SubHeadingProps) => {
 
 export const ShowingDetailContainer = () => {
     const router = useRouter();
+    const [showings, setShowings] = React.useState<
+        ShowingFormState[] | undefined
+    >();
     const breadCrumbItems = [
         { title: "Showings", href: "/showings", active: false },
         {
@@ -86,10 +90,13 @@ export const ShowingDetailContainer = () => {
 
                 <div className="flex flex-grow flex-col-reverse p-1  lg:mt-4 lg:grid lg:grid-cols-12 lg:gap-x-4">
                     <div className=" mt-4 h-2/3 lg:col-span-7 lg:h-full">
-                        <ShowingDetailList />
+                        <ShowingDetailList
+                            handleAddShowing={setShowings}
+                            showings={showings}
+                        />
                     </div>
                     <div className="relative  mt-4 h-1/3 lg:col-start-8 lg:col-end-13 lg:h-full">
-                        <ShowingDetailMap />
+                        <ShowingDetailMap showings={showings} />
                     </div>
                 </div>
                 {/* <div className="mt-8">

@@ -14,20 +14,19 @@ import {
     UserIcon,
     UsersIcon,
 } from "@heroicons/react/24/outline";
-import { ModalState } from "./AddShowingModal";
+import { ShowingFormState } from "../types";
 
-type ShowingStopCardProps = {
-    showing: number;
-} & ModalState;
-
-export const ShowingStopCard = (props: ShowingStopCardProps) => {
-    const { showing, ...rest } = props;
+export const ShowingStopCard = (props: {
+    index: number;
+    showing: ShowingFormState;
+}) => {
+    const { showing, index } = props;
     return (
         <div className="block py-6 text-gray-500">
             <div className="flex items-center justify-between text-sm ">
                 <div className="flex items-center text-sm">
                     <h3 className="mr-4 text-sm font-semibold text-purple-600">
-                        Showing {showing + 1}
+                        Showing {index + 1}
                     </h3>
                     <time dateTime="2022-01-10T17:00">5:30pm to 6:00pm</time>
                 </div>
@@ -135,7 +134,7 @@ export const ShowingStopCard = (props: ShowingStopCardProps) => {
                                 href="/places/asdas"
                                 className="hover:underline"
                             >
-                                1450 Rahway Rd, Scotch Plains NJ 07076
+                                {showing.address?.place_name}
                             </NextLink>
                         </dd>
                     </div>
@@ -149,7 +148,7 @@ export const ShowingStopCard = (props: ShowingStopCardProps) => {
                                 aria-hidden="true"
                             />
                         </dt>
-                        <dd>Confirmed</dd>
+                        <dd>{showing.status?.display}</dd>
                     </div>
                 </Col>
             </Row>
@@ -167,14 +166,16 @@ export const ShowingStopCard = (props: ShowingStopCardProps) => {
                         </dt>
                         <dd>
                             <ol className="flex items-center">
-                                <li>
-                                    <NextLink
-                                        href="/people/asdsa"
-                                        className="mr-1 hover:underline"
-                                    >
-                                        Morgan & Patrick Keenan
-                                    </NextLink>
-                                </li>
+                                {showing.clients?.map((client) => (
+                                    <li key={client.id}>
+                                        <NextLink
+                                            href={`/people/${client.id}`}
+                                            className="mr-1 hover:underline"
+                                        >
+                                            {client.name}
+                                        </NextLink>
+                                    </li>
+                                ))}
                             </ol>
                         </dd>
                     </div>
@@ -192,10 +193,10 @@ export const ShowingStopCard = (props: ShowingStopCardProps) => {
                             <ol className="flex items-center">
                                 <li>
                                     <NextLink
-                                        href="/people/asdsa"
+                                        href={`/people/${showing.agent?.id}`}
                                         className="mr-1 hover:underline"
                                     >
-                                        {faker.name.firstName()}
+                                        {showing.agent?.name}
                                     </NextLink>
                                 </li>
                             </ol>

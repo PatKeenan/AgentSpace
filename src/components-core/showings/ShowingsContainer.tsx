@@ -24,6 +24,7 @@ import type { NextPageExtended } from "types/index";
 import dynamic from "next/dynamic";
 import { ShowingCard } from "components-core/settings/settings-components";
 import { Button, ButtonLink } from "components-common/Button";
+import { ShowingsModal } from "./showings-components/ShowingsModal";
 
 const ShowingsAll = dynamic(() => import("./showings-components/ShowingsAll"), {
     suspense: true,
@@ -55,7 +56,7 @@ const candidates = [
 ];
 
 export const ShowingsContainer: NextPageExtended = () => {
-    const { activeTab, setActiveTab } = useShowingsUI();
+    const { activeTab, setActiveTab, setModalOpen } = useShowingsUI();
 
     const handleChangeTab = (tab: string) => {
         setActiveTab(tab as typeof activeTab);
@@ -68,6 +69,7 @@ export const ShowingsContainer: NextPageExtended = () => {
     return (
         <>
             <Breadcrumb items={[{ title: "Settings", href: "/settings" }]} />
+            <ShowingsModal />
             <PageBody>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
@@ -116,7 +118,14 @@ export const ShowingsContainer: NextPageExtended = () => {
                         id="showing-tabs"
                         onTabClick={handleChangeTab}
                         activeTab={activeTab}
-                        actions={<Button variant="primary">Add Showing</Button>}
+                        actions={
+                            <Button
+                                variant="primary"
+                                onClick={() => setModalOpen(true)}
+                            >
+                                Add Showing
+                            </Button>
+                        }
                     />
                 </div>
 

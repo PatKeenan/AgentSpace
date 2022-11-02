@@ -23,7 +23,7 @@
       "components-core/*": ["components-core/*"],
       "types/*": ["types/*"],
       "utils/*": ["utils/*"],
-      "env/*": ["env/*"],
+      "global-store/*": ["global-store/*"],
 
     }
   },

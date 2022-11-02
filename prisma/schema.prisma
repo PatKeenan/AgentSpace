@@ -10,15 +10,25 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Notification {
+    id        String    @id @default(cuid())
+    createdAt DateTime  @default(now())
+    message   String
+    userId    String
+    user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    viewd     Boolean?  @default(false)
+    viewedOn  DateTime?
+    deleted   Boolean?  @default(false)
+    deletedAt DateTime?
+}
+
 model PersonOnShowing {
-    id          String              @id @default(cuid())
-    personId    String
-    person      Person              @relation(fields: [personId], references: [id])
-    role        PersonOnShowingRole
-    Showing     Showing?            @relation(fields: [showingId], references: [id])
-    showingId   String?
-    workspace   Workspace           @relation(fields: [workspaceId], references: [id])
-    workspaceId String
+    id        String              @id @default(cuid())
+    person    Person              @relation(fields: [personId], references: [id])
+    role      PersonOnShowingRole
+    personId  String
+    showing   Showing             @relation(fields: [showingId], references: [id])
+    showingId String
 }
 
 model Showing {
@@ -29,8 +39,6 @@ model Showing {
     workspaceId    String
     createdBy      User              @relation(fields: [createdById], references: [id])
     createdById    String
-    place          Place             @relation(fields: [placeId], references: [id])
-    placeId        String
     date           DateTime
     status         ShowingStatus     @default(NO_STATUS)
     assignedTo     UserOnWorkspace?  @relation(fields: [assignedToId], references: [id])
@@ -61,23 +69,6 @@ model ShowingGroup {
     deletedAt   DateTime?
 }
 
-model Place {
-    id          String    @id @default(cuid())
-    createdAt   DateTime  @default(now())
-    workspace   Workspace @relation(fields: [workspaceId], references: [id])
-    createdBy   User      @relation(fields: [createdById], references: [id])
-    createdById String
-    workspaceId String
-    showings    Showing[]
-    address1    String
-    address2    String?
-    deleted     Boolean?  @default(false)
-    deletedAt   DateTime?
-    tags        Tag[]
-    note        String?
-    people      Person[]
-}
-
 model Tag {
     id            String         @id @default(cuid())
     createdAt     DateTime       @default(now())
@@ -88,10 +79,20 @@ model Tag {
     workspace     Workspace      @relation(fields: [workspaceId], references: [id])
     workspaceId   String
     showings      Showing[]
-    places        Place[]
     showingGroups ShowingGroup[]
     deleted       Boolean?       @default(false)
     deletedAt     DateTime?
+}
+
+model PersonCategory {
+    id          String    @id @default(cuid())
+    createdAt   DateTime  @default(now())
+    deleted     Boolean?  @default(false)
+    deletedAt   DateTime?
+    createdBy   User      @relation(fields: [createdById], references: [id])
+    createdById String
+    title       String    @unique @default(cuid())
+    people      Person[]
 }
 
 model PersonMeta {
@@ -107,17 +108,6 @@ model PersonMeta {
     deletedAt      DateTime?
 }
 
-model PersonCategory {
-    id          String    @id @default(cuid())
-    createdAt   DateTime  @default(now())
-    deleted     Boolean?  @default(false)
-    deletedAt   DateTime?
-    createdBy   User      @relation(fields: [createdById], references: [id])
-    createdById String
-    title       String    @unique @default(cuid())
-    people      Person[]
-}
-
 model Person {
     id              String            @id @default(cuid())
     createdAt       DateTime          @default(now())
@@ -131,29 +121,7 @@ model Person {
     workspaceId     String
     tags            Tag[]
     categories      PersonCategory[]
-    places          Place[]
     personOnShowing PersonOnShowing[]
-}
-
-model Workspace {
-    id               String                   @id @default(cuid())
-    title            String                   @default("Untitled Workspace")
-    createdAt        DateTime                 @default(now())
-    workspaceUsers   UserOnWorkspace[]
-    subscription     SubscriptionOnWorkspace?
-    workspaceMeta    WorkspaceMeta?
-    people           Person[]
-    tags             Tag[]
-    places           Place[]
-    showings         Showing[]
-    showingGroup     ShowingGroup[]
-    peopleOnShowings PersonOnShowing[]
-}
-
-model WorkspaceMeta {
-    id          String    @id @default(cuid())
-    workspaceId String    @unique
-    workspace   Workspace @relation(fields: [workspaceId], references: [id])
 }
 
 model UserOnWorkspace {
@@ -164,6 +132,18 @@ model UserOnWorkspace {
     user             User       @relation(fields: [userId], references: [id])
     userId           String
     assignedShowings Showing[]
+}
+
+model Workspace {
+    id               String                   @id @default(cuid())
+    title            String                   @default("Untitled Workspace")
+    createdAt        DateTime                 @default(now())
+    usersOnWorkspace UserOnWorkspace[]
+    subscription     SubscriptionOnWorkspace?
+    people           Person[]
+    tags             Tag[]
+    showings         Showing[]
+    showingGroup     ShowingGroup[]
 }
 
 model SubscriptionOnWorkspace {
@@ -193,8 +173,7 @@ model Account {
     scope             String?
     id_token          String?
     session_state     String?
-
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
 }
@@ -225,9 +204,9 @@ model User {
     people           Person[]
     tags             Tag[]
     showings         Showing[]
-    ShowingGroup     ShowingGroup[]
-    places           Place[]
-    PersonCategory   PersonCategory[]
+    showingGroup     ShowingGroup[]
+    personCategory   PersonCategory[]
+    notifications    Notification[]
 }
 
 model VerificationToken {
@@ -236,6 +215,11 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum PersonOnShowingRole {
+    client
+    agent
 }
 
 enum ROLE {
@@ -262,9 +246,4 @@ enum ShowingStatus {
 enum ShowingGroupType {
     SINGLE
     GROUP
-}
-
-enum PersonOnShowingRole {
-    Agent
-    Client
 }

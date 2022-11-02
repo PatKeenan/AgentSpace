@@ -8,6 +8,8 @@ type ShowingTab = typeof showingsTabs[number]
 type ShowingsState = {
     activeTab: ShowingTab
     setActiveTab: (tab: ShowingTab) => void
+    modalOpen: boolean,
+    setModalOpen: (val: boolean) => void
 }
 
 export const useShowingsUI = create<ShowingsState>()(
@@ -15,6 +17,8 @@ export const useShowingsUI = create<ShowingsState>()(
         (set) => ({
            activeTab: 'Upcoming', 
            setActiveTab: (tab) => set(() => ({activeTab: tab})),
+           modalOpen: false,
+           setModalOpen: (val) => set({modalOpen: val}) 
         })
     )
   )
