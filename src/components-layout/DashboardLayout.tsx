@@ -1,5 +1,10 @@
-import { Fragment, useState } from "react";
+import { useGlobalStore } from "global-store/useGlobalStore";
+import { customLocalStorage } from "utils/customLocalStorage";
 import { Dialog, Menu, Transition } from "@headlessui/react";
+import { NextLink } from "components-common/NextLink";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+
 import {
     Bars3CenterLeftIcon,
     HomeIcon,
@@ -8,15 +13,15 @@ import {
     TruckIcon,
     RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
+
 import {
     ChevronUpDownIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
+
+import * as React from "react";
 import clsx from "clsx";
-import { useRouter } from "next/router";
-import { NextLink } from "components-common/NextLink";
-import { signIn, useSession } from "next-auth/react";
-import { useGlobalStore } from "global-store/useGlobalStore";
+import Image from "next/image";
 
 const teams = [
     { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
@@ -30,17 +35,18 @@ type DashboardLayoutProps = {
 
 export const DashboardLayout = (props: DashboardLayoutProps) => {
     const { children = false } = props;
-    const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const { status } = useSession({
+    const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+    const router = useRouter();
+    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
+
+    const { data: session, status } = useSession({
         required: true,
         onUnauthenticated() {
             signIn();
         },
     });
-
-    const router = useRouter();
-    const { activeWorkspaceId } = useGlobalStore();
 
     const navigation = [
         {
@@ -65,18 +71,31 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
         },
     ];
 
-    return status === "loading" ? (
+    React.useEffect(() => {
+        const locallyStoredWorkspaceId =
+            customLocalStorage().getItem("activeWorkspaceId");
+
+        if (locallyStoredWorkspaceId && !activeWorkspaceId) {
+            setActiveWorkspaceId(locallyStoredWorkspaceId);
+        }
+
+        if (!locallyStoredWorkspaceId && router.isReady) {
+            router.push("/workspace/create");
+        }
+    }, [activeWorkspaceId, router, setActiveWorkspaceId]);
+
+    return !activeWorkspaceId ? null : status === "loading" ? (
         <div>loading session</div>
     ) : (
         <div className="min-h-full">
-            <Transition.Root show={sidebarOpen} as={Fragment}>
+            <Transition.Root show={sidebarOpen} as={React.Fragment}>
                 <Dialog
                     as="div"
                     className="relative z-40 lg:hidden"
                     onClose={setSidebarOpen}
                 >
                     <Transition.Child
-                        as={Fragment}
+                        as={React.Fragment}
                         enter="transition-opacity ease-linear duration-300"
                         enterFrom="opacity-0"
                         enterTo="opacity-100"
@@ -89,7 +108,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
 
                     <div className="fixed inset-0 z-40 flex">
                         <Transition.Child
-                            as={Fragment}
+                            as={React.Fragment}
                             enter="transition ease-in-out duration-300 transform"
                             enterFrom="-translate-x-full"
                             enterTo="translate-x-0"
@@ -99,7 +118,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         >
                             <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
                                 <Transition.Child
-                                    as={Fragment}
+                                    as={React.Fragment}
                                     enter="ease-in-out duration-300"
                                     enterFrom="opacity-0"
                                     enterTo="opacity-100"
@@ -231,17 +250,19 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                             <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
                                 <span className="flex w-full items-center justify-between">
                                     <span className="flex min-w-0 items-center justify-between space-x-3">
-                                        <img
+                                        <Image
+                                            height={"40px"}
+                                            width={"40px"}
                                             className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                                            src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+                                            src={
+                                                session.user?.image ??
+                                                "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                            }
                                             alt=""
                                         />
                                         <span className="flex min-w-0 flex-1 flex-col">
                                             <span className="truncate text-sm font-medium text-gray-900">
-                                                Jessy Schwarz
-                                            </span>
-                                            <span className="truncate text-sm text-gray-500">
-                                                @jessyschwarz
+                                                {session.user?.name}
                                             </span>
                                         </span>
                                     </span>
@@ -253,7 +274,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                             </Menu.Button>
                         </div>
                         <Transition
-                            as={Fragment}
+                            as={React.Fragment}
                             enter="transition ease-out duration-100"
                             enterFrom="transform opacity-0 scale-95"
                             enterTo="transform opacity-100 scale-100"
@@ -296,7 +317,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <NextLink
-                                                href={"/settings/notifications"}
+                                                href={"/notifications"}
                                                 className={clsx(
                                                     active
                                                         ? "bg-gray-100 text-gray-900"
@@ -507,15 +528,20 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         <span className="sr-only">
                                             Open user menu
                                         </span>
-                                        <img
+                                        <Image
+                                            height="32px"
+                                            width="32px"
                                             className="h-8 w-8 rounded-full"
-                                            src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                            src={
+                                                session.user?.image ??
+                                                "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                            }
                                             alt=""
                                         />
                                     </Menu.Button>
                                 </div>
                                 <Transition
-                                    as={Fragment}
+                                    as={React.Fragment}
                                     enter="transition ease-out duration-100"
                                     enterFrom="transform opacity-0 scale-95"
                                     enterTo="transform opacity-100 scale-100"

@@ -25,6 +25,7 @@ import dynamic from "next/dynamic";
 import { ShowingCard } from "components-core/settings/settings-components";
 import { Button, ButtonLink } from "components-common/Button";
 import { ShowingsModal } from "./showings-components/ShowingsModal";
+import { useGlobalStore } from "global-store/useGlobalStore";
 
 const ShowingsAll = dynamic(() => import("./showings-components/ShowingsAll"), {
     suspense: true,
@@ -66,9 +67,17 @@ export const ShowingsContainer: NextPageExtended = () => {
         { title: "All Showings" },
     ];
 
+    const { activeWorkspaceId } = useGlobalStore();
     return (
         <>
-            <Breadcrumb items={[{ title: "Settings", href: "/settings" }]} />
+            <Breadcrumb
+                items={[
+                    {
+                        title: "Showings",
+                        href: `/workspace/${activeWorkspaceId}/showings`,
+                    },
+                ]}
+            />
             <ShowingsModal />
             <PageBody>
                 <SectionHeading>

@@ -1,7 +1,17 @@
 import clsx from "clsx";
-import { Button } from "components-common/Button";
+import { Button, ButtonLink } from "components-common/Button";
+import { useGlobalStore } from "global-store/useGlobalStore";
+import { customLocalStorage } from "utils/customLocalStorage";
+import { trpc } from "utils/trpc";
 
 const SettingsWorkspaces = () => {
+    const { data, isLoading } = trpc.workspace.getAll.useQuery();
+    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
+
+    const handleClick = (activeWorkspaceId: string) => {
+        customLocalStorage().setItem("activeWorkspaceId", activeWorkspaceId);
+        setActiveWorkspaceId(activeWorkspaceId);
+    };
     return (
         <div>
             <div className="flex items-center">
@@ -15,25 +25,53 @@ const SettingsWorkspaces = () => {
                             "ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                         )}
                     >
-                        1
+                        {data && data.length}
                     </span>
                 </div>
 
-                <Button variant="primary" className="ml-auto">
+                <ButtonLink
+                    href="/workspace/create-or-select"
+                    variant="primary"
+                    className="ml-auto"
+                >
                     Add Workspace
-                </Button>
+                </ButtonLink>
             </div>
+            <ul>
+                {data?.map((workspace) => (
+                    <li
+                        className="mt-4 flex py-2 px-2"
+                        key={workspace.workspaceId}
+                    >
+                        <p
+                            className="mr-2 text-gray-700"
+                            key={workspace.workspaceId}
+                        >
+                            {workspace.workspace.title}
+                        </p>
 
-            <div className="mt-4 flex py-2 px-2">
-                <p className="mr-2 text-gray-700">Cool Workspace Name</p>{" "}
-                <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
-                    active
-                </span>
-                <div className="ml-auto space-x-4">
-                    <Button variant="text">Details</Button>
-                    <Button variant="text">Edit</Button>
-                </div>
-            </div>
+                        {workspace.workspaceId == activeWorkspaceId ? (
+                            <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                                active
+                            </span>
+                        ) : null}
+                        <div className="ml-auto space-x-4">
+                            {workspace.workspaceId !== activeWorkspaceId && (
+                                <Button
+                                    variant="text"
+                                    onClick={() =>
+                                        handleClick(workspace.workspaceId)
+                                    }
+                                >
+                                    Set as Active
+                                </Button>
+                            )}
+                            <Button variant="text">Edit</Button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+
             <h3 className="ml-2 mt-8 font-bold text-gray-700">
                 Shared with me
             </h3>

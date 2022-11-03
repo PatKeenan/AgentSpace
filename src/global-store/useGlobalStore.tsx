@@ -8,7 +8,7 @@ type GlobalStore = {
 
 export const useGlobalStore = create<GlobalStore>()(
     devtools((set) => ({
-        activeWorkspaceId: "isd",
+        activeWorkspaceId: "",
         setActiveWorkspaceId: (id: string) =>
             set(() => ({ activeWorkspaceId: id })),
     }))

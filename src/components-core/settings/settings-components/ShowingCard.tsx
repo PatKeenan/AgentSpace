@@ -4,6 +4,7 @@ import {
     EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 import { NextLink } from "components-common/NextLink";
+import { useGlobalStore } from "global-store/useGlobalStore";
 
 type ShowingCardProps = {
     candidate: {
@@ -17,8 +18,14 @@ type ShowingCardProps = {
 };
 export const ShowingCard = (props: ShowingCardProps) => {
     const { candidate } = props;
+
+    //TODO: Replace with showing workspace id
+    const { activeWorkspaceId } = useGlobalStore();
     return (
-        <NextLink href="/showings/dfgd" className="group block">
+        <NextLink
+            href={`/workspace/${activeWorkspaceId}/showings/dfgd`}
+            className="group block"
+        >
             <div className="flex items-center py-5 px-4 sm:py-6 sm:px-0">
                 <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                     <div>

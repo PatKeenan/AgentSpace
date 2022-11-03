@@ -1,4 +1,5 @@
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { useGlobalStore } from "global-store/useGlobalStore";
 import Link from "next/link";
 
 export type BreadcrumbItem = {
@@ -20,12 +21,13 @@ export const Breadcrumb = (props: BreadcrumbType) => {
         return false;
     };
 
+    const { activeWorkspaceId } = useGlobalStore();
     return (
         <nav className="flex px-4 py-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
             <ol role="list" className="flex items-center space-x-4">
                 <li>
                     <div>
-                        <Link href="/">
+                        <Link href={`/workspace/${activeWorkspaceId}`}>
                             <a className="text-gray-400 hover:text-gray-500">
                                 <HomeIcon
                                     className="h-5 w-5 flex-shrink-0"

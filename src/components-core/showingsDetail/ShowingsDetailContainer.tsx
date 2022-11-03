@@ -17,6 +17,7 @@ import {
 import { Button } from "components-common/Button";
 import { useShowingDetailUI } from "./useShowingDetailUI";
 import { ShowingFormState } from "./types";
+import { useGlobalStore } from "global-store/useGlobalStore";
 
 type SubHeadingProps = {
     text: string;
@@ -41,11 +42,17 @@ export const ShowingDetailContainer = () => {
     const [showings, setShowings] = React.useState<
         ShowingFormState[] | undefined
     >();
+    //TODO: Replace with Showing Detail Workspace Id
+    const { activeWorkspaceId } = useGlobalStore();
     const breadCrumbItems = [
-        { title: "Showings", href: "/showings", active: false },
+        {
+            title: "Showings",
+            href: `/workspace/${activeWorkspaceId}/showings`,
+            active: false,
+        },
         {
             title: router.query.id as string,
-            href: ("/showings/" + router.query.id) as string,
+            href: `/workspace/${activeWorkspaceId}/showings/${router.query.id}`,
             active: true,
         },
     ];

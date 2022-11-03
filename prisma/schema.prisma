@@ -125,11 +125,11 @@ model Person {
 }
 
 model UserOnWorkspace {
-    id               String     @id @default(cuid())
-    role             ROLE       @default(USER)
-    workspace        Workspace? @relation(fields: [workspaceId], references: [id])
-    workspaceId      String?
-    user             User       @relation(fields: [userId], references: [id])
+    id               String    @id @default(cuid())
+    role             ROLE      @default(USER)
+    workspace        Workspace @relation(fields: [workspaceId], references: [id])
+    workspaceId      String
+    user             User      @relation(fields: [userId], references: [id])
     userId           String
     assignedShowings Showing[]
 }
