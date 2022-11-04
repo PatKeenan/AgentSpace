@@ -18,7 +18,7 @@ export const useShowingsUI = create<ShowingsState>()(
            activeTab: 'Upcoming', 
            setActiveTab: (tab) => set(() => ({activeTab: tab})),
            modalOpen: false,
-           setModalOpen: (val) => set({modalOpen: val}) 
+           setModalOpen: (val) => set({modalOpen: val})
         })
     )
   )

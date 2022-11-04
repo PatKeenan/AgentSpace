@@ -23,6 +23,7 @@
       "components-core/*": ["components-core/*"],
       "types/*": ["types/*"],
       "utils/*": ["utils/*"],
+      "hooks/*": ["hooks/*"],
       "global-store/*": ["global-store/*"],
 
     }

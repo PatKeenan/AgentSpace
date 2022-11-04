@@ -51,21 +51,24 @@ model Showing {
     deleted        Boolean?          @default(false)
     deletedAt      DateTime?
     people         PersonOnShowing[]
+    address        String
+    place_name     String
+    latitude       Int
+    longitude      Int
 }
 
 model ShowingGroup {
-    id          String           @id @default(cuid())
-    createdAt   DateTime         @default(now())
-    workspace   Workspace        @relation(fields: [workspaceId], references: [id])
+    id          String    @id @default(cuid())
+    createdAt   DateTime  @default(now())
+    workspace   Workspace @relation(fields: [workspaceId], references: [id])
     workspaceId String
-    createdBy   User             @relation(fields: [createdById], references: [id])
+    createdBy   User      @relation(fields: [createdById], references: [id])
     createdById String
     showings    Showing[]
     title       String
     date        DateTime?
-    type        ShowingGroupType
     tags        Tag[]
-    deleted     Boolean?         @default(false)
+    deleted     Boolean?  @default(false)
     deletedAt   DateTime?
 }
 
@@ -207,6 +210,7 @@ model User {
     showingGroup     ShowingGroup[]
     personCategory   PersonCategory[]
     notifications    Notification[]
+    defaultWorkspace String?
 }
 
 model VerificationToken {

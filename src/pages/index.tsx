@@ -1,17 +1,17 @@
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
+import { useRouter } from "next/router";
 import { NextPageExtended } from "types/index";
+import * as React from "react";
+import { signIn, useSession } from "next-auth/react";
+
 const Dashboard: NextPageExtended = () => {
-    return (
-        <PageBody>
-            <SectionHeading>
-                <SectionHeading.TitleContainer>
-                    <SectionHeading.Title>Dashboard</SectionHeading.Title>
-                </SectionHeading.TitleContainer>
-            </SectionHeading>
-        </PageBody>
-    );
+    const { status } = useSession({
+        required: true,
+        onUnauthenticated: () => {
+            signIn();
+        },
+    });
+    return <div>Hello</div>;
 };
 
-Dashboard.layout = "dashboard";
+Dashboard.layout == "dashboard";
 export default Dashboard;

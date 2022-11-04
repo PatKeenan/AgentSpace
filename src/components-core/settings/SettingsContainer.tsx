@@ -97,5 +97,3 @@ export const SettingsContainer: NextPageExtended = () => {
         </>
     );
 };
-
-SettingsContainer.layout = "dashboard";

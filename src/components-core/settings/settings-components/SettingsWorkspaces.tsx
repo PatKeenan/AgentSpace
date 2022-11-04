@@ -1,17 +1,18 @@
 import clsx from "clsx";
 import { Button, ButtonLink } from "components-common/Button";
 import { useGlobalStore } from "global-store/useGlobalStore";
-import { customLocalStorage } from "utils/customLocalStorage";
 import { trpc } from "utils/trpc";
 
 const SettingsWorkspaces = () => {
-    const { data, isLoading } = trpc.workspace.getAll.useQuery();
-    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
+    const { data } = trpc.workspace.getAll.useQuery();
+    const { activeWorkspace, setActiveWorkspace } = useGlobalStore();
+
+    const { mutate } = trpc.auth.setDefaultWorkspace.useMutation();
 
     const handleClick = (activeWorkspaceId: string) => {
-        customLocalStorage().setItem("activeWorkspaceId", activeWorkspaceId);
-        setActiveWorkspaceId(activeWorkspaceId);
+        mutate({ workspaceId: activeWorkspaceId });
     };
+
     return (
         <div>
             <div className="flex items-center">
@@ -30,7 +31,7 @@ const SettingsWorkspaces = () => {
                 </div>
 
                 <ButtonLink
-                    href="/workspace/create-or-select"
+                    href="/workspace/create"
                     variant="primary"
                     className="ml-auto"
                 >
@@ -50,13 +51,13 @@ const SettingsWorkspaces = () => {
                             {workspace.workspace.title}
                         </p>
 
-                        {workspace.workspaceId == activeWorkspaceId ? (
+                        {workspace.workspaceId == activeWorkspace?.id ? (
                             <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
                                 active
                             </span>
                         ) : null}
                         <div className="ml-auto space-x-4">
-                            {workspace.workspaceId !== activeWorkspaceId && (
+                            {workspace.workspaceId !== activeWorkspace?.id && (
                                 <Button
                                     variant="text"
                                     onClick={() =>

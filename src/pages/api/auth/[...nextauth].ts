@@ -2,11 +2,11 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "server/db/client";
 import { env } from "../../../env/server.mjs";
-
-
 import GoogleProvider from 'next-auth/providers/google'
 import EmailProvider from 'next-auth/providers/email'
 
+
+const allowedUsers = ["patkeenan316@gmail.com", "patkeenan.dev@gmail.com", "ford.dave7@gmail.com"]
 export const authOptions: NextAuthOptions = {
     theme: {
         colorScheme: 'light',
@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
 
     callbacks: {
         async signIn({ user }) {
-            if(user.email == 'patkeenan316@gmail.com') return true
+            if(user.email && allowedUsers.includes(user.email)) return true
             return false
           },
         session({ session, user }) {
@@ -23,6 +23,7 @@ export const authOptions: NextAuthOptions = {
             }
             return session;
         },
+        
     },
     secret: env.NEXTAUTH_URL,
    

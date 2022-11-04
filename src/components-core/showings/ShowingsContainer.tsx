@@ -1,64 +1,28 @@
+import { ShowingsModal } from "./showings-components/ShowingsModal";
 import { SectionHeading } from "components-layout/SectionHeading";
-import {
-    BarsArrowUpIcon,
-    CheckIcon,
-    MapPinIcon,
-    UserGroupIcon,
-    XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { Button, ButtonLink } from "components-common/Button";
+import { useGlobalStore } from "global-store/useGlobalStore";
 import { Breadcrumb } from "components-layout/Breadcrumb";
 import { PageBody } from "components-layout/PageBody";
+import { NextLink } from "components-common/NextLink";
 import { useShowingsUI } from "./useShowingsUI";
 import { Tabs } from "components-common/Tabs";
+import { trpc } from "utils/trpc";
 import {
-    ArrowLongLeftIcon,
-    ArrowLongRightIcon,
+    CalendarIcon,
     ChevronRightIcon,
     MagnifyingGlassIcon,
-    QuestionMarkCircleIcon,
+    TruckIcon,
 } from "@heroicons/react/20/solid";
-import { Suspense } from "react";
 
 import type { NextPageExtended } from "types/index";
-
-import dynamic from "next/dynamic";
-import { ShowingCard } from "components-core/settings/settings-components";
-import { Button, ButtonLink } from "components-common/Button";
-import { ShowingsModal } from "./showings-components/ShowingsModal";
-import { useGlobalStore } from "global-store/useGlobalStore";
-
-const ShowingsAll = dynamic(() => import("./showings-components/ShowingsAll"), {
-    suspense: true,
-});
-const ShowingsPast = dynamic(
-    () => import("./showings-components/ShowingsPast"),
-    {
-        suspense: true,
-    }
-);
-const ShowingsUpcoming = dynamic(
-    () => import("./showings-components/ShowingsUpcoming"),
-    {
-        suspense: true,
-    }
-);
-
-const candidates = [
-    {
-        name: "Emily Selman",
-        email: "emily.selman@example.com",
-        imageUrl:
-            "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        applied: "January 7, 2020",
-        appliedDatetime: "2020-07-01T15:34:56",
-        status: "Completed phone screening",
-    },
-    // More candidates...
-];
+import { MapPinIcon } from "@heroicons/react/24/outline";
+import { formatDate } from "utils/formatDate";
+import * as React from "react";
 
 export const ShowingsContainer: NextPageExtended = () => {
     const { activeTab, setActiveTab, setModalOpen } = useShowingsUI();
-
+    const { activeWorkspace } = useGlobalStore();
     const handleChangeTab = (tab: string) => {
         setActiveTab(tab as typeof activeTab);
     };
@@ -67,19 +31,18 @@ export const ShowingsContainer: NextPageExtended = () => {
         { title: "All Showings" },
     ];
 
-    const { activeWorkspaceId } = useGlobalStore();
     return (
         <>
             <Breadcrumb
                 items={[
                     {
                         title: "Showings",
-                        href: `/workspace/${activeWorkspaceId}/showings`,
+                        href: `/workspace/${activeWorkspace?.id}/showings`,
                     },
                 ]}
             />
             <ShowingsModal />
-            <PageBody>
+            <PageBody fullHeight>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>Showings</SectionHeading.Title>
@@ -121,24 +84,26 @@ export const ShowingsContainer: NextPageExtended = () => {
                         </>
                     </SectionHeading.Actions>
                 </SectionHeading>
-                <div className="px-4 sm:px-0">
-                    <Tabs
-                        tabs={tabs}
-                        id="showing-tabs"
-                        onTabClick={handleChangeTab}
-                        activeTab={activeTab}
-                        actions={
-                            <Button
-                                variant="primary"
-                                onClick={() => setModalOpen(true)}
-                            >
-                                Add Showing
-                            </Button>
-                        }
-                    />
-                </div>
 
-                <ListView />
+                <>
+                    <div className="px-4 sm:px-0">
+                        <Tabs
+                            tabs={tabs}
+                            id="showing-tabs"
+                            onTabClick={handleChangeTab}
+                            activeTab={activeTab}
+                            actions={
+                                <Button
+                                    variant="primary"
+                                    onClick={() => setModalOpen(true)}
+                                >
+                                    Add Showing
+                                </Button>
+                            }
+                        />
+                    </div>
+                    <ListView />
+                </>
             </PageBody>
         </>
     );
@@ -146,69 +111,98 @@ export const ShowingsContainer: NextPageExtended = () => {
 ShowingsContainer.layout = "dashboard";
 
 const ListView = () => {
-    return (
+    const { activeWorkspace } = useGlobalStore();
+    const { setModalOpen } = useShowingsUI();
+    const { data: showingGroups, isLoading } =
+        trpc.showing.getAllGroups.useQuery(
+            { workspaceId: activeWorkspace?.id as string },
+            { enabled: activeWorkspace !== undefined }
+        );
+
+    return isLoading ? (
+        <div>Loading...</div>
+    ) : (
         <>
-            <ul
-                role="list"
-                className="mt-5 divide-y divide-gray-200 border-t border-gray-200 sm:mt-0 sm:border-t-0"
-            >
-                {candidates.map((candidate) => (
-                    <li key={candidate.email}>
-                        <ShowingCard
-                            candidate={candidate}
-                            key={candidate.name}
-                        />
-                    </li>
-                ))}
-            </ul>
+            {showingGroups && !showingGroups.length ? (
+                <div className=" mt-2 grid h-full place-items-center rounded-lg border-2 border-dashed border-gray-300 p-2 hover:border-gray-400">
+                    <div className="text-center">
+                        <TruckIcon className="mx-auto h-24 w-24 text-gray-300" />
+                        <p className="text-sm text-gray-400">No Showings</p>
+                        <Button
+                            variant="primary"
+                            className="mt-8"
+                            onClick={() => setModalOpen(true)}
+                        >
+                            Add First Showing
+                        </Button>
+                    </div>
+                </div>
+            ) : (
+                <div className="overflow-hidden bg-white shadow sm:rounded-md">
+                    <ul role="list" className="divide-y divide-gray-200">
+                        {showingGroups?.map((showingGroup) => (
+                            <li key={showingGroup.id}>
+                                <NextLink
+                                    href={`/workspace/${showingGroup.workspaceId}/showings/${showingGroup.id}`}
+                                    className="group block hover:bg-gray-50"
+                                >
+                                    <div className="flex items-center px-4 py-4 sm:px-6">
+                                        <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
+                                            <div className="truncate">
+                                                <p className="truncate font-medium text-gray-600 group-hover:text-purple-600">
+                                                    {showingGroup.title}
+                                                </p>
+                                                <div className="mt-2 flex">
+                                                    <div className="flex items-center text-sm text-gray-500">
+                                                        <CalendarIcon
+                                                            className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                            aria-hidden="true"
+                                                        />
 
-            {/* Pagination */}
-            <nav
-                className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0"
-                aria-label="Pagination"
-            >
-                <div className="-mt-px flex w-0 flex-1">
-                    <a
-                        href="#"
-                        className="inline-flex items-center border-t-2 border-transparent pt-4 pr-1 text-sm font-medium text-gray-500 hover:border-gray-200 hover:text-gray-700"
-                    >
-                        <ArrowLongLeftIcon
-                            className="mr-3 h-5 w-5 text-gray-400"
-                            aria-hidden="true"
-                        />
-                        Previous
-                    </a>
+                                                        <time
+                                                            dateTime={formatDate(
+                                                                showingGroup.date
+                                                            )}
+                                                        >
+                                                            {formatDate(
+                                                                showingGroup.date
+                                                            )}
+                                                        </time>
+                                                    </div>
+                                                    <div className="ml-4 flex items-center text-sm text-gray-500">
+                                                        <MapPinIcon
+                                                            className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                            aria-hidden="true"
+                                                        />
+                                                        <p>
+                                                            {
+                                                                showingGroup
+                                                                    .showings
+                                                                    .length
+                                                            }{" "}
+                                                            showing
+                                                            {showingGroup
+                                                                .showings
+                                                                .length !== 1 &&
+                                                                "s"}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="ml-5 flex-shrink-0">
+                                            <ChevronRightIcon
+                                                className="h-5 w-5 text-gray-400"
+                                                aria-hidden="true"
+                                            />
+                                        </div>
+                                    </div>
+                                </NextLink>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-                <div className="hidden md:-mt-px md:flex">
-                    <a
-                        href="#"
-                        className="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-200 hover:text-gray-700"
-                    >
-                        1
-                    </a>
-                    {/* Current: "border-purple-500 text-purple-600", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-200" */}
-
-                    <a
-                        href="#"
-                        className="inline-flex items-center border-t-2 border-purple-500 px-4 pt-4 text-sm font-medium text-purple-600"
-                        aria-current="page"
-                    >
-                        2
-                    </a>
-                </div>
-                <div className="-mt-px flex w-0 flex-1 justify-end">
-                    <a
-                        href="#"
-                        className="inline-flex items-center border-t-2 border-transparent pt-4 pl-1 text-sm font-medium text-gray-500 hover:border-gray-200 hover:text-gray-700"
-                    >
-                        Next
-                        <ArrowLongRightIcon
-                            className="ml-3 h-5 w-5 text-gray-400"
-                            aria-hidden="true"
-                        />
-                    </a>
-                </div>
-            </nav>
+            )}
         </>
     );
 };

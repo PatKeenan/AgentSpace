@@ -22,6 +22,9 @@ import {
 import * as React from "react";
 import clsx from "clsx";
 import Image from "next/image";
+import { AccessControl } from "./AccessControl";
+import { useActiveWorkspace } from "hooks/usePermissions";
+import { trpc } from "utils/trpc";
 
 const teams = [
     { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
@@ -36,10 +39,25 @@ type DashboardLayoutProps = {
 export const DashboardLayout = (props: DashboardLayoutProps) => {
     const { children = false } = props;
 
-    const [sidebarOpen, setSidebarOpen] = React.useState(false);
+    const { activeWorkspace, isLoading } = useActiveWorkspace();
 
+    const {
+        data: isAllowed,
+        isLoading: isLoadingPermission,
+        isError: isErrorPermission,
+    } = trpc.workspace.checkIfAllowed.useQuery(
+        { workspaceId: activeWorkspace?.id as string },
+        { enabled: activeWorkspace !== undefined }
+    );
     const router = useRouter();
-    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
+
+    React.useEffect(() => {
+        if (!isAllowed && !isLoadingPermission && isErrorPermission) {
+            router.push("/unauthorized");
+        }
+    }, [isAllowed, isErrorPermission, isLoadingPermission, router]);
+
+    const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
     const { data: session, status } = useSession({
         required: true,
@@ -51,41 +69,30 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
     const navigation = [
         {
             name: "Home",
-            href: `/workspace/${activeWorkspaceId}`,
+            href: `/workspace/${activeWorkspace?.id}`,
             icon: HomeIcon,
         },
         {
             name: "Showings",
-            href: `/workspace/${activeWorkspaceId}/showings`,
+            href: `/workspace/${activeWorkspace?.id}/showings`,
             icon: TruckIcon,
         },
         {
             name: "Projects",
-            href: `/workspace/${activeWorkspaceId}/projects`,
+            href: `/workspace/${activeWorkspace?.id}/projects`,
             icon: RectangleGroupIcon,
         },
         {
             name: "People",
-            href: `/workspace/${activeWorkspaceId}/people`,
+            href: `/workspace/${activeWorkspace?.id}/people`,
             icon: UserGroupIcon,
         },
     ];
 
-    React.useEffect(() => {
-        const locallyStoredWorkspaceId =
-            customLocalStorage().getItem("activeWorkspaceId");
-
-        if (locallyStoredWorkspaceId && !activeWorkspaceId) {
-            setActiveWorkspaceId(locallyStoredWorkspaceId);
-        }
-
-        if (!locallyStoredWorkspaceId && router.isReady) {
-            router.push("/workspace/create");
-        }
-    }, [activeWorkspaceId, router, setActiveWorkspaceId]);
-
-    return !activeWorkspaceId ? null : status === "loading" ? (
-        <div>loading session</div>
+    return !activeWorkspace ? null : status === "loading" ? (
+        <div className="grid h-full place-items-center">
+            <h3>Loading...</h3>
+        </div>
     ) : (
         <div className="min-h-full">
             <Transition.Root show={sidebarOpen} as={React.Fragment}>
@@ -188,7 +195,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         </div>
                                         <div className="mt-8">
                                             <NextLink
-                                                href={`/workspace/${activeWorkspaceId}/tags`}
+                                                href={`/workspace/${activeWorkspace.id}/tags`}
                                                 className="px-3 text-sm font-medium text-gray-500"
                                                 id="mobile-teams-headline"
                                             >
@@ -441,7 +448,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         <div className="mt-8">
                             {/* Secondary navigation */}
                             <NextLink
-                                href={`workspace/${activeWorkspaceId}/tags`}
+                                href={`workspace/${activeWorkspace.id}/tags`}
                                 className="px-3 text-sm font-medium text-gray-500"
                                 id="desktop-teams-headline"
                             >
@@ -637,6 +644,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         </div>
                     </div>
                 </div>
+
                 <main className="flex-1">{children}</main>
             </div>
         </div>

@@ -2,6 +2,7 @@ import { context } from 'types/map-box';
 import {z} from 'zod'
 import { addressSchema } from './addressShema';
 import { personSchema } from './personShema';
+import { tagSchema } from './tagSchema';
 
 export const statusSchema = z.object({
     id: z.string(),
@@ -10,6 +11,8 @@ export const statusSchema = z.object({
 export type ZodStatusSchema = z.infer<typeof statusSchema>
 
 export const showingSchema = z.object({
+    stopNumber: z.number(),
+    tags: z.array(tagSchema).optional(),
     address: addressSchema,
     buildingOrApt: z.string().optional(),
     clients: z.array(personSchema).optional(),
