@@ -22,7 +22,6 @@ export const serverSchema = z.object({
     STRIPE_WEBHOOK_SECRET: z.string(),
     EMAIL_SERVER: z.string(),
     EMAIL_FROM: z.string(),
-    
 });
 
 /**
@@ -32,7 +31,7 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
     NEXT_PUBLIC_STRIPE_KEY: z.string(),
-    MAP_BOX_PUBLIC_KEY: z.string()
+    MAP_BOX_PUBLIC_KEY: z.string(),
 });
 
 /**
