@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
     },
-    secret: env.NEXTAUTH_URL,
+    secret: env.NEXTAUTH_SECRET,
 
     adapter: PrismaAdapter(prisma),
     providers: [
