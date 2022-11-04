@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 import { personSchema } from "server/schemas/personShema";
 
 export const tagSchema = z.object({
@@ -6,5 +6,5 @@ export const tagSchema = z.object({
     title: z.string(),
     people: z.array(personSchema).optional(),
     deleted: z.boolean().optional(),
-    deletedAt: z.string().optional()
-})
+    deletedAt: z.string().optional(),
+});

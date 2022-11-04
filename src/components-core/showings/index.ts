@@ -1,2 +1,2 @@
-export * from './ShowingsContainer'
-export * from './useShowingsUI'
+export * from "./ShowingsContainer";
+export * from "./useShowingsUI";

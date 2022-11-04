@@ -1,16 +1,16 @@
 import { MapboxPlaces } from "types/map-box";
 
 interface Id {
-    id: string
+    id: string;
 }
 
 export interface Person extends Id {
-    name: string
+    name: string;
 }
 
 export interface Status extends Id {
-value: "confirmed" | "pending" | "canceled"
-display: string
+    value: "confirmed" | "pending" | "canceled";
+    display: string;
 }
 
 export type ShowingFormState = {

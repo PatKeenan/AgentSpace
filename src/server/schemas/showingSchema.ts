@@ -1,14 +1,14 @@
-import { context } from 'types/map-box';
-import {z} from 'zod'
-import { addressSchema } from './addressShema';
-import { personSchema } from './personShema';
-import { tagSchema } from './tagSchema';
+import { context } from "types/map-box";
+import { z } from "zod";
+import { addressSchema } from "./addressShema";
+import { personSchema } from "./personShema";
+import { tagSchema } from "./tagSchema";
 
 export const statusSchema = z.object({
     id: z.string(),
     status: z.enum(["confirmed", "pending", "canceled"]),
 });
-export type ZodStatusSchema = z.infer<typeof statusSchema>
+export type ZodStatusSchema = z.infer<typeof statusSchema>;
 
 export const showingSchema = z.object({
     stopNumber: z.number(),

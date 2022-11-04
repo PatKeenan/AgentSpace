@@ -21,4 +21,3 @@ export const authedProcedure = t.procedure.use(({ ctx, next }) => {
         },
     });
 });
-

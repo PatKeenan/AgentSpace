@@ -1,1 +1,1 @@
-export * from './TagsContainer'
+export * from "./TagsContainer";

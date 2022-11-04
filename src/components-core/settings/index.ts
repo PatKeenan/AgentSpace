@@ -1,2 +1,2 @@
-export * from './SettingsContainer'
-export * from './useSettingsUI'
+export * from "./SettingsContainer";
+export * from "./useSettingsUI";

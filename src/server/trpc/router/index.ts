@@ -13,7 +13,7 @@ export const appRouter = t.router({
     workspace: workspaceRouter,
     showing: showingsRouter,
     tags: tagsRouter,
-    people: peopleRouter
+    people: peopleRouter,
 });
 
 // export type definition of API
