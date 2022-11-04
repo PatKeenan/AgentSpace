@@ -71,7 +71,7 @@ export const SettingsContainer: NextPageExtended = () => {
     };
 
     return (
-        <>
+        <div className="relative h-full">
             <Breadcrumb items={[{ title: "Settings", href: "/settings" }]} />
             <PageBody>
                 <SectionHeading>
@@ -94,6 +94,6 @@ export const SettingsContainer: NextPageExtended = () => {
                     </div>
                 </div>
             </PageBody>
-        </>
+        </div>
     );
 };
