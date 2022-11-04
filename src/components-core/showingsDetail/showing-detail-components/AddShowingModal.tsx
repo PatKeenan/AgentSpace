@@ -69,11 +69,8 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
         debounced: debouncedAddressQuery,
     } = useDebounceState("");
 
-    const {
-        state: peopleQuery,
-        setState: setPeopleQuery,
-        debounced: debouncedPeopleQuery,
-    } = useDebounceState("");
+    const { state: peopleQuery, setState: setPeopleQuery } =
+        useDebounceState("");
 
     const { data } = trpc.addressSearch.search.useQuery(
         { query: debouncedAddressQuery },
@@ -86,10 +83,6 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
     };
 
     const baseTopPadding = "pt-2";
-
-    const handleReset = () => {
-        setState(initialFormState);
-    };
 
     /////////////////////////////////////////////////////////////
 

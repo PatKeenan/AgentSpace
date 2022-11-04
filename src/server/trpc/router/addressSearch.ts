@@ -9,7 +9,7 @@ export const addressSearchRouter = t.router({
         .input(z.object({ query: z.string() }))
         .query(async ({ input }) => {
             const data = await fetch(
-                `https://api.mapbox.com/geocoding/v5/mapbox.places/${input.query}.json?access_token=${env.MAP_BOX_PUBLIC_KEY}`
+                `https://api.mapbox.com/geocoding/v5/mapbox.places/${input.query}.json?access_token=${env.MAP_BOX_KEY}`
             ).then((res) => res.json());
             return data as MapboxPlaces;
         }),

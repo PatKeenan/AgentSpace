@@ -2,20 +2,17 @@ import * as React from "react";
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid";
 
 import { Breadcrumb } from "components-layout/Breadcrumb";
-import { PencilIcon, PlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import { SectionHeading } from "components-layout/SectionHeading";
 import { useRouter } from "next/router";
 
 import type { FC } from "react";
 import { PageBody } from "components-layout/PageBody";
-import clsx from "clsx";
 import {
-    EmptyData,
     ShowingDetailList,
     ShowingDetailMap,
 } from "./showing-detail-components";
 import { Button } from "components-common/Button";
-import { useShowingDetailUI } from "./useShowingDetailUI";
 import { ShowingFormState } from "./types";
 import { useGlobalStore } from "global-store/useGlobalStore";
 
@@ -43,16 +40,16 @@ export const ShowingDetailContainer = () => {
         ShowingFormState[] | undefined
     >();
     //TODO: Replace with Showing Detail Workspace Id
-    const { activeWorkspaceId } = useGlobalStore();
+    const { activeWorkspace } = useGlobalStore();
     const breadCrumbItems = [
         {
             title: "Showings",
-            href: `/workspace/${activeWorkspaceId}/showings`,
+            href: `/workspace/${activeWorkspace?.id}/showings`,
             active: false,
         },
         {
             title: router.query.id as string,
-            href: `/workspace/${activeWorkspaceId}/showings/${router.query.id}`,
+            href: `/workspace/${activeWorkspace?.id}/showings/${router.query.id}`,
             active: true,
         },
     ];

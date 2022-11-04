@@ -1,14 +1,12 @@
 import { useGlobalStore } from "global-store/useGlobalStore";
-import React from "react";
 import { trpc } from "utils/trpc";
 
 const ShowingsAll = () => {
     const { activeWorkspace } = useGlobalStore();
-    const { data: showingGroups, isLoading } =
-        trpc.showing.getAllGroups.useQuery(
-            { workspaceId: activeWorkspace?.id as string },
-            { enabled: activeWorkspace !== undefined }
-        );
+    const { data, isLoading } = trpc.showing.getAllGroups.useQuery(
+        { workspaceId: activeWorkspace?.id as string },
+        { enabled: activeWorkspace !== undefined }
+    );
 
     return isLoading ? (
         <div>Loading...</div>

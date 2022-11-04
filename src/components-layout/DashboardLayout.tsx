@@ -1,5 +1,3 @@
-import { useGlobalStore } from "global-store/useGlobalStore";
-import { customLocalStorage } from "utils/customLocalStorage";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { NextLink } from "components-common/NextLink";
 import { signIn, useSession } from "next-auth/react";
@@ -22,7 +20,6 @@ import {
 import * as React from "react";
 import clsx from "clsx";
 import Image from "next/image";
-import { AccessControl } from "./AccessControl";
 import { useActiveWorkspace } from "hooks/usePermissions";
 import { trpc } from "utils/trpc";
 
@@ -39,7 +36,7 @@ type DashboardLayoutProps = {
 export const DashboardLayout = (props: DashboardLayoutProps) => {
     const { children = false } = props;
 
-    const { activeWorkspace, isLoading } = useActiveWorkspace();
+    const { activeWorkspace } = useActiveWorkspace();
 
     const {
         data: isAllowed,

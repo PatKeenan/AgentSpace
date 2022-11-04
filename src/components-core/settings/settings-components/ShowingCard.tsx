@@ -20,10 +20,10 @@ export const ShowingCard = (props: ShowingCardProps) => {
     const { candidate } = props;
 
     //TODO: Replace with showing workspace id
-    const { activeWorkspaceId } = useGlobalStore();
+    const { activeWorkspace } = useGlobalStore();
     return (
         <NextLink
-            href={`/workspace/${activeWorkspaceId}/showings/dfgd`}
+            href={`/workspace/${activeWorkspace?.id}/showings/dfgd`}
             className="group block"
         >
             <div className="flex items-center py-5 px-4 sm:py-6 sm:px-0">

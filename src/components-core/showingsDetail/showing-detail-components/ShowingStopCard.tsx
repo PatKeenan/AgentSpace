@@ -3,7 +3,6 @@ import { Menu, Transition } from "@headlessui/react";
 import { Col } from "components-common/Col";
 import { Row } from "components-common/Row";
 import { Fragment } from "react";
-import { faker } from "@faker-js/faker";
 
 import clsx from "clsx";
 import {

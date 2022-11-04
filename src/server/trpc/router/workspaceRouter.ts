@@ -1,7 +1,6 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { UserOnWorkspace } from "@prisma/client";
 
 export const workspaceRouter = t.router({
     getAll: authedProcedure.query(async ({ ctx }) => {

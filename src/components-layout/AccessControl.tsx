@@ -1,4 +1,3 @@
-import { NotAuthorized } from "components-core/NotAuthorized";
 import { useGlobalStore } from "global-store/useGlobalStore";
 import { trpc } from "utils/trpc";
 import React from "react";
@@ -13,7 +12,7 @@ export const AccessControl = (props: Children) => {
     const router = useRouter();
     const { activeWorkspace, setActiveWorkspace } = useGlobalStore();
 
-    const { data: defaultWorkspaceQuery, isLoading: defaultWorkspaceLoading } =
+    const { data: defaultWorkspaceQuery } =
         trpc.auth.getDefaultWorkspace.useQuery();
 
     const {
@@ -28,7 +27,7 @@ export const AccessControl = (props: Children) => {
     React.useEffect(() => {
         if (!isAllowed && !isLoading && !isError) {
         }
-    }, []);
+    }, [isAllowed, isError, isLoading]);
 
     React.useEffect(() => {
         if (!defaultWorkspaceQuery) {

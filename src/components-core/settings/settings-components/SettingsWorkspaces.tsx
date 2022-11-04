@@ -5,7 +5,7 @@ import { trpc } from "utils/trpc";
 
 const SettingsWorkspaces = () => {
     const { data } = trpc.workspace.getAll.useQuery();
-    const { activeWorkspace, setActiveWorkspace } = useGlobalStore();
+    const { activeWorkspace } = useGlobalStore();
 
     const { mutate } = trpc.auth.setDefaultWorkspace.useMutation();
 

@@ -1,4 +1,3 @@
-import { customLocalStorage } from "utils/customLocalStorage";
 import { useGlobalStore } from "global-store/useGlobalStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
@@ -11,7 +10,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { trpc } from "utils/trpc";
 import * as z from "zod";
-import * as React from "react";
 import clsx from "clsx";
 
 export const CreateWorkspaceContainer = () => {
@@ -65,11 +63,8 @@ export const CreateWorkspaceContainer = () => {
     const { data: workspaces, isLoading: isLoadingWorkspaces } =
         trpc.workspace.getAll.useQuery();
 
-    const {
-        mutate: setDefaultMutation,
-        isLoading: isLoadingSetDefault,
-        isError: setDefaultError,
-    } = trpc.auth.setDefaultWorkspace.useMutation();
+    const { mutate: setDefaultMutation } =
+        trpc.auth.setDefaultWorkspace.useMutation();
 
     const [selected, setSelected] = useState(
         workspaces?.find((i) => i.workspaceId == activeWorkspace?.id)

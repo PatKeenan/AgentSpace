@@ -1,6 +1,6 @@
 import { ShowingsModal } from "./showings-components/ShowingsModal";
 import { SectionHeading } from "components-layout/SectionHeading";
-import { Button, ButtonLink } from "components-common/Button";
+import { Button } from "components-common/Button";
 import { useGlobalStore } from "global-store/useGlobalStore";
 import { Breadcrumb } from "components-layout/Breadcrumb";
 import { PageBody } from "components-layout/PageBody";

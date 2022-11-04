@@ -19,8 +19,6 @@ export function MultiAutoComplete<
 >(props: MultiAutoCompleteProps<T, K>) {
     const {
         label,
-        query,
-        setQuery,
         selected,
         onSelect,
         displayField,
