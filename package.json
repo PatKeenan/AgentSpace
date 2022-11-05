@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "dev": "yarn up:db && next dev",
     "up:db": "docker-compose up -d",
     "postinstall": "prisma generate",
