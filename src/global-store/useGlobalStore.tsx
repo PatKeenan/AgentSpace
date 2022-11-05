@@ -2,7 +2,7 @@ import { devtools } from "zustand/middleware";
 import create from "zustand";
 import { UserOnWorkspace } from "@prisma/client";
 
-type ActiveWorkspace =
+export type ActiveWorkspace =
     | {
           id: string;
           role: UserOnWorkspace["role"];

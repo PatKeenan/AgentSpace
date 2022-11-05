@@ -11,3 +11,4 @@ export * from "./MultiAutocomplete";
 export * from "./Input";
 export * from "./Textarea";
 export * from "./Select";
+export * from './Loading'
