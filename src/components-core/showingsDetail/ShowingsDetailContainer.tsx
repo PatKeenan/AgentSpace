@@ -40,16 +40,16 @@ export const ShowingDetailContainer = () => {
         ShowingFormState[] | undefined
     >();
     //TODO: Replace with Showing Detail Workspace Id
-    const { activeWorkspace } = useGlobalStore();
+    const { activeWorkspaceId } = useGlobalStore();
     const breadCrumbItems = [
         {
             title: "Showings",
-            href: `/workspace/${activeWorkspace?.id}/showings`,
+            href: `/workspace/${activeWorkspaceId}/showings`,
             active: false,
         },
         {
             title: router.query.id as string,
-            href: `/workspace/${activeWorkspace?.id}/showings/${router.query.id}`,
+            href: `/workspace/${activeWorkspaceId}/showings/${router.query.id}`,
             active: true,
         },
     ];
