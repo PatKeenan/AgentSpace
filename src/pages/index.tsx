@@ -16,28 +16,18 @@ const Dashboard: NextPageExtended = () => {
         onUnauthenticated: () => signIn(),
     });
 
+    // If no user workspace meta, push user to the create page
     React.useEffect(() => {
-        if (!isLoading && data && data.defaultWorkspace) {
-            return setActiveWorkspaceId(data.defaultWorkspace);
+        if (data && data.defaultWorkspace) {
+            setActiveWorkspaceId(data.defaultWorkspace);
+            router.push(`/workspace/${data.defaultWorkspace}`);
         }
-    }, [data, setActiveWorkspaceId, isLoading]);
 
-    React.useEffect(() => {
-        if (
-            !isLoading &&
-            data &&
-            data.defaultWorkspace &&
-            activeWorkspaceId == data.defaultWorkspace
-        ) {
-            router.push(`/workspace/${activeWorkspaceId}`);
-        }
-    }, [activeWorkspaceId, data, router, isLoading]);
-
-    React.useEffect(() => {
-        if (!isLoading && !activeWorkspaceId && !data?.defaultWorkspace) {
+        if (data && data.workspaceMeta.length == 0) {
+            setActiveWorkspaceId(undefined);
             router.push("/workspace/create");
         }
-    }, [activeWorkspaceId, data?.defaultWorkspace, isLoading, router]);
+    }, [activeWorkspaceId, data, router, setActiveWorkspaceId]);
 
     return isLoading && !data ? <Loading /> : null;
 };

@@ -21,7 +21,6 @@ import * as React from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import { trpc } from "utils/trpc";
-import { Protected } from "./Protected";
 import { Loading } from "components-common/Loading";
 import { useGlobalStore } from "global-store/useGlobalStore";
 
