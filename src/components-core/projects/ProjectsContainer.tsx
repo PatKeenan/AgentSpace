@@ -1,5 +1,7 @@
-import React from "react";
+import type { NextPageExtended } from "types/index";
 
-export const ProjectContainer = () => {
+export const ProjectContainer: NextPageExtended = () => {
     return <div>ProjectContainer</div>;
 };
+
+ProjectContainer.layout = "dashboard";

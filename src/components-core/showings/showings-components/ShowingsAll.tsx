@@ -2,10 +2,10 @@ import { useGlobalStore } from "global-store/useGlobalStore";
 import { trpc } from "utils/trpc";
 
 const ShowingsAll = () => {
-    const { activeWorkspace } = useGlobalStore();
+    const { activeWorkspaceId } = useGlobalStore();
     const { data, isLoading } = trpc.showing.getAllGroups.useQuery(
-        { workspaceId: activeWorkspace?.id as string },
-        { enabled: activeWorkspace !== undefined }
+        { workspaceId: activeWorkspaceId as string },
+        { enabled: typeof activeWorkspaceId == "string" }
     );
 
     return isLoading ? (

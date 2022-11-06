@@ -1,27 +1,44 @@
 import { Loading } from "components-common/Loading";
-import { Protected } from "components-layout/Protected";
 import { useGlobalStore } from "global-store/useGlobalStore";
-import { useActiveWorkspace } from "hooks/useActiveWorkspace";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import * as React from "react";
 import type { NextPageExtended } from "types/index";
+import { trpc } from "utils/trpc";
 
 const Dashboard: NextPageExtended = () => {
     const router = useRouter();
-    const { activeWorkspace, isLoading } = useActiveWorkspace();
+    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
+    const { data, isLoading } = trpc.user.getWorkspaceMeta.useQuery();
+
+    useSession({
+        required: true,
+        onUnauthenticated: () => signIn(),
+    });
 
     React.useEffect(() => {
-        if (activeWorkspace && router.isReady) {
-            router.push(`/workspace/${activeWorkspace.id}`);
+        if (!isLoading && data && data.defaultWorkspace) {
+            return setActiveWorkspaceId(data.defaultWorkspace);
         }
-    }, [activeWorkspace, router]);
+    }, [data, setActiveWorkspaceId, isLoading]);
 
-    return isLoading ? (
-        <Loading />
-    ) : (
-        <Protected>
-            <></>
-        </Protected>
-    );
+    React.useEffect(() => {
+        if (
+            !isLoading &&
+            data &&
+            data.defaultWorkspace &&
+            activeWorkspaceId == data.defaultWorkspace
+        ) {
+            router.push(`/workspace/${activeWorkspaceId}`);
+        }
+    }, [activeWorkspaceId, data, router, isLoading]);
+
+    React.useEffect(() => {
+        if (!isLoading && !activeWorkspaceId && !data?.defaultWorkspace) {
+            router.push("/workspace/create");
+        }
+    }, [activeWorkspaceId, data?.defaultWorkspace, isLoading, router]);
+
+    return isLoading && !data ? <Loading /> : null;
 };
 export default Dashboard;

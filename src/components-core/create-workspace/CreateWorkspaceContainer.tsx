@@ -1,11 +1,11 @@
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useGlobalStore } from "global-store/useGlobalStore";
+import { Listbox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
-import { Fragment, useState } from "react";
-import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Button } from "components-common/Button";
 import { Input } from "components-common/Input";
+import { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import { trpc } from "utils/trpc";
@@ -20,11 +20,7 @@ export const CreateWorkspaceContainer = () => {
         },
     });
 
-    const {
-        handleSubmit,
-        register,
-        formState: { errors },
-    } = useForm<{ title: string }>({
+    const { handleSubmit, register } = useForm<{ title: string }>({
         resolver: zodResolver(
             z.object({
                 title: z
@@ -38,20 +34,11 @@ export const CreateWorkspaceContainer = () => {
     });
 
     const router = useRouter();
-    const { setActiveWorkspace, activeWorkspace } = useGlobalStore();
-    const { data: session } = useSession();
+    const { setActiveWorkspaceId, activeWorkspaceId } = useGlobalStore();
 
     const { mutate, isLoading } = trpc.workspace.create.useMutation({
         onSuccess(data) {
-            const workspacePermissions = data.usersOnWorkspace.find(
-                (i) => i.userId == session?.user?.id
-            );
-            if (workspacePermissions) {
-                setActiveWorkspace({
-                    id: workspacePermissions.workspaceId,
-                    role: workspacePermissions.role,
-                });
-            }
+            setActiveWorkspaceId(data.id);
             router.push(`/workspace/${data.id}`);
         },
     });
@@ -64,10 +51,10 @@ export const CreateWorkspaceContainer = () => {
         trpc.workspace.getAll.useQuery();
 
     const { mutate: setDefaultMutation } =
-        trpc.auth.setDefaultWorkspace.useMutation();
+        trpc.user.setDefaultWorkspace.useMutation();
 
     const [selected, setSelected] = useState(
-        workspaces?.find((i) => i.workspaceId == activeWorkspace?.id)
+        workspaces?.find((i) => i.workspaceId == activeWorkspaceId)
     );
 
     const handleSetAsActive = () => {
@@ -75,17 +62,9 @@ export const CreateWorkspaceContainer = () => {
             setDefaultMutation(
                 { workspaceId: selected.workspaceId },
                 {
-                    onSuccess: (data) => {
-                        const activeWorkspaceData = data.workspaceMeta.find(
-                            (i) => i.workspaceId == selected.workspaceId
-                        );
-                        if (activeWorkspaceData) {
-                            setActiveWorkspace({
-                                id: activeWorkspaceData.workspaceId,
-                                role: activeWorkspaceData.role,
-                            });
-                            router.push(`/workspace/${activeWorkspaceData.id}`);
-                        }
+                    onSuccess: () => {
+                        setActiveWorkspaceId(selected.workspaceId);
+                        router.push(`/workspace/${selected.workspaceId}`);
                     },
                     onError(error) {
                         alert(error.message);
@@ -118,7 +97,7 @@ export const CreateWorkspaceContainer = () => {
                                                     {workspaces.find(
                                                         (i) =>
                                                             i.id ==
-                                                            activeWorkspace?.id
+                                                            activeWorkspaceId
                                                     )?.workspace.title ||
                                                         "Choose a Workspace"}
                                                 </Listbox.Label>

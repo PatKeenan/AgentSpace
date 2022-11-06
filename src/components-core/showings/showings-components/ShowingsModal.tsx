@@ -22,7 +22,7 @@ export const ShowingsModal = () => {
         }
     );
     const router = useRouter();
-    const { activeWorkspace } = useGlobalStore();
+    const { activeWorkspaceId } = useGlobalStore();
 
     const { mutate, isLoading } = trpc.showing.createGroup.useMutation({
         onSuccess(data) {
@@ -34,8 +34,8 @@ export const ShowingsModal = () => {
     });
 
     const onSubmit = handleSubmit(async (data) => {
-        if (activeWorkspace) {
-            mutate({ ...data, workspaceId: activeWorkspace.id });
+        if (activeWorkspaceId) {
+            mutate({ ...data, workspaceId: activeWorkspaceId });
             setModalOpen(false);
         }
     });

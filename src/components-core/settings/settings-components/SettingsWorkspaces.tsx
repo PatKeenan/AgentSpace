@@ -5,9 +5,12 @@ import { trpc } from "utils/trpc";
 
 const SettingsWorkspaces = () => {
     const { data } = trpc.workspace.getAll.useQuery();
-    const { activeWorkspace } = useGlobalStore();
+    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
 
-    const { mutate } = trpc.auth.setDefaultWorkspace.useMutation();
+    const { mutate } = trpc.user.setDefaultWorkspace.useMutation({
+        onSuccess: (data) =>
+            setActiveWorkspaceId(data.defaultWorkspace as string),
+    });
 
     const handleClick = (activeWorkspaceId: string) => {
         mutate({ workspaceId: activeWorkspaceId });
@@ -51,13 +54,13 @@ const SettingsWorkspaces = () => {
                             {workspace.workspace.title}
                         </p>
 
-                        {workspace.workspaceId == activeWorkspace?.id ? (
+                        {workspace.workspaceId == activeWorkspaceId ? (
                             <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
                                 active
                             </span>
                         ) : null}
                         <div className="ml-auto space-x-4">
-                            {workspace.workspaceId !== activeWorkspace?.id && (
+                            {workspace.workspaceId !== activeWorkspaceId && (
                                 <Button
                                     variant="text"
                                     onClick={() =>

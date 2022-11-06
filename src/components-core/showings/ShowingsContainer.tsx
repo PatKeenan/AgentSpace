@@ -22,7 +22,7 @@ import * as React from "react";
 
 export const ShowingsContainer: NextPageExtended = () => {
     const { activeTab, setActiveTab, setModalOpen } = useShowingsUI();
-    const { activeWorkspace } = useGlobalStore();
+    const { activeWorkspaceId } = useGlobalStore();
     const handleChangeTab = (tab: string) => {
         setActiveTab(tab as typeof activeTab);
     };
@@ -37,7 +37,7 @@ export const ShowingsContainer: NextPageExtended = () => {
                 items={[
                     {
                         title: "Showings",
-                        href: `/workspace/${activeWorkspace?.id}/showings`,
+                        href: `/workspace/${activeWorkspaceId}/showings`,
                     },
                 ]}
             />
@@ -111,12 +111,12 @@ export const ShowingsContainer: NextPageExtended = () => {
 ShowingsContainer.layout = "dashboard";
 
 const ListView = () => {
-    const { activeWorkspace } = useGlobalStore();
+    const { activeWorkspaceId } = useGlobalStore();
     const { setModalOpen } = useShowingsUI();
     const { data: showingGroups, isLoading } =
         trpc.showing.getAllGroups.useQuery(
-            { workspaceId: activeWorkspace?.id as string },
-            { enabled: activeWorkspace !== undefined }
+            { workspaceId: activeWorkspaceId as string },
+            { enabled: typeof activeWorkspaceId == "string" }
         );
 
     return isLoading ? (

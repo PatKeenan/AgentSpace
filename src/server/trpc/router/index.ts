@@ -6,6 +6,7 @@ import { workspaceRouter } from "./workspaceRouter";
 import { showingsRouter } from "./showingsRouter";
 import { tagsRouter } from "./tagsRouter";
 import { peopleRouter } from "./peopleRouter";
+import { userRouter } from "./userRouter";
 
 export const appRouter = t.router({
     auth: authRouter,
@@ -14,6 +15,7 @@ export const appRouter = t.router({
     showing: showingsRouter,
     tags: tagsRouter,
     people: peopleRouter,
+    user: userRouter
 });
 
 // export type definition of API
