@@ -20,7 +20,6 @@ import {
 import * as React from "react";
 import clsx from "clsx";
 import Image from "next/image";
-import { useActiveWorkspace } from "hooks/useActiveWorkspace";
 import { trpc } from "utils/trpc";
 import { Protected } from "./Protected";
 import { Loading } from "components-common/Loading";
