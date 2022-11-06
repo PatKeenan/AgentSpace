@@ -3,19 +3,18 @@ import { z } from "zod";
 import { authedProcedure, t } from "../trpc";
 
 export const userRouter = t.router({
-    getWorkspaceMeta: authedProcedure
-        .query(async ({ ctx }) => {
-            return await ctx.prisma.user.findUnique({
-                where: {
-                    id: ctx.session.user.id,
-                },
-               select: {
+    getWorkspaceMeta: authedProcedure.query(async ({ ctx }) => {
+        return await ctx.prisma.user.findUnique({
+            where: {
+                id: ctx.session.user.id,
+            },
+            select: {
                 workspaceMeta: true,
-                defaultWorkspace: true
-               }
-            });
-        }),
-        setDefaultWorkspace: authedProcedure
+                defaultWorkspace: true,
+            },
+        });
+    }),
+    setDefaultWorkspace: authedProcedure
         .input(
             z.object({
                 workspaceId: z.string(),
@@ -50,5 +49,4 @@ export const userRouter = t.router({
                 },
             });
         }),
-   
 });

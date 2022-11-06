@@ -15,7 +15,7 @@ export const appRouter = t.router({
     showing: showingsRouter,
     tags: tagsRouter,
     people: peopleRouter,
-    user: userRouter
+    user: userRouter,
 });
 
 // export type definition of API

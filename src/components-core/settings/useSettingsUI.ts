@@ -1,4 +1,4 @@
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import create from "zustand";
 
 const settingsTabs = [
@@ -18,8 +18,12 @@ type SettingsUIState = {
 };
 
 export const useSettingsUI = create<SettingsUIState>()(
+    persist(
     devtools((set) => ({
         activeTab: "General",
         setActiveTab: (tab) => set(() => ({ activeTab: tab })),
-    }))
+    })), {
+        name: 'settings-ui'
+    }
+    )
 );
