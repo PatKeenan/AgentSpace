@@ -1,22 +1,29 @@
-import clsx from "clsx";
 import { Button, ButtonLink } from "components-common/Button";
-import { useGlobalStore } from "global-store/useGlobalStore";
+import { Loading } from "components-common/Loading";
 import { trpc } from "utils/trpc";
+import Link from "next/link";
+import clsx from "clsx";
+import { NextLink } from "components-common/NextLink";
 
 const SettingsWorkspaces = () => {
-    const { data } = trpc.workspace.getAll.useQuery();
-    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
-
-    const { mutate } = trpc.user.setDefaultWorkspace.useMutation({
-        onSuccess: (data) =>
-            setActiveWorkspaceId(data.defaultWorkspace as string),
-    });
+    const { data, isLoading } = trpc.user.getWorkspaceMeta.useQuery();
+    const { mutate } = trpc.user.setDefaultWorkspace.useMutation();
+    const utils = trpc.useContext();
 
     const handleClick = (activeWorkspaceId: string) => {
-        mutate({ workspaceId: activeWorkspaceId });
+        mutate(
+            { workspaceId: activeWorkspaceId },
+            {
+                onSuccess() {
+                    utils.user.getWorkspaceMeta.invalidate();
+                },
+            }
+        );
     };
 
-    return (
+    return !data && isLoading ? (
+        <Loading />
+    ) : (
         <div>
             <div className="flex items-center">
                 <div className="flex items-center">
@@ -29,7 +36,7 @@ const SettingsWorkspaces = () => {
                             "ml-3 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                         )}
                     >
-                        {data && data.length}
+                        {data && data.workspaceMeta.length}
                     </span>
                 </div>
 
@@ -42,32 +49,37 @@ const SettingsWorkspaces = () => {
                 </ButtonLink>
             </div>
             <ul>
-                {data?.map((workspace) => (
+                {data?.workspaceMeta.map((workspace) => (
                     <li
                         className="mt-4 flex py-2 px-2"
                         key={workspace.workspaceId}
                     >
-                        <p
-                            className="mr-2 text-gray-700"
-                            key={workspace.workspaceId}
-                        >
-                            {workspace.workspace.title}
-                        </p>
+                        <div className="group flex items-center hover:cursor-pointer">
+                            <NextLink
+                                href={`/workspace/${workspace.workspaceId}`}
+                            >
+                                <span className="mr-2 text-gray-700 group-hover:text-purple-700 group-hover:underline">
+                                    {workspace.workspace.title}
+                                </span>
+                            </NextLink>
 
-                        {workspace.workspaceId == activeWorkspaceId ? (
-                            <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
-                                active
-                            </span>
-                        ) : null}
+                            {workspace.workspaceId == data.defaultWorkspace ? (
+                                <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-0.5 text-sm font-medium text-green-800">
+                                    default
+                                </span>
+                            ) : null}
+                        </div>
+
                         <div className="ml-auto space-x-4">
-                            {workspace.workspaceId !== activeWorkspaceId && (
+                            {workspace.workspaceId !==
+                                data.defaultWorkspace && (
                                 <Button
                                     variant="text"
                                     onClick={() =>
                                         handleClick(workspace.workspaceId)
                                     }
                                 >
-                                    Set as Active
+                                    Set as Default
                                 </Button>
                             )}
                             <Button variant="text">Edit</Button>

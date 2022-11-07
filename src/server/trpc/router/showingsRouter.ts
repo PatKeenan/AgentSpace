@@ -22,6 +22,9 @@ export const showingsRouter = t.router({
                     },
                 },
             });
+            if(workspaceUsers && !workspaceUsers.usersOnWorkspace.length){
+                throw new TRPCError({ code: "UNAUTHORIZED" });
+            }
             if (workspaceUsers && workspaceUsers.usersOnWorkspace.length) {
                 return await ctx.prisma.showingGroup.findMany({
                     where: {
@@ -40,7 +43,6 @@ export const showingsRouter = t.router({
                     },
                 });
             }
-            throw new TRPCError({ code: "UNAUTHORIZED" });
         }),
     getAllByWorkspace: authedProcedure
         .input(

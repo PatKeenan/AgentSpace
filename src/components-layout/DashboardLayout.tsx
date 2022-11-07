@@ -20,9 +20,9 @@ import {
 import * as React from "react";
 import clsx from "clsx";
 import Image from "next/image";
-import { trpc } from "utils/trpc";
 import { Loading } from "components-common/Loading";
-import { useGlobalStore } from "global-store/useGlobalStore";
+
+import { useWorkspace } from "hooks/useWorkspace";
 
 const teams = [
     { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
@@ -41,72 +41,32 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
 
     const router = useRouter();
 
-    const { activeWorkspaceId, setActiveWorkspaceId } = useGlobalStore();
-
-    const { data: userWorkspaceMeta, isLoading: isLoadingUserWorkspaceMeta } =
-        trpc.user.getWorkspaceMeta.useQuery(undefined, {
-            enabled: !activeWorkspaceId,
-        });
-
-    const {
-        data: isAllowed,
-        isLoading: isLoadingPermission,
-        isError: isErrorPermission,
-    } = trpc.workspace.checkIfAllowed.useQuery(
-        { workspaceId: activeWorkspaceId as string },
-        { enabled: activeWorkspaceId !== undefined }
-    );
+    const { workspaceId, isForbidden, isLoading } = useWorkspace({});
 
     const navigation = [
         {
             name: "Home",
-            href: `/workspace/${activeWorkspaceId}`,
+            href: `/workspace/${workspaceId}`,
             icon: HomeIcon,
         },
         {
             name: "Showings",
-            href: `/workspace/${activeWorkspaceId}/showings`,
+            href: `/workspace/${workspaceId}/showings`,
             icon: TruckIcon,
         },
         {
             name: "Projects",
-            href: `/workspace/${activeWorkspaceId}/projects`,
+            href: `/workspace/${workspaceId}/projects`,
             icon: RectangleGroupIcon,
         },
         {
             name: "People",
-            href: `/workspace/${activeWorkspaceId}/people`,
+            href: `/workspace/${workspaceId}/people`,
             icon: UserGroupIcon,
         },
     ];
 
-    React.useEffect(() => {
-        if (
-            !activeWorkspaceId &&
-            userWorkspaceMeta &&
-            !userWorkspaceMeta.defaultWorkspace
-        ) {
-            router.push("/workspace/create");
-        }
-    }, [activeWorkspaceId, router, userWorkspaceMeta]);
-
-    React.useEffect(() => {
-        if (
-            activeWorkspaceId &&
-            userWorkspaceMeta?.defaultWorkspace &&
-            activeWorkspaceId !== userWorkspaceMeta.defaultWorkspace
-        ) {
-            setActiveWorkspaceId(userWorkspaceMeta.defaultWorkspace);
-        }
-    }, [activeWorkspaceId, setActiveWorkspaceId, userWorkspaceMeta]);
-
-    React.useEffect(() => {
-        if (isErrorPermission) {
-            router.push("/unauthorized");
-        }
-    }, [isErrorPermission, router]);
-
-    return !session ? null : !isAllowed && isLoadingPermission ? (
+    return !session || isForbidden ? null : !workspaceId && isLoading ? (
         <Loading />
     ) : (
         <div className="min-h-full">
@@ -210,7 +170,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         </div>
                                         <div className="mt-8">
                                             <NextLink
-                                                href={`/workspace/${activeWorkspaceId}/tags`}
+                                                href={`/workspace/${workspaceId}/tags`}
                                                 className="px-3 text-sm font-medium text-gray-500"
                                                 id="mobile-teams-headline"
                                             >
@@ -463,7 +423,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         <div className="mt-8">
                             {/* Secondary navigation */}
                             <NextLink
-                                href={`workspace/${activeWorkspaceId}/tags`}
+                                href={`workspace/${workspaceId}/tags`}
                                 className="px-3 text-sm font-medium text-gray-500"
                                 id="desktop-teams-headline"
                             >

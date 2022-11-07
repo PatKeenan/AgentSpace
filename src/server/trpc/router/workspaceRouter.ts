@@ -62,4 +62,22 @@ export const workspaceRouter = t.router({
             }
             return true;
         }),
+    getWorkspaceMeta: authedProcedure
+    .input(z.object({
+        workspaceId: z.string()
+    }))
+    .query(async ({ctx, input}) => {
+        return await ctx.prisma.workspace.findUnique({
+            where: {
+                id: input.workspaceId
+            },
+            select: {
+                usersOnWorkspace: {
+                    where: {
+                        userId: ctx.session.user.id
+                    }
+                }
+            }
+        })
+    })
 });

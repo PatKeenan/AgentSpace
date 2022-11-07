@@ -21,13 +21,12 @@ export const Breadcrumb = (props: BreadcrumbType) => {
         return false;
     };
 
-    const { activeWorkspaceId } = useGlobalStore();
     return (
         <nav className="flex px-4 py-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
             <ol role="list" className="flex items-center space-x-4">
                 <li>
                     <div>
-                        <Link href={`/workspace/${activeWorkspaceId}`}>
+                        <Link href={`/`}>
                             <a className="text-gray-400 hover:text-gray-500">
                                 <HomeIcon
                                     className="h-5 w-5 flex-shrink-0"

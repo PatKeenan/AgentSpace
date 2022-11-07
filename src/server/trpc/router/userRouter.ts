@@ -9,7 +9,16 @@ export const userRouter = t.router({
                 id: ctx.session.user.id,
             },
             select: {
-                workspaceMeta: true,
+                workspaceMeta: {
+                    include: {
+                        workspace: {
+                            select: {
+                                id: true,
+                                title: true
+                            }
+                        }
+                    }
+                },
                 defaultWorkspace: true,
             },
         });

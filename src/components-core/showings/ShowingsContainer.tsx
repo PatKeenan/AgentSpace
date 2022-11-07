@@ -1,7 +1,6 @@
 import { ShowingsModal } from "./showings-components/ShowingsModal";
 import { SectionHeading } from "components-layout/SectionHeading";
 import { Button } from "components-common/Button";
-import { useGlobalStore } from "global-store/useGlobalStore";
 import { Breadcrumb } from "components-layout/Breadcrumb";
 import { PageBody } from "components-layout/PageBody";
 import { NextLink } from "components-common/NextLink";
@@ -19,10 +18,22 @@ import type { NextPageExtended } from "types/index";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { formatDate } from "utils/formatDate";
 import * as React from "react";
+import { useWorkspace } from "hooks/useWorkspace";
+import { useRouter } from "next/router";
 
 export const ShowingsContainer: NextPageExtended = () => {
     const { activeTab, setActiveTab, setModalOpen } = useShowingsUI();
-    const { activeWorkspaceId } = useGlobalStore();
+    const router = useRouter();
+
+    const { workspaceId } = useWorkspace({
+        handleForbidden: () => {
+            router.push("/unauthorized");
+        },
+        handleWorkspaceNotFound() {
+            router.push("/404");
+        },
+    });
+
     const handleChangeTab = (tab: string) => {
         setActiveTab(tab as typeof activeTab);
     };
@@ -37,7 +48,7 @@ export const ShowingsContainer: NextPageExtended = () => {
                 items={[
                     {
                         title: "Showings",
-                        href: `/workspace/${activeWorkspaceId}/showings`,
+                        href: `/workspace/${workspaceId}/showings`,
                     },
                 ]}
             />
@@ -102,7 +113,7 @@ export const ShowingsContainer: NextPageExtended = () => {
                             }
                         />
                     </div>
-                    <ListView />
+                    <ListView workspaceId={workspaceId} />
                 </>
             </PageBody>
         </>
@@ -110,13 +121,12 @@ export const ShowingsContainer: NextPageExtended = () => {
 };
 ShowingsContainer.layout = "dashboard";
 
-const ListView = () => {
-    const { activeWorkspaceId } = useGlobalStore();
+const ListView = ({ workspaceId }: { workspaceId: string | undefined }) => {
     const { setModalOpen } = useShowingsUI();
     const { data: showingGroups, isLoading } =
         trpc.showing.getAllGroups.useQuery(
-            { workspaceId: activeWorkspaceId as string },
-            { enabled: typeof activeWorkspaceId == "string" }
+            { workspaceId: workspaceId as string },
+            { enabled: typeof workspaceId == "string" }
         );
 
     return isLoading ? (

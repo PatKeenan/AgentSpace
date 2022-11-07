@@ -1,6 +1,5 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Button, ButtonLink } from "components-common/Button";
-import { useGlobalStore } from "global-store/useGlobalStore";
 
 export const NotAuthorized = () => {
     const refresh = () => {
