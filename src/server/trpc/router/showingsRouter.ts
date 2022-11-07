@@ -22,7 +22,7 @@ export const showingsRouter = t.router({
                     },
                 },
             });
-            if(workspaceUsers && !workspaceUsers.usersOnWorkspace.length){
+            if (workspaceUsers && !workspaceUsers.usersOnWorkspace.length) {
                 throw new TRPCError({ code: "UNAUTHORIZED" });
             }
             if (workspaceUsers && workspaceUsers.usersOnWorkspace.length) {

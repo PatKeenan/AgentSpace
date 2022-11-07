@@ -14,10 +14,10 @@ export const userRouter = t.router({
                         workspace: {
                             select: {
                                 id: true,
-                                title: true
-                            }
-                        }
-                    }
+                                title: true,
+                            },
+                        },
+                    },
                 },
                 defaultWorkspace: true,
             },
