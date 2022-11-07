@@ -1,1 +1,1 @@
-export * from './PeopleDetailContainer'
+export * from "./PeopleDetailContainer";

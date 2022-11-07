@@ -2,13 +2,13 @@ import { devtools, persist } from "zustand/middleware";
 import create from "zustand";
 
 type PeopleUIState = {
-   empty: ''
+    empty: "";
 };
 
 export const usePeopleUI = create<PeopleUIState>()(
     persist(
         devtools((set) => ({
-            empty: ''
+            empty: "",
         })),
         {
             name: "people-ui",
