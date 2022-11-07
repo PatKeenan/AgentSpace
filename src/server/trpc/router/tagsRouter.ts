@@ -1,6 +1,5 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
-import { personSchema } from "server/schemas/personShema";
 
 export const tagsRouter = t.router({
     getAll: authedProcedure

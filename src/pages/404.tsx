@@ -1,5 +1,4 @@
 import { ButtonLink } from "components-common/Button";
-import { NextLink } from "components-common/NextLink";
 
 const Custom404 = () => {
     return (

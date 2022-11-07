@@ -1,7 +1,6 @@
 import { Button, ButtonLink } from "components-common/Button";
 import { Loading } from "components-common/Loading";
 import { trpc } from "utils/trpc";
-import Link from "next/link";
 import clsx from "clsx";
 import { NextLink } from "components-common/NextLink";
 

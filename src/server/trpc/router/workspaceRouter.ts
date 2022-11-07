@@ -18,32 +18,6 @@ export const workspaceRouter = t.router({
             },
         });
     }),
-    create: authedProcedure
-        .input(
-            z.object({
-                title: z.string(),
-            })
-        )
-        .mutation(async ({ input, ctx }) => {
-            return await ctx.prisma.workspace.create({
-                data: {
-                    title: input.title,
-                    usersOnWorkspace: {
-                        create: {
-                            userId: ctx.session.user.id,
-                            role: "ADMIN",
-                        },
-                    },
-                },
-                include: {
-                    usersOnWorkspace: {
-                        where: {
-                            userId: ctx.session.user.id,
-                        },
-                    },
-                },
-            });
-        }),
     checkIfAllowed: authedProcedure
         .input(
             z.object({
@@ -74,6 +48,32 @@ export const workspaceRouter = t.router({
                     id: input.workspaceId,
                 },
                 select: {
+                    usersOnWorkspace: {
+                        where: {
+                            userId: ctx.session.user.id,
+                        },
+                    },
+                },
+            });
+        }),
+    create: authedProcedure
+        .input(
+            z.object({
+                title: z.string(),
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            return await ctx.prisma.workspace.create({
+                data: {
+                    title: input.title,
+                    usersOnWorkspace: {
+                        create: {
+                            userId: ctx.session.user.id,
+                            role: "ADMIN",
+                        },
+                    },
+                },
+                include: {
                     usersOnWorkspace: {
                         where: {
                             userId: ctx.session.user.id,
