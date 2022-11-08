@@ -18,25 +18,23 @@ export const workspaceRouter = t.router({
             },
         });
     }),
-    checkIfAllowed: authedProcedure
+    getUser: authedProcedure
         .input(
             z.object({
                 workspaceId: z.string(),
             })
         )
         .query(async ({ ctx, input }) => {
-            const workspaceUsers = await ctx.prisma.userOnWorkspace.findFirst({
+            return await ctx.prisma.userOnWorkspace.findUnique({
                 where: {
-                    userId: ctx.session.user.id,
-                    workspaceId: input.workspaceId,
-                },
+                    userId_workspaceId: {
+                        userId: ctx.session.user.id,
+                        workspaceId: input.workspaceId
+                    }
+                }
             });
-            if (!workspaceUsers) {
-                throw new TRPCError({ code: "UNAUTHORIZED" });
-            }
-            return true;
         }),
-    getWorkspaceMeta: authedProcedure
+    getUsers: authedProcedure
         .input(
             z.object({
                 workspaceId: z.string(),
@@ -48,12 +46,8 @@ export const workspaceRouter = t.router({
                     id: input.workspaceId,
                 },
                 select: {
-                    usersOnWorkspace: {
-                        where: {
-                            userId: ctx.session.user.id,
-                        },
-                    },
-                },
+                    usersOnWorkspace: true
+                }
             });
         }),
     create: authedProcedure

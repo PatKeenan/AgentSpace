@@ -50,7 +50,7 @@ export const Showings2Container: NextPageExtended = () => {
     const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
 
     const router = useRouter();
-    const { workspaceId } = useWorkspace({});
+    const workspace = useWorkspace();
 
     const getMonthName = () => {
         return monthInView.toLocaleString("en-US", { month: "long" });
@@ -86,10 +86,6 @@ export const Showings2Container: NextPageExtended = () => {
         );
         return getDay(firstDayInMonth) as number;
     };
-
-    const { data, isLoading } = trpc.showing.getAllGroups.useQuery({
-        workspaceId: workspaceId as string,
-    });
 
     return (
         <>
@@ -230,7 +226,7 @@ export const Showings2Container: NextPageExtended = () => {
                     </div>
                     <div className="lg:col-span-7 xl:col-span-8">
                         <ol className="mt-4 divide-y divide-gray-100 text-sm leading-6">
-                            {isLoading && !data ? (
+                            {/* {isLoading && !data ? (
                                 <Loading />
                             ) : data ? (
                                 data.map((showingGroup) => (
@@ -294,7 +290,7 @@ export const Showings2Container: NextPageExtended = () => {
                                         </NextLink>
                                     </li>
                                 ))
-                            ) : null}
+                            ) : null} */}
                         </ol>
                     </div>
                 </div>

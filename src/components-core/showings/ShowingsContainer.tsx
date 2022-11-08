@@ -25,14 +25,7 @@ export const ShowingsContainer: NextPageExtended = () => {
     const { activeTab, setActiveTab, setModalOpen } = useShowingsUI();
     const router = useRouter();
 
-    const { workspaceId } = useWorkspace({
-        handleForbidden: () => {
-            router.push("/unauthorized");
-        },
-        handleWorkspaceNotFound() {
-            router.push("/404");
-        },
-    });
+    const workspace = useWorkspace();
 
     const handleChangeTab = (tab: string) => {
         setActiveTab(tab as typeof activeTab);
@@ -48,7 +41,7 @@ export const ShowingsContainer: NextPageExtended = () => {
                 items={[
                     {
                         title: "Showings",
-                        href: `/workspace/${workspaceId}/showings`,
+                        href: `/workspace/${workspace.id}/showings`,
                     },
                 ]}
             />
@@ -113,7 +106,7 @@ export const ShowingsContainer: NextPageExtended = () => {
                             }
                         />
                     </div>
-                    <ListView workspaceId={workspaceId} />
+                    {/* <ListView workspaceId={workspace.id} /> */}
                 </>
             </PageBody>
         </>
@@ -121,13 +114,9 @@ export const ShowingsContainer: NextPageExtended = () => {
 };
 ShowingsContainer.layout = "dashboard";
 
-const ListView = ({ workspaceId }: { workspaceId: string | undefined }) => {
+/* const ListView = ({ workspaceId }: { workspaceId: string | undefined }) => {
     const { setModalOpen } = useShowingsUI();
-    const { data: showingGroups, isLoading } =
-        trpc.showing.getAllGroups.useQuery(
-            { workspaceId: workspaceId as string },
-            { enabled: typeof workspaceId == "string" }
-        );
+
 
     return isLoading ? (
         <div>Loading...</div>
@@ -153,7 +142,7 @@ const ListView = ({ workspaceId }: { workspaceId: string | undefined }) => {
                         {showingGroups?.map((showingGroup) => (
                             <li key={showingGroup.id}>
                                 <NextLink
-                                    href={`/workspace/${showingGroup.workspaceId}/showings/${showingGroup.id}`}
+                                    href={`/workspace/${showingGroup.workspace.id}/showings/${showingGroup.id}`}
                                     className="group block hover:bg-gray-50"
                                 >
                                     <div className="flex items-center px-4 py-4 sm:px-6">
@@ -216,3 +205,4 @@ const ListView = ({ workspaceId }: { workspaceId: string | undefined }) => {
         </>
     );
 };
+ */

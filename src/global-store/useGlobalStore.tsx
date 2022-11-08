@@ -1,20 +1,16 @@
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import create from "zustand";
+import { UserOnWorkspace } from "@prisma/client";
 
 type GlobalStore = {
-    activeWorkspaceId: string | undefined;
-    setActiveWorkspaceId: (workspaceId: string | undefined) => void;
+    userOnWorkspace: UserOnWorkspace | undefined | null;
+    setUserOnWorkspace: (args: UserOnWorkspace | undefined | null) => void;
 };
 
 export const useGlobalStore = create<GlobalStore>()(
-    persist(
-        devtools((set) => ({
-            activeWorkspaceId: undefined,
-            setActiveWorkspaceId: (workspaceId) =>
-                set(() => ({ activeWorkspaceId: workspaceId })),
-        })),
-        {
-            name: "global-store",
-        }
-    )
+    devtools((set) => ({
+        userOnWorkspace: undefined,
+        setUserOnWorkspace: (userOnWorkspace) =>
+            set(() => ({ userOnWorkspace })),
+    }))
 );

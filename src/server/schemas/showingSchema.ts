@@ -1,6 +1,7 @@
+import { ShowingStatus } from "@prisma/client";
 import { z } from "zod";
 import { addressSchema } from "./addressShema";
-import { personSchema } from "./personShema";
+
 import { tagSchema } from "./tagSchema";
 
 export const statusSchema = z.object({
@@ -9,20 +10,12 @@ export const statusSchema = z.object({
 });
 export type ZodStatusSchema = z.infer<typeof statusSchema>;
 
-export const showingSchema = z.object({
-    stopNumber: z.number(),
-    tags: z.array(tagSchema).optional(),
-    address: addressSchema,
-    buildingOrApt: z.string().optional(),
-    clients: z.array(personSchema).optional(),
-    agent: personSchema.optional(),
-    startTime: z.string().optional(),
-    endTime: z.string().optional(),
-    status: statusSchema.optional(),
-    notes: z
-        .string()
-        .max(1000, "Must be less than 1,000 characters")
-        .optional(),
+export const createShowingSchema = z.object({
+   workspaceId: z.string(),
+   status: z.nativeEnum(ShowingStatus).default('PENDING'),
+
 });
 
-export type ZodShowingSchema = z.infer<typeof showingSchema>;
+/* export type ZodShowingSchema = z.infer<typeof showingSchema>;
+
+ */

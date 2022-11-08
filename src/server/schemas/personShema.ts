@@ -11,12 +11,24 @@ export const personMetaSchema = z.object({
     deletedAt: z.string(),
 });
 
-export type ZodPersonMetaSchema = z.infer<typeof personMetaSchema>;
+export const createPersonMetaSchema = z.object({
+    firstName: z.string(),
+    lastName: z.string().optional(),
+    isPrimaryContact: z.boolean().default(false),
+    primaryEmail: z.string().email().optional(),
+    secondaryEmail: z.string().email().optional(),
+    primaryPhone: z.string().optional(),
+    secondaryPhone: z.string().optional()
+})
 
-export const personSchema = z.object({
-    id: z.string(),
+export type CreatePersonMetaSchema = z.infer<typeof createPersonMetaSchema>
+
+
+export const createPersonSchema = z.object({
     name: z.string(),
     workspaceId: z.string(),
-    personMeta: personMetaSchema,
-});
-export type ZodPersonSchema = z.infer<typeof personSchema>;
+    personMeta: z.array(createPersonMetaSchema).optional()
+})
+export type CreatePersonSchema = z.infer<typeof createPersonSchema>
+
+

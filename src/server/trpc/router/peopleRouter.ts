@@ -1,6 +1,5 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
-import { personSchema } from "server/schemas/personShema";
 
 export const peopleRouter = t.router({
     getAll: authedProcedure
@@ -29,38 +28,5 @@ export const peopleRouter = t.router({
                 },
             });
         }),
-    create: authedProcedure
-        .input(personSchema.omit({ id: true }).partial({ personMeta: true }))
-        .mutation(async ({ ctx, input }) => {
-            const { personMeta, ...person } = input;
-            return await ctx.prisma.person.create({
-                data: {
-                    ...person,
-                    createdById: ctx.session.user.id,
-                    personMeta: {
-                        create: {
-                            ...personMeta,
-                            isPrimaryContact: true,
-                        },
-                    },
-                },
-            });
-        }),
-    add: authedProcedure
-        .input(personSchema.omit({ id: true }).partial({ personMeta: true }))
-        .mutation(async ({ ctx, input }) => {
-            const { personMeta, ...person } = input;
-            return await ctx.prisma.person.create({
-                data: {
-                    ...person,
-                    createdById: ctx.session.user.id,
-                    personMeta: {
-                        create: {
-                            ...personMeta,
-                            isPrimaryContact: true,
-                        },
-                    },
-                },
-            });
-        }),
+    
 });

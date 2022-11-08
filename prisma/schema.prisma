@@ -25,78 +25,62 @@ model Notification {
 model PersonOnShowing {
     id        String              @id @default(cuid())
     person    Person              @relation(fields: [personId], references: [id])
-    role      PersonOnShowingRole
     personId  String
+    role      PersonOnShowingRole
     showing   Showing             @relation(fields: [showingId], references: [id])
     showingId String
+    deleted   Boolean?            @default(false)
+    deletedAt DateTime?
 }
 
 model Showing {
-    id             String            @id @default(cuid())
-    createdAt      DateTime          @default(now())
-    updatedAt      DateTime          @default(now())
-    workspace      Workspace         @relation(fields: [workspaceId], references: [id])
-    workspaceId    String
-    createdBy      User              @relation(fields: [createdById], references: [id])
-    createdById    String
-    date           DateTime
-    status         ShowingStatus     @default(NO_STATUS)
-    assignedTo     UserOnWorkspace?  @relation(fields: [assignedToId], references: [id])
-    assignedToId   String?
-    stopNumber     Int
-    showingGroup   ShowingGroup      @relation(fields: [showingGroupId], references: [id])
-    showingGroupId String
-    note           String?
-    tags           Tag[]
-    deleted        Boolean?          @default(false)
-    deletedAt      DateTime?
-    people         PersonOnShowing[]
-    address        String
-    place_name     String
-    latitude       Int
-    longitude      Int
-}
-
-model ShowingGroup {
-    id          String    @id @default(cuid())
-    createdAt   DateTime  @default(now())
-    workspace   Workspace @relation(fields: [workspaceId], references: [id])
-    workspaceId String
-    createdBy   User      @relation(fields: [createdById], references: [id])
-    createdById String
-    showings    Showing[]
-    title       String
-    date        DateTime?
-    tags        Tag[]
-    deleted     Boolean?  @default(false)
-    deletedAt   DateTime?
+    id           String            @id @default(cuid())
+    createdAt    DateTime          @default(now())
+    updatedAt    DateTime          @default(now())
+    workspace    Workspace         @relation(fields: [workspaceId], references: [id])
+    workspaceId  String
+    createdBy    User              @relation(fields: [createdById], references: [id])
+    createdById  String
+    date         DateTime
+    status       ShowingStatus     @default(NO_STATUS)
+    stopNumber   Int
+    tags         Tag[]
+    people       PersonOnShowing[]
+    address      String
+    place_name   String
+    latitude     Int
+    longitude    Int
+    note         String?
+    assignedTo   UserOnWorkspace?  @relation(fields: [assignedToId], references: [id])
+    assignedToId String?
+    deleted      Boolean?          @default(false)
+    deletedAt    DateTime?
 }
 
 model Tag {
-    id            String         @id @default(cuid())
-    createdAt     DateTime       @default(now())
-    createdBy     User           @relation(fields: [createdById], references: [id])
-    createdById   String
-    title         String
-    people        Person[]
-    workspace     Workspace      @relation(fields: [workspaceId], references: [id])
-    workspaceId   String
-    showings      Showing[]
-    showingGroups ShowingGroup[]
-    deleted       Boolean?       @default(false)
-    deletedAt     DateTime?
+    id          String    @id @default(cuid())
+    createdAt   DateTime  @default(now())
+    createdBy   User      @relation(fields: [createdById], references: [id])
+    createdById String
+    title       String
+    people      Person[]
+    workspace   Workspace @relation(fields: [workspaceId], references: [id])
+    workspaceId String
+    showings    Showing[]
+    deleted     Boolean?  @default(false)
+    deletedAt   DateTime?
 }
 
 model PersonMeta {
     id               String    @id @default(cuid())
     isPrimaryContact Boolean   @default(false)
+    person           Person    @relation(fields: [personId], references: [id])
+    personId         String    @unique
     social           Json?
     primaryEmail     String?
     secondaryEmail   String?
     primaryPhone     String?
     secondaryPhone   String?
-    person           Person    @relation(fields: [personId], references: [id])
-    personId         String    @unique
     deleted          Boolean?  @default(false)
     deletedAt        DateTime?
     first_name       String?
@@ -104,19 +88,19 @@ model PersonMeta {
 }
 
 model Person {
-    id              String              @id @default(cuid())
-    createdAt       DateTime            @default(now())
-    name            String
-    deleted         Boolean?            @default(false)
-    deletedAt       DateTime?
-    createdBy       User                @relation(fields: [createdById], references: [id])
-    createdById     String
-    personMeta      PersonMeta[]
-    workspace       Workspace           @relation(fields: [workspaceId], references: [id])
-    workspaceId     String
-    tags            Tag[]
-    personOnShowing PersonOnShowing[]
-    refferedBy      ReferralConnection?
+    id           String              @id @default(cuid())
+    createdAt    DateTime            @default(now())
+    name         String
+    createdBy    User                @relation(fields: [createdById], references: [id])
+    createdById  String
+    personMeta   PersonMeta[]
+    workspace    Workspace           @relation(fields: [workspaceId], references: [id])
+    workspaceId  String
+    tags         Tag[]
+    showingsMeta PersonOnShowing[]
+    refferedBy   ReferralConnection?
+    deleted      Boolean?            @default(false)
+    deletedAt    DateTime?
 }
 
 model ReferralConnection {
@@ -146,11 +130,10 @@ model Workspace {
     title            String                   @default("Untitled Workspace")
     createdAt        DateTime                 @default(now())
     usersOnWorkspace UserOnWorkspace[]
-    subscription     SubscriptionOnWorkspace?
     people           Person[]
     tags             Tag[]
     showings         Showing[]
-    showingGroup     ShowingGroup[]
+    subscription     SubscriptionOnWorkspace?
 }
 
 model SubscriptionOnWorkspace {
@@ -173,14 +156,14 @@ model Account {
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String?
-    access_token      String?
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     expires_at        Int?
     token_type        String?
     scope             String?
     id_token          String?
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token     String?
+    access_token      String?
 
     @@unique([provider, providerAccountId])
 }
@@ -197,12 +180,6 @@ model Session {
 
 model User {
     id               String                    @id @default(cuid())
-    name             String?
-    brokerage        String?
-    email            String?                   @unique
-    emailVerified    DateTime?
-    image            String?
-    stripeCustomerId String?                   @unique
     accounts         Account[]
     sessions         Session[]
     isRegistered     Boolean                   @default(false)
@@ -211,9 +188,14 @@ model User {
     people           Person[]
     tags             Tag[]
     showings         Showing[]
-    showingGroup     ShowingGroup[]
     notifications    Notification[]
     defaultWorkspace String?
+    name             String?
+    brokerage        String?
+    email            String?                   @unique
+    emailVerified    DateTime?
+    image            String?
+    stripeCustomerId String?                   @unique
 }
 
 model VerificationToken {
@@ -225,8 +207,9 @@ model VerificationToken {
 }
 
 enum PersonOnShowingRole {
-    client
-    agent
+    CLIENT
+    AGENT
+    OTHER
 }
 
 enum ROLE {
@@ -248,9 +231,4 @@ enum ShowingStatus {
     RESCHEDULED
     PENDING
     DENIED
-}
-
-enum ShowingGroupType {
-    SINGLE
-    GROUP
 }
