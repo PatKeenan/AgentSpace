@@ -186,6 +186,8 @@ export const PeopleContainer: NextPageExtended = () => {
                                                     key={person.email}
                                                     className={
                                                         selectedPeople.includes(
+                                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                            //@ts-ignore
                                                             person
                                                         )
                                                             ? "bg-gray-50"
@@ -194,6 +196,8 @@ export const PeopleContainer: NextPageExtended = () => {
                                                 >
                                                     <td className="relative w-12 px-6 sm:w-16 sm:px-8">
                                                         {selectedPeople.includes(
+                                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                            //@ts-ignore
                                                             person
                                                         ) && (
                                                             <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
@@ -203,6 +207,8 @@ export const PeopleContainer: NextPageExtended = () => {
                                                             className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
                                                             value={person.email}
                                                             checked={selectedPeople.includes(
+                                                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                                //@ts-ignore
                                                                 person
                                                             )}
                                                             onChange={(e) =>
@@ -228,6 +234,8 @@ export const PeopleContainer: NextPageExtended = () => {
                                                         className={clsx(
                                                             "whitespace-nowrap py-4 pr-3 text-sm font-medium",
                                                             selectedPeople.includes(
+                                                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                                                //@ts-ignore
                                                                 person
                                                             )
                                                                 ? "text-indigo-600"

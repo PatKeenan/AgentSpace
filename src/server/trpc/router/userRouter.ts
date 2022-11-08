@@ -3,6 +3,22 @@ import { z } from "zod";
 import { authedProcedure, t } from "../trpc";
 
 export const userRouter = t.router({
+    getWorkspaces: authedProcedure.query(async ({ ctx }) => {
+        return ctx.prisma.userOnWorkspace.findMany({
+            where: {
+                userId: ctx.session.user.id,
+                locked: false,
+            },
+            include: {
+                workspace: {
+                    select: {
+                        id: true,
+                        title: true,
+                    },
+                },
+            },
+        });
+    }),
     getWorkspaceMeta: authedProcedure.query(async ({ ctx }) => {
         return await ctx.prisma.user.findUnique({
             where: {

@@ -1,10 +1,10 @@
+import { NextLink } from "components-common/NextLink";
+import { useWorkspace } from "hooks/useWorkspace";
 import {
     CheckCircleIcon,
     ChevronRightIcon,
     EnvelopeIcon,
 } from "@heroicons/react/24/outline";
-import { NextLink } from "components-common/NextLink";
-import { useGlobalStore } from "global-store/useGlobalStore";
 
 type ShowingCardProps = {
     candidate: {
@@ -19,11 +19,10 @@ type ShowingCardProps = {
 export const ShowingCard = (props: ShowingCardProps) => {
     const { candidate } = props;
 
-    //TODO: Replace with showing workspace id
-    const { activeWorkspaceId } = useGlobalStore();
+    const workspace = useWorkspace();
     return (
         <NextLink
-            href={`/workspace/${activeWorkspaceId}/showings/dfgd`}
+            href={`/workspace/${workspace.id}/showings/dfgd`}
             className="group block"
         >
             <div className="flex items-center py-5 px-4 sm:py-6 sm:px-0">

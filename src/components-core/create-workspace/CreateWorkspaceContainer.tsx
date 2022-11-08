@@ -1,16 +1,16 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { useGlobalStore } from "global-store/useGlobalStore";
+import { Button, Input, Loading } from "components-common";
 import { Listbox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
-import { Button } from "components-common/Button";
-import { Input } from "components-common/Input";
-import { Fragment, useState } from "react";
+import { useWorkspace, useUser } from "hooks";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { trpc } from "utils/trpc";
+import * as React from "react";
 import * as z from "zod";
 import clsx from "clsx";
+
+import type { UserOnWorkspace } from "@prisma/client";
 
 export const CreateWorkspaceContainer = () => {
     const { status } = useSession({
@@ -19,6 +19,34 @@ export const CreateWorkspaceContainer = () => {
             signIn();
         },
     });
+
+    const router = useRouter();
+    const workspace = useWorkspace();
+    const user = useUser();
+
+    const { mutate: createWorkspace, isLoading: loadingCreation } =
+        workspace.create({
+            onSuccess(data) {
+                router.push(`/workspace/${data.id}`);
+            },
+        });
+
+    const { data: workspaces, isLoading: loadingWorkspaces } =
+        user.getWorkspaces();
+
+    const [selected, setSelected] = React.useState<
+        | (UserOnWorkspace & {
+              workspace: {
+                  id: string;
+                  title: string;
+              };
+          })
+        | undefined
+    >();
+
+    const handleClick = () => {
+        if (selected) router.push(`/workspace/${selected.workspaceId}`);
+    };
 
     const { handleSubmit, register } = useForm<{ title: string }>({
         resolver: zodResolver(
@@ -33,49 +61,12 @@ export const CreateWorkspaceContainer = () => {
         ),
     });
 
-    const router = useRouter();
-    const { setActiveWorkspaceId, activeWorkspaceId } = useGlobalStore();
-
-    const { mutate, isLoading } = trpc.workspace.create.useMutation({
-        onSuccess(data) {
-            setActiveWorkspaceId(data.id);
-            router.push(`/workspace/${data.id}`);
-        },
-    });
-
     const onSubmit = handleSubmit(async (data) => {
-        mutate(data);
+        createWorkspace(data);
     });
 
-    const { data: workspaces, isLoading: isLoadingWorkspaces } =
-        trpc.workspace.getAll.useQuery();
-
-    const { mutate: setDefaultMutation } =
-        trpc.user.setDefaultWorkspace.useMutation();
-
-    const [selected, setSelected] = useState(
-        workspaces?.find((i) => i.workspaceId == activeWorkspaceId)
-    );
-
-    const handleSetAsActive = () => {
-        if (selected) {
-            setDefaultMutation(
-                { workspaceId: selected.workspaceId },
-                {
-                    onSuccess: () => {
-                        setActiveWorkspaceId(selected.workspaceId);
-                        router.push(`/workspace/${selected.workspaceId}`);
-                    },
-                    onError(error) {
-                        alert(error.message);
-                    },
-                }
-            );
-        }
-    };
-
-    return status == "loading" || isLoadingWorkspaces ? (
-        <div>Loading...</div>
+    return status == "loading" || loadingWorkspaces ? (
+        <Loading />
     ) : (
         <div className="h-full bg-gray-50">
             <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -94,12 +85,7 @@ export const CreateWorkspaceContainer = () => {
                                         {({ open }) => (
                                             <>
                                                 <Listbox.Label className="sr-only block text-sm font-medium text-gray-700">
-                                                    {workspaces.find(
-                                                        (i) =>
-                                                            i.id ==
-                                                            activeWorkspaceId
-                                                    )?.workspace.title ||
-                                                        "Choose a Workspace"}
+                                                    Choose a Workspace
                                                 </Listbox.Label>
                                                 <div className="relative mt-1">
                                                     <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
@@ -118,7 +104,7 @@ export const CreateWorkspaceContainer = () => {
 
                                                     <Transition
                                                         show={open}
-                                                        as={Fragment}
+                                                        as={React.Fragment}
                                                         leave="transition ease-in duration-100"
                                                         leaveFrom="opacity-100"
                                                         leaveTo="opacity-0"
@@ -196,7 +182,7 @@ export const CreateWorkspaceContainer = () => {
                                         className={
                                             "mt-2 w-full justify-center disabled:cursor-not-allowed disabled:bg-gray-200"
                                         }
-                                        onClick={() => handleSetAsActive()}
+                                        onClick={() => handleClick()}
                                     >
                                         Set as Active
                                     </Button>
@@ -224,11 +210,11 @@ export const CreateWorkspaceContainer = () => {
                                     type="submit"
                                     variant="primary"
                                     className={clsx(
-                                        isLoading && "animate-pulse",
+                                        loadingCreation && "animate-pulse",
                                         "w-full justify-center"
                                     )}
                                 >
-                                    {isLoading
+                                    {loadingCreation
                                         ? "Loading..."
                                         : "Save Workspace"}
                                 </Button>

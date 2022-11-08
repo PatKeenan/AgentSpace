@@ -3,6 +3,8 @@ import { trpc } from "utils/trpc";
 
 export function useWorkspace() {
     const router = useRouter();
+
+    // Id can only be used when /workspace/<workspaceId> exists in the path
     const id = router.query.workspaceId;
     const { workspace } = trpc;
 
@@ -11,5 +13,6 @@ export function useWorkspace() {
         getAll: workspace.getAll.useQuery,
         getUsers: workspace.getUsers.useQuery,
         getUser: workspace.getUser.useQuery,
+        create: workspace.create.useMutation,
     };
 }

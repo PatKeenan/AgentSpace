@@ -1,4 +1,32 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn format
+echo '🏗️👷 Checking styles and tpyes before committing...'
+
+# Check Prettier standards
+yarn check-format ||
+(
+    echo '🤮 Prettier Check Failed. Run yarn format, add changes and try commit again.';
+    false;
+)
+
+# Check ESLint Standards
+yarn check-lint ||
+(
+        echo '😤 ELint Check Failed. 😤 
+                Make the required changes listed above, add changes and try to commit again.'
+        false; 
+)
+
+# Check tsconfig standards
+yarn check-types ||
+(
+    echo '❌ Failed Type check❌
+            Fix the errors and try again.'
+    false;
+)
+
+# If everything passes... Now we can commit
+echo '🚀🚀 Code looks good! 🚀🚀'
+
+
