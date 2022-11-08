@@ -40,6 +40,24 @@ export const peopleRouter = t.router({
                     personMeta: {
                         create: {
                             ...personMeta,
+                            isPrimaryContact: true,
+                        },
+                    },
+                },
+            });
+        }),
+    add: authedProcedure
+        .input(personSchema.omit({ id: true }).partial({ personMeta: true }))
+        .mutation(async ({ ctx, input }) => {
+            const { personMeta, ...person } = input;
+            return await ctx.prisma.person.create({
+                data: {
+                    ...person,
+                    createdById: ctx.session.user.id,
+                    personMeta: {
+                        create: {
+                            ...personMeta,
+                            isPrimaryContact: true,
                         },
                     },
                 },

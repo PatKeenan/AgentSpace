@@ -5,9 +5,10 @@ import { ChildrenProps } from "types/index";
 export const PageBody = (props: {
     children: ChildrenProps;
     fullWidth?: boolean;
+    noMaxWidth?: boolean;
     fullHeight?: boolean;
 }) => {
-    const { fullWidth, fullHeight, ...rest } = props;
+    const { fullWidth, fullHeight, noMaxWidth = false, ...rest } = props;
     return fullWidth ? (
         <div
             className={clsx(fullHeight && "h-full flex-grow", "pt-8 pb-16")}
@@ -17,7 +18,8 @@ export const PageBody = (props: {
         <div
             className={clsx(
                 fullHeight && "h-[calc(100vh-3.5rem)]",
-                "relative mx-auto max-w-6xl md:px-8"
+                noMaxWidth ? "w-full" : "max-w-6xl ",
+                "relative mx-auto md:px-8"
             )}
         >
             <div

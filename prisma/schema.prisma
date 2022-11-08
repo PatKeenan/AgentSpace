@@ -87,44 +87,45 @@ model Tag {
     deletedAt     DateTime?
 }
 
-model PersonCategory {
-    id          String    @id @default(cuid())
-    createdAt   DateTime  @default(now())
-    deleted     Boolean?  @default(false)
-    deletedAt   DateTime?
-    createdBy   User      @relation(fields: [createdById], references: [id])
-    createdById String
-    title       String    @unique @default(cuid())
-    people      Person[]
-}
-
 model PersonMeta {
-    id             String    @id @default(cuid())
-    social         Json?
-    primaryEmail   String?
-    secondaryEmail String?
-    primaryPhone   String?
-    secondaryPhone String?
-    person         Person    @relation(fields: [personId], references: [id])
-    personId       String    @unique
-    deleted        Boolean?  @default(false)
-    deletedAt      DateTime?
+    id               String    @id @default(cuid())
+    isPrimaryContact Boolean   @default(false)
+    social           Json?
+    primaryEmail     String?
+    secondaryEmail   String?
+    primaryPhone     String?
+    secondaryPhone   String?
+    person           Person    @relation(fields: [personId], references: [id])
+    personId         String    @unique
+    deleted          Boolean?  @default(false)
+    deletedAt        DateTime?
+    first_name       String?
+    last_name        String?
 }
 
 model Person {
-    id              String            @id @default(cuid())
-    createdAt       DateTime          @default(now())
+    id              String              @id @default(cuid())
+    createdAt       DateTime            @default(now())
     name            String
-    deleted         Boolean?          @default(false)
+    deleted         Boolean?            @default(false)
     deletedAt       DateTime?
-    createdBy       User              @relation(fields: [createdById], references: [id])
+    createdBy       User                @relation(fields: [createdById], references: [id])
     createdById     String
-    personMeta      PersonMeta?
-    workspace       Workspace         @relation(fields: [workspaceId], references: [id])
+    personMeta      PersonMeta[]
+    workspace       Workspace           @relation(fields: [workspaceId], references: [id])
     workspaceId     String
     tags            Tag[]
-    categories      PersonCategory[]
     personOnShowing PersonOnShowing[]
+    refferedBy      ReferralConnection?
+}
+
+model ReferralConnection {
+    id           String    @id @default(cuid())
+    personId     String    @unique
+    person       Person    @relation(fields: [personId], references: [id])
+    referalNotes String?
+    deleted      Boolean?  @default(false)
+    deletedAt    DateTime?
 }
 
 model UserOnWorkspace {
@@ -211,7 +212,6 @@ model User {
     tags             Tag[]
     showings         Showing[]
     showingGroup     ShowingGroup[]
-    personCategory   PersonCategory[]
     notifications    Notification[]
     defaultWorkspace String?
 }

@@ -1,13 +1,13 @@
-import React from "react";
-import { NextPageExtended } from "types/index";
-import { useLayoutEffect, useRef, useState } from "react";
-import clsx from "clsx";
-import { PageBody } from "components-layout/PageBody";
 import { SectionHeading } from "components-layout/SectionHeading";
-import { Breadcrumb } from "components-layout/Breadcrumb";
-import { useRouter } from "next/router";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Button, ButtonLink } from "components-common/Button";
+import { useLayoutEffect, useRef, useState } from "react";
+import { Breadcrumb } from "components-layout/Breadcrumb";
+import { PageBody } from "components-layout/PageBody";
+import { useRouter } from "next/router";
+import clsx from "clsx";
+
+import type { NextPageExtended } from "types/index";
 
 const people = [
     {
@@ -151,30 +151,25 @@ export const PeopleContainer: NextPageExtended = () => {
                                                         onChange={toggleAll}
                                                     />
                                                 </th>
-                                                <th
-                                                    scope="col"
-                                                    className="min-w-[12rem] py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                                                >
-                                                    Name
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                                >
-                                                    Title
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                                >
-                                                    Email
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                                                >
-                                                    Role
-                                                </th>
+                                                {[
+                                                    "Name",
+                                                    "Title",
+                                                    "Email",
+                                                    "Role",
+                                                ].map((i, index) => (
+                                                    <th
+                                                        key={index}
+                                                        scope="col"
+                                                        className={clsx(
+                                                            i == "Name" &&
+                                                                "min-w-[12rem]",
+                                                            "py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
+                                                        )}
+                                                    >
+                                                        {i}
+                                                    </th>
+                                                ))}
+
                                                 <th
                                                     scope="col"
                                                     className="relative py-3.5 pl-3 pr-4 sm:pr-6"
