@@ -11,9 +11,8 @@ export const statusSchema = z.object({
 export type ZodStatusSchema = z.infer<typeof statusSchema>;
 
 export const createShowingSchema = z.object({
-   workspaceId: z.string(),
-   status: z.nativeEnum(ShowingStatus).default('PENDING'),
-
+    workspaceId: z.string(),
+    status: z.nativeEnum(ShowingStatus).default("PENDING"),
 });
 
 /* export type ZodShowingSchema = z.infer<typeof showingSchema>;

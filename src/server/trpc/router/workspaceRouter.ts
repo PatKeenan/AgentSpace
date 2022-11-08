@@ -29,9 +29,9 @@ export const workspaceRouter = t.router({
                 where: {
                     userId_workspaceId: {
                         userId: ctx.session.user.id,
-                        workspaceId: input.workspaceId
-                    }
-                }
+                        workspaceId: input.workspaceId,
+                    },
+                },
             });
         }),
     getUsers: authedProcedure
@@ -46,8 +46,8 @@ export const workspaceRouter = t.router({
                     id: input.workspaceId,
                 },
                 select: {
-                    usersOnWorkspace: true
-                }
+                    usersOnWorkspace: true,
+                },
             });
         }),
     create: authedProcedure

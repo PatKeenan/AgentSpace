@@ -18,17 +18,14 @@ export const createPersonMetaSchema = z.object({
     primaryEmail: z.string().email().optional(),
     secondaryEmail: z.string().email().optional(),
     primaryPhone: z.string().optional(),
-    secondaryPhone: z.string().optional()
-})
+    secondaryPhone: z.string().optional(),
+});
 
-export type CreatePersonMetaSchema = z.infer<typeof createPersonMetaSchema>
-
+export type CreatePersonMetaSchema = z.infer<typeof createPersonMetaSchema>;
 
 export const createPersonSchema = z.object({
     name: z.string(),
     workspaceId: z.string(),
-    personMeta: z.array(createPersonMetaSchema).optional()
-})
-export type CreatePersonSchema = z.infer<typeof createPersonSchema>
-
-
+    personMeta: z.array(createPersonMetaSchema).optional(),
+});
+export type CreatePersonSchema = z.infer<typeof createPersonSchema>;
