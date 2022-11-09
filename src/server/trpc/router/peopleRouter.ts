@@ -21,6 +21,7 @@ export const peopleRouter = t.router({
                     personMeta: {
                         where: {
                             isPrimaryContact: true,
+                            deleted: false,
                         },
                     },
                 },
@@ -41,7 +42,11 @@ export const peopleRouter = t.router({
                     deleted: false,
                 },
                 include: {
-                    personMeta: true,
+                    personMeta: {
+                        where: {
+                            deleted: false,
+                        },
+                    },
                 },
             });
         }),
@@ -71,6 +76,97 @@ export const peopleRouter = t.router({
             return await ctx.prisma.personMeta.create({
                 data: {
                     ...input,
+                },
+            });
+        }),
+    softDelete: authedProcedure
+        .input(
+            z.object({
+                personId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const currentDate = new Date();
+            const person = await ctx.prisma.person.update({
+                where: {
+                    id: input.personId,
+                },
+                data: {
+                    deleted: true,
+                    deletedAt: currentDate,
+                },
+                select: {
+                    workspaceId: true,
+                    id: true,
+                },
+            });
+            await ctx.prisma.personMeta.updateMany({
+                where: {
+                    personId: input.personId,
+                },
+                data: {
+                    deleted: true,
+                    deletedAt: currentDate,
+                },
+            });
+            return person;
+        }),
+    softDeleteMany: authedProcedure
+        .input(
+            z.object({
+                ids: z.array(z.string()),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const currentDate = new Date();
+            await ctx.prisma.person.updateMany({
+                where: {
+                    id: {
+                        in: input.ids,
+                    },
+                },
+                data: {
+                    deleted: true,
+                    deletedAt: currentDate,
+                },
+            });
+            return await ctx.prisma.personMeta.updateMany({
+                where: {
+                    personId: {
+                        in: input.ids,
+                    },
+                },
+                data: {
+                    deleted: true,
+                    deletedAt: currentDate,
+                },
+            });
+        }),
+    hardDelete: authedProcedure
+        .input(
+            z.object({
+                personId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.person.delete({
+                where: {
+                    id: input.personId,
+                },
+            });
+        }),
+    hardDeleteMany: authedProcedure
+        .input(
+            z.object({
+                ids: z.array(z.string()),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.person.deleteMany({
+                where: {
+                    id: {
+                        in: input.ids,
+                    },
                 },
             });
         }),

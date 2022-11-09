@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { trpc } from "utils/trpc";
 
 export const usePeople = () => {
@@ -11,5 +10,9 @@ export const usePeople = () => {
         getOne: people.getOne.useQuery,
         createPerson: people.createPerson.useMutation,
         createMeta: people.createMeta,
+        softDelete: people.softDelete.useMutation,
+        hardDelete: people.hardDelete.useMutation,
+        softDeleteMany: people.softDeleteMany.useMutation,
+        hardDeleteMany: people.hardDeleteMany.useMutation,
     };
 };

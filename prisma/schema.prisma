@@ -24,10 +24,10 @@ model Notification {
 
 model PersonOnShowing {
     id        String              @id @default(cuid())
-    person    Person              @relation(fields: [personId], references: [id])
+    person    Person              @relation(fields: [personId], references: [id], onDelete: Cascade)
     personId  String
     role      PersonOnShowingRole
-    showing   Showing             @relation(fields: [showingId], references: [id])
+    showing   Showing             @relation(fields: [showingId], references: [id], onDelete: Cascade)
     showingId String
     deleted   Boolean?            @default(false)
     deletedAt DateTime?
@@ -37,9 +37,9 @@ model Showing {
     id           String            @id @default(cuid())
     createdAt    DateTime          @default(now())
     updatedAt    DateTime          @default(now())
-    workspace    Workspace         @relation(fields: [workspaceId], references: [id])
+    workspace    Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId  String
-    createdBy    User              @relation(fields: [createdById], references: [id])
+    createdBy    User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById  String
     date         DateTime
     status       ShowingStatus     @default(NO_STATUS)
@@ -60,11 +60,11 @@ model Showing {
 model Tag {
     id          String    @id @default(cuid())
     createdAt   DateTime  @default(now())
-    createdBy   User      @relation(fields: [createdById], references: [id])
+    createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById String
     title       String
     people      Person[]
-    workspace   Workspace @relation(fields: [workspaceId], references: [id])
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId String
     showings    Showing[]
     deleted     Boolean?  @default(false)
@@ -74,7 +74,7 @@ model Tag {
 model PersonMeta {
     id               String    @id @default(cuid())
     isPrimaryContact Boolean   @default(false)
-    person           Person    @relation(fields: [personId], references: [id])
+    person           Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
     personId         String    @unique
     social           Json?
     primaryEmail     String?
@@ -83,18 +83,18 @@ model PersonMeta {
     secondaryPhone   String?
     deleted          Boolean?  @default(false)
     deletedAt        DateTime?
-    firstName       String?
-    lastName        String?
+    firstName        String?
+    lastName         String?
 }
 
 model Person {
     id           String              @id @default(cuid())
     createdAt    DateTime            @default(now())
     name         String
-    createdBy    User                @relation(fields: [createdById], references: [id])
+    createdBy    User                @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById  String
     personMeta   PersonMeta[]
-    workspace    Workspace           @relation(fields: [workspaceId], references: [id])
+    workspace    Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId  String
     tags         Tag[]
     showingsMeta PersonOnShowing[] 
@@ -106,7 +106,7 @@ model Person {
 model ReferralConnection {
     id           String    @id @default(cuid())
     personId     String    @unique
-    person       Person    @relation(fields: [personId], references: [id])
+    person       Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
     referalNotes String?
     deleted      Boolean?  @default(false)
     deletedAt    DateTime?
@@ -115,9 +115,9 @@ model ReferralConnection {
 model UserOnWorkspace {
     id               String    @id @default(cuid())
     role             ROLE      @default(USER)
-    workspace        Workspace @relation(fields: [workspaceId], references: [id])
+    workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId      String
-    user             User      @relation(fields: [userId], references: [id])
+    user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId           String
     assignedShowings Showing[]
     locked           Boolean   @default(false)

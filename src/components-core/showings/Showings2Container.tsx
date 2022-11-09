@@ -27,7 +27,6 @@ import {
 import * as React from "react";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useCalendar } from "hooks/useCalendar";
-import { addDays } from "date-fns";
 
 export const Showings2Container: NextPageExtended = () => {
     const {
@@ -41,7 +40,6 @@ export const Showings2Container: NextPageExtended = () => {
     const [selectedDate, setSelectedDate] = React.useState<Date>(
         () => new Date()
     );
-
     const router = useRouter();
     const workspace = useWorkspace();
 
@@ -66,14 +64,14 @@ export const Showings2Container: NextPageExtended = () => {
                                 ? "Tomorrow "
                                 : isYesterday(selectedDate)
                                 ? "Yesterday "
-                                : null}
+                                : `${format(selectedDate, "EEEE")}, `}
                             {format(selectedDate, "PPP")}
                         </p>
                     </SectionHeading.TitleContainer>
                 </SectionHeading>
 
                 <div className="mt-10 lg:grid lg:grid-cols-12 lg:gap-x-16">
-                    <div className="text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-9">
+                    <div className="text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-7">
                         <div className="flex items-center text-gray-900">
                             <button
                                 type="button"

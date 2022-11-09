@@ -14,6 +14,7 @@ import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
 import type { Person, PersonMeta } from "@prisma/client";
+import { exists } from "utils/helpers";
 
 export const PeopleContainer: NextPageExtended = () => {
     const { setModalOpen } = usePeopleUI();
@@ -21,11 +22,13 @@ export const PeopleContainer: NextPageExtended = () => {
     const checkbox = useRef<HTMLInputElement>(null);
     const [checked, setChecked] = useState(false);
     const [indeterminate, setIndeterminate] = useState(false);
-    const [selectedPeople, setSelectedPeople] =
-        useState<typeof peopleData>(undefined);
+    const [selectedPeople, setSelectedPeople] = useState<typeof peopleData>([]);
 
     const workspace = useWorkspace();
     const people = usePeople();
+
+    const deletePerson = people.softDelete();
+    const deletePeople = people.softDeleteMany();
 
     const {
         data: peopleData,
@@ -74,6 +77,36 @@ export const PeopleContainer: NextPageExtended = () => {
         if (isChecked && newSelection && newSelection.length > 0) {
             setSelectedPeople(newSelection);
         }
+    }
+
+    function handleDelete() {
+        if (!selectedPeople) return;
+        if (
+            selectedPeople.length == 1 &&
+            typeof selectedPeople[0] !== "undefined"
+        ) {
+            const person = selectedPeople[0];
+            deletePerson.mutate(
+                { personId: person.id },
+                {
+                    onSuccess: (d) =>
+                        people.invalidateGetAll({ workspaceId: d.workspaceId }),
+                }
+            );
+        }
+        if (selectedPeople.length > 1) {
+            const selectedIds = selectedPeople.flatMap((i) => i.id);
+            deletePeople.mutate(
+                { ids: selectedIds },
+                {
+                    onSuccess: () =>
+                        people.invalidateGetAll({
+                            workspaceId: workspace.id as string,
+                        }),
+                }
+            );
+        }
+        setSelectedPeople([]);
     }
     const router = useRouter();
     return (
@@ -164,8 +197,17 @@ export const PeopleContainer: NextPageExtended = () => {
                                                 <Button
                                                     variant="outlined"
                                                     className="text-xs"
+                                                    onClick={() =>
+                                                        handleDelete()
+                                                    }
                                                 >
-                                                    Delete all
+                                                    Delete{" "}
+                                                    {selectedPeople.length !==
+                                                        0 &&
+                                                    selectedPeople.length ==
+                                                        peopleData?.length
+                                                        ? "all"
+                                                        : `(${selectedPeople.length})`}
                                                 </Button>
                                             </div>
                                         )}
@@ -184,14 +226,16 @@ export const PeopleContainer: NextPageExtended = () => {
                                                         onChange={toggleAll}
                                                     />
                                                 </th>
+
                                                 {["Name", "Email", "Phone"].map(
                                                     (i, index) => (
                                                         <th
                                                             key={index}
                                                             scope="col"
                                                             className={clsx(
-                                                                i == "Name" &&
-                                                                    "min-w-[12rem]",
+                                                                index == 0
+                                                                    ? "min-w-[12rem]"
+                                                                    : "pl-3",
                                                                 "py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
                                                             )}
                                                         >
