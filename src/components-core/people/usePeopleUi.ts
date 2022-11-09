@@ -1,17 +1,14 @@
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import create from "zustand";
 
-type PeopleUIState = {
-    empty: "";
+type PeopleState = {
+    modalOpen: boolean;
+    setModalOpen: (val: boolean) => void;
 };
 
-export const usePeopleUI = create<PeopleUIState>()(
-    persist(
-        devtools((set) => ({
-            empty: "",
-        })),
-        {
-            name: "people-ui",
-        }
-    )
+export const usePeopleUI = create<PeopleState>()(
+    devtools((set) => ({
+        modalOpen: false,
+        setModalOpen: (val) => set({ modalOpen: val }),
+    }))
 );

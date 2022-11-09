@@ -15,7 +15,7 @@ export function PersonSchema() {
         name: z.string(),
         workspaceId: z.string(),
         referredById: z.string().optional(),
-        personMeta: metaBase.optional(),
+        personMeta: metaBase,
         deleted: z.boolean().optional(),
     });
 
@@ -26,9 +26,10 @@ export function PersonSchema() {
 
     return { create };
 }
-
 const createPersonMeta = PersonSchema().create.meta;
+const createPerson = PersonSchema().create.person;
 export type CreatePersonMeta = z.infer<typeof createPersonMeta>;
+export type CreatePerson = z.infer<typeof createPerson>;
 
 export const Schemas = {
     person: PersonSchema,

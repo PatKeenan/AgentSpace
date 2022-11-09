@@ -17,6 +17,13 @@ export const peopleRouter = t.router({
                     workspaceId: input.workspaceId,
                     deleted: false,
                 },
+                include: {
+                    personMeta: {
+                        where: {
+                            isPrimaryContact: true,
+                        },
+                    },
+                },
             });
         }),
     getOne: authedProcedure
