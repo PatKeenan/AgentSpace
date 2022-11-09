@@ -8,8 +8,10 @@ import { useRouter } from "next/router";
 import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
+import { usePeople } from "hooks/usePeople";
+import { useWorkspace } from "hooks/useWorkspace";
 
-const people = [
+const peoplePlaceholder = [
     {
         name: "Lindsay Walton",
         title: "Front-end Developer",
@@ -29,14 +31,23 @@ export const PeopleContainer: NextPageExtended = () => {
     const checkbox = useRef<HTMLInputElement>(null);
     const [checked, setChecked] = useState(false);
     const [indeterminate, setIndeterminate] = useState(false);
-    const [selectedPeople, setSelectedPeople] = useState<typeof people | []>(
-        []
+    const [selectedPeople, setSelectedPeople] = useState<
+        typeof peoplePlaceholder | []
+    >([]);
+
+    const workspace = useWorkspace();
+    const people = usePeople();
+
+    const { data, isLoading } = people.getAll(
+        { workspaceId: workspace.id as string },
+        { enabled: typeof workspace.id == "string" }
     );
 
     useLayoutEffect(() => {
         const isIndeterminate =
-            selectedPeople.length > 0 && selectedPeople.length < people.length;
-        setChecked(selectedPeople.length === people.length);
+            selectedPeople.length > 0 &&
+            selectedPeople.length < peoplePlaceholder.length;
+        setChecked(selectedPeople.length === peoplePlaceholder.length);
         setIndeterminate(isIndeterminate);
         if (checkbox.current) {
             checkbox.current.indeterminate = isIndeterminate;
@@ -44,7 +55,7 @@ export const PeopleContainer: NextPageExtended = () => {
     }, [selectedPeople]);
 
     function toggleAll() {
-        setSelectedPeople(checked || indeterminate ? [] : people);
+        setSelectedPeople(checked || indeterminate ? [] : peoplePlaceholder);
         setChecked(!checked && !indeterminate);
         setIndeterminate(false);
     }
@@ -181,7 +192,7 @@ export const PeopleContainer: NextPageExtended = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
-                                            {people.map((person) => (
+                                            {peoplePlaceholder.map((person) => (
                                                 <tr
                                                     key={person.email}
                                                     className={
@@ -284,7 +295,7 @@ export const PeopleContainer: NextPageExtended = () => {
                                                 </span>{" "}
                                                 of{" "}
                                                 <span className="font-medium">
-                                                    {people.length}
+                                                    {peoplePlaceholder.length}
                                                 </span>{" "}
                                                 results
                                             </p>

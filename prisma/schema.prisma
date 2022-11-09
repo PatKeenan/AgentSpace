@@ -83,8 +83,8 @@ model PersonMeta {
     secondaryPhone   String?
     deleted          Boolean?  @default(false)
     deletedAt        DateTime?
-    first_name       String?
-    last_name        String?
+    firstName       String?
+    lastName        String?
 }
 
 model Person {
@@ -97,8 +97,8 @@ model Person {
     workspace    Workspace           @relation(fields: [workspaceId], references: [id])
     workspaceId  String
     tags         Tag[]
-    showingsMeta PersonOnShowing[]
-    refferedBy   ReferralConnection?
+    showingsMeta PersonOnShowing[] 
+    referredBy   ReferralConnection?
     deleted      Boolean?            @default(false)
     deletedAt    DateTime?
 }
