@@ -8,13 +8,12 @@ import { PageBody } from "components-layout/PageBody";
 import { useWorkspace } from "hooks/useWorkspace";
 import { PeopleModal } from "./people-components";
 import { usePeopleUI } from "./usePeopleUI";
-import { useRouter } from "next/router";
 import { usePeople } from "hooks/usePeople";
+import { useRouter } from "next/router";
 import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
 import type { Person, PersonMeta } from "@prisma/client";
-import { exists } from "utils/helpers";
 
 export const PeopleContainer: NextPageExtended = () => {
     const { setModalOpen } = usePeopleUI();
@@ -27,8 +26,15 @@ export const PeopleContainer: NextPageExtended = () => {
     const workspace = useWorkspace();
     const people = usePeople();
 
-    const deletePerson = people.softDelete();
-    const deletePeople = people.softDeleteMany();
+    // Hard delete on dev server only
+    const deletePerson =
+        process.env.NODE_ENV == "production"
+            ? people.softDelete()
+            : people.hardDelete();
+    const deletePeople =
+        process.env.NODE_ENV == "production"
+            ? people.softDeleteMany()
+            : people.hardDeleteMany();
 
     const {
         data: peopleData,
@@ -319,11 +325,11 @@ export const PeopleContainer: NextPageExtended = () => {
                                                         </td>
 
                                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                            {meta?.primaryEmail ??
+                                                            {meta?.primaryEmail ||
                                                                 "---"}
                                                         </td>
                                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                            {meta?.primaryPhone ??
+                                                            {meta?.primaryPhone ||
                                                                 "---"}
                                                         </td>
 

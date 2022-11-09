@@ -4,6 +4,7 @@ export const usePeople = () => {
     const { people } = trpc;
     const utils = trpc.useContext();
     utils.people.getAll.invalidate;
+
     return {
         getAll: people.getAll.useQuery,
         invalidateGetAll: utils.people.getAll.invalidate,
