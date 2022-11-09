@@ -5,6 +5,11 @@ export function assert<T>(condition: T) {
     return condition;
 }
 
+export function exists<T>(data: T) {
+    if (!data) return false;
+    return typeof data !== "undefined";
+}
+
 export const curryPath = (base: string) => {
     return (sub: string) => {
         return "/".concat(base, "/", sub);

@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const Schemas = {
+    person: PersonSchema,
+};
+
+//Start Person Schema
+
 export function PersonSchema() {
     const metaBase = z.object({
         firstName: z.string(),
@@ -31,6 +37,4 @@ const createPerson = PersonSchema().create.person;
 export type CreatePersonMeta = z.infer<typeof createPersonMeta>;
 export type CreatePerson = z.infer<typeof createPerson>;
 
-export const Schemas = {
-    person: PersonSchema,
-};
+//End Person Schema

@@ -30,12 +30,14 @@ export const peopleRouter = t.router({
         .input(
             z.object({
                 id: z.string(),
+                workspaceId: z.string(),
             })
         )
         .query(async ({ ctx, input }) => {
             return await ctx.prisma.person.findFirst({
                 where: {
                     id: input.id,
+                    workspaceId: input.workspaceId,
                     deleted: false,
                 },
                 include: {

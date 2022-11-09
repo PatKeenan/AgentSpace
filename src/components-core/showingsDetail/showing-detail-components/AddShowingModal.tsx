@@ -1,6 +1,6 @@
 import { useShowingDetailUI } from "../useShowingDetailUI";
 import { Dialog, Transition } from "@headlessui/react";
-import { useDebounceState } from "utils/useDebounce";
+import { useDebounceState } from "hooks";
 import { trpc } from "utils/trpc";
 import * as React from "react";
 import clsx from "clsx";

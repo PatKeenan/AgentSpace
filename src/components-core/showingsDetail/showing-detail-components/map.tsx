@@ -28,7 +28,6 @@ const Map = ({
         latitude: number;
         longitude: number;
     };
-    console.log(center);
     return (
         <MapContainer
             center={[center.latitude, center.longitude]}

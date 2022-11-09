@@ -13,7 +13,7 @@ import { usePeople } from "hooks/usePeople";
 import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
-import { Person, PersonMeta } from "@prisma/client";
+import type { Person, PersonMeta } from "@prisma/client";
 
 export const PeopleContainer: NextPageExtended = () => {
     const { setModalOpen } = usePeopleUI();
@@ -75,7 +75,6 @@ export const PeopleContainer: NextPageExtended = () => {
             setSelectedPeople(newSelection);
         }
     }
-    console.log(selectedPeople);
     const router = useRouter();
     return (
         <>
