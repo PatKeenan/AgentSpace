@@ -1,7 +1,6 @@
 import { useShowingDetailUI } from "../useShowingDetailUI";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { AddShowingModal } from "./AddShowingModal";
-import { ShowingStopCard } from "./ShowingStopCard";
+
 import { Button } from "components-common/Button";
 import * as React from "react";
 import { ShowingFormState } from "../types";
@@ -19,7 +18,7 @@ export const ShowingDetailList = (props: ShowingDetailListProps) => {
 
     return (
         <>
-            <AddShowingModal handleAddShowing={handleAddShowing} />
+            {/*   <AddShowingModal handleAddShowing={handleAddShowing} /> */}
             <div className="block">
                 <Button
                     variant="outlined"
@@ -32,7 +31,7 @@ export const ShowingDetailList = (props: ShowingDetailListProps) => {
                     />
                     Add Showing
                 </Button>
-
+                {/* 
                 <ol className="mt-3 divide-y divide-gray-100">
                     {showings?.map((showing, index) => (
                         <ShowingStopCard
@@ -41,7 +40,7 @@ export const ShowingDetailList = (props: ShowingDetailListProps) => {
                             index={index}
                         />
                     ))}
-                </ol>
+                </ol> */}
             </div>
         </>
     );

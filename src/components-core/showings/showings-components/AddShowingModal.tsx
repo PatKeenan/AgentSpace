@@ -18,16 +18,22 @@ import {
     Button,
 } from "components-common";
 
-import type { ShowingFormState, Status } from "../types";
+import type { ShowingFormState } from "../types";
 import { exists } from "utils/helpers";
-import { CreateShowing, Schemas } from "server/schemas";
-import { useForm } from "react-hook-form";
-import { ContactOnShowing, ContactOnShowingRole } from "@prisma/client";
+import { ContactOnShowingRole, ShowingStatus } from "@prisma/client";
+
+export interface Status {
+    id: string;
+    value: ShowingStatus;
+    display: string;
+}
 
 const statusOptions: Status[] = [
-    { id: "1", value: "confirmed", display: "Confirmed" },
-    { id: "2", value: "pending", display: "Pending" },
-    { id: " 3", value: "canceled", display: "Canceled" },
+    { id: "1", value: "CONFIRMED", display: "Confirmed" },
+    { id: "2", value: "PENDING", display: "Pending" },
+    { id: "4", value: "CANCELED", display: "Canceled" },
+    { id: "5", value: "RESCHEDULED", display: "Rescheduled" },
+    { id: "6", value: "DENIED", display: "Denied" },
 ];
 
 const initialFormState: ShowingFormState = {
@@ -40,12 +46,6 @@ const initialFormState: ShowingFormState = {
     buildingOrApt: "",
     note: "",
 };
-/*  res = {
-     address: data.features.address,
-     placeName: data.features.place_name,
-     longitude: data.features.geometry.coordinates[0],
-     latitude: data.features.geometry.coordinates[1],
- }; */
 
 const showingFormReducer = (
     state: ShowingFormState,
@@ -58,10 +58,11 @@ const showingFormReducer = (
 type AddShowingModalProps = {
     showing?: ShowingFormState;
     selectedDate: Date;
+    onSuccessCallback?: () => void;
 };
 
 export const AddShowingModal = (props: AddShowingModalProps) => {
-    const { showing, selectedDate } = props;
+    const { showing, selectedDate, onSuccessCallback } = props;
     const [state, setState] = React.useReducer(
         showingFormReducer,
         showing ?? initialFormState
@@ -109,21 +110,11 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (state.address) {
-            const {
-                address,
-                clients,
-                agents,
-                status,
-                startTime,
-                endTime,
-                note,
-            } = state;
-
-            const agentsFormatted = agents?.map((i) => ({
+            const agentsFormatted = state.agents?.map((i) => ({
                 contactId: i.id,
                 role: ContactOnShowingRole["AGENT"],
             }));
-            const clientsFormatted = clients?.map((i) => ({
+            const clientsFormatted = state.clients?.map((i) => ({
                 contactId: i.id,
                 role: ContactOnShowingRole["CLIENT"],
             }));
@@ -137,18 +128,33 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                       agentsFormatted.concat(clientsFormatted)
                     : [];
 
-            createShowing.mutate({
-                address: state.address.address,
-                placeName: state.address.place_name,
-                longitude: String(state.address.geometry.coordinates[0]),
-                latitude: String(state.address.geometry.coordinates[1]),
-                workspaceId: workspace.id as string,
-                date: selectedDate.toISOString(),
-                note: note,
-                contacts,
-            });
+            createShowing.mutate(
+                {
+                    address: state.address.place_name,
+                    longitude: String(state.address.geometry.coordinates[0]),
+                    latitude: String(state.address.geometry.coordinates[1]),
+                    workspaceId: workspace.id as string,
+                    date: selectedDate.toISOString(),
+                    note: state.note,
+                    startTime: state.startTime,
+                    endTime: state.endTime,
+                    status: state.status?.value,
+                    contacts,
+                },
+                {
+                    onSuccess: () => {
+                        onSuccessCallback && onSuccessCallback();
+                        showingUI.setModalOpen(false);
+                    },
+                }
+            );
         }
     };
+
+    React.useEffect(() => {
+        //Cleanup
+        return () => setState(initialFormState);
+    }, [showingUI.modalOpen]);
 
     /////////////////////////////////////////////////////////////
 
@@ -366,7 +372,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                         className="w-full justify-center"
                                         form="showing-form"
                                     >
-                                        Save Contact
+                                        Save Showing
                                     </Button>
                                 </div>
                             </Dialog.Panel>

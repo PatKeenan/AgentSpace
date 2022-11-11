@@ -5,6 +5,8 @@ export const useShowings = () => {
     const { showing } = trpc;
 
     return {
+        getAll: showing.getAll.useQuery,
+        getByMonth: showing.getByMonth.useQuery,
         getByDate: showing.getByDate.useQuery,
         create: showing.create.useMutation,
     };

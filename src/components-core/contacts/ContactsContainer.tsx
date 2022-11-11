@@ -179,12 +179,12 @@ export const ContactsContainer: NextPageExtended = () => {
                             </p>
                         </div>
                         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                            <Button
+                            <ButtonLink
                                 variant="primary"
-                                onClick={() => setModalOpen(true)}
+                                href={`/workspace/${workspace.id}/contacts/create`}
                             >
                                 Add Contact
-                            </Button>
+                            </ButtonLink>
                         </div>
                     </div>
                     <div className="mt-8 flex flex-col">
@@ -234,22 +234,24 @@ export const ContactsContainer: NextPageExtended = () => {
                                                     />
                                                 </th>
 
-                                                {["Name", "Email", "Phone"].map(
-                                                    (i, index) => (
-                                                        <th
-                                                            key={index}
-                                                            scope="col"
-                                                            className={clsx(
-                                                                index == 0
-                                                                    ? "min-w-[12rem]"
-                                                                    : "pl-3",
-                                                                "py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                                                            )}
-                                                        >
-                                                            {i}
-                                                        </th>
-                                                    )
-                                                )}
+                                                {[
+                                                    "Contact",
+                                                    "Primary Email",
+                                                    "Primary Phone",
+                                                ].map((i, index) => (
+                                                    <th
+                                                        key={index}
+                                                        scope="col"
+                                                        className={clsx(
+                                                            index == 0
+                                                                ? "min-w-[12rem]"
+                                                                : "pl-3",
+                                                            "py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
+                                                        )}
+                                                    >
+                                                        {i}
+                                                    </th>
+                                                ))}
 
                                                 <th
                                                     scope="col"

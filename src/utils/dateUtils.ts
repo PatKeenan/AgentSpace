@@ -2,16 +2,29 @@ import { addDays, getDay } from "date-fns";
 
 export const dateUtils = {
     getMonth: getMonth,
+    transform: transform,
 };
 
 function getMonth(month: Date) {
     return {
+        firstDay: new Date(month.getFullYear(), month.getMonth(), 1),
+        lastDay: new Date(month.getFullYear(), month.getMonth() + 1, 0),
         getName: (options?: Intl.DateTimeFormatOptions | undefined) =>
             getMonthName(month, options),
         getAllDates: () => getAllDatesInMonth(month),
         firstDayIndex: getDay(
             new Date(month.getFullYear(), month.getMonth(), 1)
         ) as number,
+    };
+}
+
+function transform(date: Date | string) {
+    const formattedDate = new Date(date);
+
+    return {
+        isoDateOnly:
+            formattedDate.toISOString().split("T")[0] ||
+            formattedDate.toISOString(),
     };
 }
 

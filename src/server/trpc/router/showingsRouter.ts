@@ -1,15 +1,69 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 import { Schemas } from "server/schemas";
+import { dateUtils } from "utils/dateUtils";
+import { addDays } from "date-fns";
 
 const showingSchema = Schemas.showing();
 
 export const showingsRouter = t.router({
+    getAll: authedProcedure
+        .input(
+            z.object({
+                workspaceId: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.showing.findMany({
+                where: {
+                    workspaceId: input.workspaceId,
+                    deleted: false,
+                },
+            });
+        }),
+    getByMonth: authedProcedure
+        .input(
+            z.object({
+                workspaceId: z.string(),
+                date: z
+                    .string()
+                    .transform((i) => dateUtils.transform(i).isoDateOnly),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const month = dateUtils.getMonth(new Date(input.date));
+            return await ctx.prisma.showing.findMany({
+                where: {
+                    workspaceId: input.workspaceId,
+                    deleted: false,
+                    date: {
+                        gte: dateUtils.transform(addDays(month.firstDay, -1))
+                            .isoDateOnly,
+                        lte: dateUtils.transform(month.lastDay).isoDateOnly,
+                    },
+                },
+                include: {
+                    contacts: {
+                        select: {
+                            role: true,
+                            contact: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+        }),
     getByDate: authedProcedure
         .input(
             z.object({
                 workspaceId: z.string(),
-                date: z.date().refine((i) => i.toISOString()),
+                date: z
+                    .string()
+                    .transform((i) => dateUtils.transform(i).isoDateOnly),
             })
         )
         .query(async ({ ctx, input }) => {
@@ -43,12 +97,13 @@ export const showingsRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const { contacts, ...rest } = input;
+            const { contacts, date, ...rest } = input;
             return await ctx.prisma.showing.create({
                 data: {
                     ...rest,
                     createdById: ctx.session.user.id,
-                    contact: {
+                    date: date,
+                    contacts: {
                         createMany: {
                             data: contacts,
                         },

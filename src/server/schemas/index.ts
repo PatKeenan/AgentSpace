@@ -1,4 +1,5 @@
-import { ContactOnShowingRole } from "@prisma/client";
+import { ContactOnShowingRole, ShowingStatus } from "@prisma/client";
+import { dateUtils } from "utils";
 import { z } from "zod";
 
 export const Schemas = {
@@ -58,11 +59,13 @@ export type CreateContactOnShowing = z.infer<typeof createContactOnShowing>;
 
 function showingSchema() {
     const create = z.object({
-        date: z.string().transform((i) => new Date(i)),
+        date: z.string().transform((i) => dateUtils.transform(i).isoDateOnly),
+        startTime: z.string().optional(),
+        endTime: z.string().optional(),
         address: z.string(),
-        placeName: z.string(),
         latitude: z.string().transform((i) => Number(i)),
         longitude: z.string().transform((i) => Number(i)),
+        status: z.nativeEnum(ShowingStatus).default("NO_STATUS"),
         note: z
             .string()
             .max(800, "Note must be less than 800 characters.")

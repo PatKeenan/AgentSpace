@@ -13,15 +13,13 @@ import {
     UserIcon,
     UsersIcon,
 } from "@heroicons/react/24/outline";
-import { ShowingFormState } from "../types";
 
-export const ShowingStopCard = (props: {
-    index: number;
-    showing: ShowingFormState;
-}) => {
+import type { ShowingCardProps } from "../types";
+
+export const ShowingCard = (props: ShowingCardProps) => {
     const { showing, index } = props;
     return (
-        <div className="block py-6 text-gray-500">
+        <div className="block text-gray-500">
             <div className="flex items-center justify-between text-sm ">
                 <div className="flex items-center text-sm">
                     <h3 className="mr-4 text-sm font-semibold text-purple-600">
@@ -133,7 +131,7 @@ export const ShowingStopCard = (props: {
                                 href="/places/asdas"
                                 className="hover:underline"
                             >
-                                {showing.address?.place_name}
+                                {showing.address}
                             </NextLink>
                         </dd>
                     </div>
@@ -147,7 +145,7 @@ export const ShowingStopCard = (props: {
                                 aria-hidden="true"
                             />
                         </dt>
-                        <dd>{showing.status?.display}</dd>
+                        <dd>{showing.status}</dd>
                     </div>
                 </Col>
             </Row>
@@ -165,16 +163,18 @@ export const ShowingStopCard = (props: {
                         </dt>
                         <dd>
                             <ol className="flex items-center">
-                                {showing.clients?.map((client) => (
-                                    <li key={client.id}>
-                                        <NextLink
-                                            href={`/contacts/${client.id}`}
-                                            className="mr-1 hover:underline"
-                                        >
-                                            {client.name}
-                                        </NextLink>
-                                    </li>
-                                ))}
+                                {showing.contacts
+                                    ?.filter((i) => i.role == "CLIENT")
+                                    ?.map((i, idx) => (
+                                        <li key={`${i.contact.id}-${idx}`}>
+                                            <NextLink
+                                                href={`/workspace/${showing.workspaceId}/contacts/${i.contact.id}`}
+                                                className="mr-1 hover:underline"
+                                            >
+                                                {i.contact.name}
+                                            </NextLink>
+                                        </li>
+                                    )) || "--"}
                             </ol>
                         </dd>
                     </div>
@@ -190,14 +190,18 @@ export const ShowingStopCard = (props: {
                         </dt>
                         <dd>
                             <ol className="flex items-center">
-                                <li>
-                                    <NextLink
-                                        href={`/contacts/${showing.agent?.id}`}
-                                        className="mr-1 hover:underline"
-                                    >
-                                        {showing.agent?.name}
-                                    </NextLink>
-                                </li>
+                                {showing.contacts
+                                    ?.filter((i) => i.role == "AGENT")
+                                    ?.map((i, idx) => (
+                                        <li key={`${i.contact.id}-${idx}`}>
+                                            <NextLink
+                                                href={`/workspace/${showing.workspaceId}/contacts/${i.contact.id}`}
+                                                className="mr-1 hover:underline"
+                                            >
+                                                {i.contact.name}
+                                            </NextLink>
+                                        </li>
+                                    ))}
                             </ol>
                         </dd>
                     </div>

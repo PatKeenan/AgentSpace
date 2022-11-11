@@ -24,8 +24,8 @@ model Notification {
 
 model ContactOnShowing {
     id        String              @id @default(cuid())
-    contact    Contact              @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    contactId  String
+    contact   Contact              @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId String
     role      ContactOnShowingRole
     showing   Showing             @relation(fields: [showingId], references: [id], onDelete: Cascade)
     showingId String
@@ -41,12 +41,13 @@ model Showing {
     workspaceId  String
     createdBy    User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById  String
-    date         DateTime
+    date         String
     status       ShowingStatus     @default(NO_STATUS)
+    startTime    String?
+    endTime      String?
     tags         Tag[]
-    contact       ContactOnShowing[]
+    contacts     ContactOnShowing[]
     address      String
-    placeName    String
     latitude     Float
     longitude    Float
     note         String?
@@ -55,7 +56,7 @@ model Showing {
     deleted      Boolean?          @default(false)
     deletedAt    DateTime?
     // If user decideds to reorder to the showings in a list. Default will be sorted by start time asending with created at ascending being a secondary if there are two of the same start times
-    weight       Int? 
+    weight       Int? @default(0)
 }
 
 model Tag {
@@ -64,7 +65,7 @@ model Tag {
     createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById String
     title       String
-    contact      Contact[]
+    contact     Contact[]
     workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId String
     showings    Showing[]
