@@ -14,6 +14,7 @@ type AutoCompleteProps<T, K> = {
     icon?: boolean;
     multiple?: boolean;
     name?: string;
+    required?: boolean;
 };
 
 export function AutoComplete<
@@ -30,6 +31,7 @@ export function AutoComplete<
         options,
         icon = true,
         name,
+        required = false,
     } = props;
 
     return (
@@ -39,6 +41,7 @@ export function AutoComplete<
             </Combobox.Label>
             <div className="relative mt-1">
                 <Combobox.Input
+                    required={required}
                     name={name}
                     value={query}
                     className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"

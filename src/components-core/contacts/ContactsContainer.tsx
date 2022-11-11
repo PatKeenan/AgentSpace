@@ -1,137 +1,137 @@
 import { SectionHeading } from "components-layout/SectionHeading";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Button, ButtonLink } from "components-common/Button";
-import React, { useLayoutEffect, useRef, useState } from "react";
 import { Breadcrumb } from "components-layout/Breadcrumb";
 import { NextLink } from "components-common/NextLink";
 import { PageBody } from "components-layout/PageBody";
 import { useWorkspace } from "hooks/useWorkspace";
-import { PeopleModal } from "./people-components";
-import { usePeopleUI } from "./usePeopleUI";
-import { usePeople } from "hooks/usePeople";
+import { CreateContactModal } from "./contacts-components";
+import { useContactsUI } from "./useContactsUI";
+import { useContacts } from "hooks/useContacts";
 import { useRouter } from "next/router";
 import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
-import type { Person, PersonMeta } from "@prisma/client";
+import type { Contact, ContactMeta } from "@prisma/client";
 
-export const PeopleContainer: NextPageExtended = () => {
-    const { setModalOpen } = usePeopleUI();
+export const ContactsContainer: NextPageExtended = () => {
+    const [indeterminate, setIndeterminate] = useState(false);
+    const [checked, setChecked] = useState(false);
+    const [selectedContacts, setSelectedContacts] = useState<
+        typeof contactsQuery.data
+    >([]);
+
+    const { setModalOpen } = useContactsUI();
+    const workspace = useWorkspace();
+    const contacts = useContacts();
+    const router = useRouter();
 
     const checkbox = useRef<HTMLInputElement>(null);
-    const [checked, setChecked] = useState(false);
-    const [indeterminate, setIndeterminate] = useState(false);
-    const [selectedPeople, setSelectedPeople] = useState<typeof peopleData>([]);
 
-    const workspace = useWorkspace();
-    const people = usePeople();
-
-    // Hard delete on dev server only
-    const deletePerson =
+    // Hard delete on dev only
+    const deleteContact =
         process.env.NODE_ENV == "production"
-            ? people.softDelete()
-            : people.hardDelete();
-    const deletePeople =
+            ? contacts.softDelete()
+            : contacts.hardDelete();
+    const deleteContacts =
         process.env.NODE_ENV == "production"
-            ? people.softDeleteMany()
-            : people.hardDeleteMany();
+            ? contacts.softDeleteMany()
+            : contacts.hardDeleteMany();
 
-    const {
-        data: peopleData,
-        isLoading: loadingPeople,
-        isError: errorGettingPeople,
-    } = people.getAll(
+    const contactsQuery = contacts.getAll(
         { workspaceId: workspace.id as string },
         { enabled: typeof workspace.id == "string" }
     );
 
     useLayoutEffect(() => {
         let isIndeterminate = false;
-        if (selectedPeople && peopleData) {
+        if (selectedContacts && contactsQuery.data) {
             isIndeterminate =
-                selectedPeople.length > 0 &&
-                selectedPeople.length < peopleData.length;
-            setChecked(selectedPeople.length === peopleData.length);
+                selectedContacts.length > 0 &&
+                selectedContacts.length < contactsQuery.data.length;
+            setChecked(selectedContacts.length === contactsQuery.data.length);
             setIndeterminate(isIndeterminate);
         }
         if (checkbox.current) {
             checkbox.current.indeterminate = isIndeterminate;
         }
-    }, [peopleData, selectedPeople]);
+    }, [contactsQuery.data, selectedContacts]);
 
-    function toggleAll() {
-        setSelectedPeople(checked || indeterminate ? [] : peopleData);
+    const toggleAll = () => {
+        setSelectedContacts(checked || indeterminate ? [] : contactsQuery.data);
         setChecked(!checked && !indeterminate);
         setIndeterminate(false);
-    }
+    };
 
-    function handleSelectPerson(
+    const handleSelectContact = (
         e: React.ChangeEvent<HTMLInputElement>,
-        selectedPerson: Person & { personMeta: PersonMeta[] }
-    ) {
+        selectedContact: Contact & { contactMeta: ContactMeta[] }
+    ) => {
         const isChecked = e.target.checked;
         const newSelection =
-            selectedPeople && selectedPeople.length > 0
-                ? [...selectedPeople, selectedPerson]
-                : [selectedPerson];
+            selectedContacts && selectedContacts.length > 0
+                ? [...selectedContacts, selectedContact]
+                : [selectedContact];
 
-        if (!isChecked && selectedPeople && selectedPeople.length > 0) {
-            setSelectedPeople(
-                selectedPeople.filter((p) => p.id !== selectedPerson.id)
+        if (!isChecked && selectedContacts && selectedContacts.length > 0) {
+            setSelectedContacts(
+                selectedContacts.filter((p) => p.id !== selectedContact.id)
             );
         }
         if (isChecked && newSelection && newSelection.length > 0) {
-            setSelectedPeople(newSelection);
+            setSelectedContacts(newSelection);
         }
-    }
+    };
 
-    function handleDelete() {
-        if (!selectedPeople) return;
+    const handleDelete = () => {
+        if (!selectedContacts) return;
         if (
-            selectedPeople.length == 1 &&
-            typeof selectedPeople[0] !== "undefined"
+            selectedContacts.length == 1 &&
+            typeof selectedContacts[0] !== "undefined"
         ) {
-            const person = selectedPeople[0];
-            deletePerson.mutate(
-                { personId: person.id },
+            const contact = selectedContacts[0];
+            deleteContact.mutate(
+                { contactId: contact.id },
                 {
                     onSuccess: (d) =>
-                        people.invalidateGetAll({ workspaceId: d.workspaceId }),
+                        contacts.invalidateGetAll({
+                            workspaceId: d.workspaceId,
+                        }),
                 }
             );
         }
-        if (selectedPeople.length > 1) {
-            const selectedIds = selectedPeople.flatMap((i) => i.id);
-            deletePeople.mutate(
+        if (selectedContacts.length > 1) {
+            const selectedIds = selectedContacts.flatMap((i) => i.id);
+            deleteContacts.mutate(
                 { ids: selectedIds },
                 {
                     onSuccess: () =>
-                        people.invalidateGetAll({
+                        contacts.invalidateGetAll({
                             workspaceId: workspace.id as string,
                         }),
                 }
             );
         }
-        setSelectedPeople([]);
-    }
-    const router = useRouter();
+        setSelectedContacts([]);
+    };
     return (
         <>
             <Breadcrumb
                 items={[
                     {
-                        title: "People",
+                        title: "Contacts",
                         href: `/workspace/${
                             router.query.workspaceId as string
-                        }/people`,
+                        }/contacts`,
                     },
                 ]}
             />
             <PageBody>
-                <PeopleModal />
+                <CreateContactModal />
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
-                        <SectionHeading.Title>People</SectionHeading.Title>
+                        <SectionHeading.Title>Contacts</SectionHeading.Title>
                     </SectionHeading.TitleContainer>
                     <SectionHeading.Actions>
                         <>
@@ -158,12 +158,12 @@ export const PeopleContainer: NextPageExtended = () => {
                                     <input
                                         type="text"
                                         className="block w-full border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:hidden"
-                                        placeholder="Search People"
+                                        placeholder="Search Contacts"
                                     />
                                     <input
                                         type="text"
                                         className="hidden w-full  rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:block sm:text-sm"
-                                        placeholder="Search people"
+                                        placeholder="Search contacts"
                                     />
                                 </div>
                             </div>
@@ -174,7 +174,7 @@ export const PeopleContainer: NextPageExtended = () => {
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
                             <p className="mt-2 text-sm text-gray-700">
-                                A list of all the people in your workspace
+                                A list of all the contacts in your workspace
                                 including their name, email and phone number.
                             </p>
                         </div>
@@ -183,7 +183,7 @@ export const PeopleContainer: NextPageExtended = () => {
                                 variant="primary"
                                 onClick={() => setModalOpen(true)}
                             >
-                                Add Person
+                                Add Contact
                             </Button>
                         </div>
                     </div>
@@ -191,8 +191,8 @@ export const PeopleContainer: NextPageExtended = () => {
                         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                                 <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                                    {selectedPeople &&
-                                        selectedPeople.length > 0 && (
+                                    {selectedContacts &&
+                                        selectedContacts.length > 0 && (
                                             <div className="absolute top-0 left-12 flex h-12 items-center space-x-3 bg-gray-50 sm:left-16">
                                                 <Button
                                                     variant="outlined"
@@ -208,12 +208,13 @@ export const PeopleContainer: NextPageExtended = () => {
                                                     }
                                                 >
                                                     Delete{" "}
-                                                    {selectedPeople.length !==
+                                                    {selectedContacts.length !==
                                                         0 &&
-                                                    selectedPeople.length ==
-                                                        peopleData?.length
+                                                    selectedContacts.length ==
+                                                        contactsQuery.data
+                                                            ?.length
                                                         ? "all"
-                                                        : `(${selectedPeople.length})`}
+                                                        : `(${selectedContacts.length})`}
                                                 </Button>
                                             </div>
                                         )}
@@ -261,95 +262,101 @@ export const PeopleContainer: NextPageExtended = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200 bg-white">
-                                            {peopleData?.map((person) => {
-                                                const meta = person.personMeta
-                                                    .length
-                                                    ? person.personMeta[0]
-                                                    : undefined;
-                                                return (
-                                                    <tr
-                                                        key={person.id}
-                                                        className={
-                                                            selectedPeople &&
-                                                            selectedPeople.includes(
-                                                                person
-                                                            )
-                                                                ? "bg-gray-50"
-                                                                : undefined
-                                                        }
-                                                    >
-                                                        <td className="relative w-12 px-6 sm:w-16 sm:px-8">
-                                                            {selectedPeople &&
-                                                                selectedPeople.includes(
-                                                                    person
-                                                                ) && (
-                                                                    <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
-                                                                )}
-                                                            <input
-                                                                type="checkbox"
-                                                                className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
-                                                                value={
-                                                                    person.id
-                                                                }
-                                                                checked={
-                                                                    selectedPeople &&
-                                                                    selectedPeople.includes(
-                                                                        person
-                                                                    )
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleSelectPerson(
-                                                                        e,
-                                                                        person
-                                                                    )
-                                                                }
-                                                            />
-                                                        </td>
-                                                        <td
-                                                            className={clsx(
-                                                                "whitespace-nowrap py-4 pr-3 text-sm font-medium",
-                                                                selectedPeople &&
-                                                                    selectedPeople.includes(
-                                                                        person
-                                                                    )
-                                                                    ? "text-indigo-600"
-                                                                    : "text-gray-900"
-                                                            )}
+                                            {contactsQuery.data?.map(
+                                                (contact) => {
+                                                    const meta = contact
+                                                        .contactMeta.length
+                                                        ? contact.contactMeta[0]
+                                                        : undefined;
+                                                    return (
+                                                        <tr
+                                                            key={contact.id}
+                                                            className={
+                                                                selectedContacts &&
+                                                                selectedContacts.includes(
+                                                                    contact
+                                                                )
+                                                                    ? "bg-gray-50"
+                                                                    : undefined
+                                                            }
                                                         >
-                                                            <NextLink
-                                                                href={`/workspace/${person.workspaceId}/people/${person.id}`}
-                                                                className="hover:text-purple-600"
-                                                            >
-                                                                {person.name}
-                                                            </NextLink>
-                                                        </td>
-
-                                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                            {meta?.primaryEmail ||
-                                                                "---"}
-                                                        </td>
-                                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                            {meta?.primaryPhone ||
-                                                                "---"}
-                                                        </td>
-
-                                                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                            <a
-                                                                href="#"
-                                                                className="text-indigo-600 hover:text-indigo-900"
-                                                            >
-                                                                Edit
-                                                                <span className="sr-only">
-                                                                    ,{" "}
-                                                                    {
-                                                                        person.name
+                                                            <td className="relative w-12 px-6 sm:w-16 sm:px-8">
+                                                                {selectedContacts &&
+                                                                    selectedContacts.includes(
+                                                                        contact
+                                                                    ) && (
+                                                                        <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
+                                                                    )}
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
+                                                                    value={
+                                                                        contact.id
                                                                     }
-                                                                </span>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
+                                                                    checked={
+                                                                        selectedContacts &&
+                                                                        selectedContacts.includes(
+                                                                            contact
+                                                                        )
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        handleSelectContact(
+                                                                            e,
+                                                                            contact
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </td>
+                                                            <td
+                                                                className={clsx(
+                                                                    "whitespace-nowrap py-4 pr-3 text-sm font-medium",
+                                                                    selectedContacts &&
+                                                                        selectedContacts.includes(
+                                                                            contact
+                                                                        )
+                                                                        ? "text-indigo-600"
+                                                                        : "text-gray-900"
+                                                                )}
+                                                            >
+                                                                <NextLink
+                                                                    href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
+                                                                    className="hover:text-purple-600"
+                                                                >
+                                                                    {
+                                                                        contact.name
+                                                                    }
+                                                                </NextLink>
+                                                            </td>
+
+                                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                                {meta?.primaryEmail ||
+                                                                    "---"}
+                                                            </td>
+                                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                                {meta?.primaryPhone ||
+                                                                    "---"}
+                                                            </td>
+
+                                                            <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                                                <a
+                                                                    href="#"
+                                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                                >
+                                                                    Edit
+                                                                    <span className="sr-only">
+                                                                        ,{" "}
+                                                                        {
+                                                                            contact.name
+                                                                        }
+                                                                    </span>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                }
+                                            )}
                                         </tbody>
                                     </table>
                                     <nav
@@ -364,13 +371,15 @@ export const PeopleContainer: NextPageExtended = () => {
                                                 </span>{" "}
                                                 -{" "}
                                                 <span className="font-medium">
-                                                    {peopleData &&
-                                                        peopleData.length}
+                                                    {contactsQuery.data &&
+                                                        contactsQuery.data
+                                                            .length}
                                                 </span>{" "}
                                                 of{" "}
                                                 <span className="font-medium">
-                                                    {peopleData &&
-                                                        peopleData.length}
+                                                    {contactsQuery.data &&
+                                                        contactsQuery.data
+                                                            .length}
                                                 </span>{" "}
                                                 results
                                             </p>
@@ -402,4 +411,4 @@ export const PeopleContainer: NextPageExtended = () => {
     );
 };
 
-PeopleContainer.layout = "dashboard";
+ContactsContainer.layout = "dashboard";

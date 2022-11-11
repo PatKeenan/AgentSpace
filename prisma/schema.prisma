@@ -22,11 +22,11 @@ model Notification {
     deletedAt DateTime?
 }
 
-model PersonOnShowing {
+model ContactOnShowing {
     id        String              @id @default(cuid())
-    person    Person              @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId  String
-    role      PersonOnShowingRole
+    contact    Contact              @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId  String
+    role      ContactOnShowingRole
     showing   Showing             @relation(fields: [showingId], references: [id], onDelete: Cascade)
     showingId String
     deleted   Boolean?            @default(false)
@@ -43,18 +43,19 @@ model Showing {
     createdById  String
     date         DateTime
     status       ShowingStatus     @default(NO_STATUS)
-    stopNumber   Int
     tags         Tag[]
-    people       PersonOnShowing[]
+    contact       ContactOnShowing[]
     address      String
-    place_name   String
-    latitude     Int
-    longitude    Int
+    placeName    String
+    latitude     Float
+    longitude    Float
     note         String?
     assignedTo   UserOnWorkspace?  @relation(fields: [assignedToId], references: [id])
     assignedToId String?
     deleted      Boolean?          @default(false)
     deletedAt    DateTime?
+    // If user decideds to reorder to the showings in a list. Default will be sorted by start time asending with created at ascending being a secondary if there are two of the same start times
+    weight       Int? 
 }
 
 model Tag {
@@ -63,19 +64,18 @@ model Tag {
     createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById String
     title       String
-    people      Person[]
+    contact      Contact[]
     workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId String
     showings    Showing[]
     deleted     Boolean?  @default(false)
     deletedAt   DateTime?
 }
-
-model PersonMeta {
+model ContactMeta {
     id               String    @id @default(cuid())
     isPrimaryContact Boolean   @default(false)
-    person           Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
-    personId         String    @unique
+    contact          Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId        String    @unique
     social           Json?
     primaryEmail     String?
     secondaryEmail   String?
@@ -87,17 +87,17 @@ model PersonMeta {
     lastName         String?
 }
 
-model Person {
+model Contact {
     id           String              @id @default(cuid())
     createdAt    DateTime            @default(now())
     name         String
     createdBy    User                @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById  String
-    personMeta   PersonMeta[]
+    contactMeta  ContactMeta[]
     workspace    Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId  String
     tags         Tag[]
-    showingsMeta PersonOnShowing[] 
+    showingsMeta ContactOnShowing[] 
     referredBy   ReferralConnection?
     deleted      Boolean?            @default(false)
     deletedAt    DateTime?
@@ -105,8 +105,8 @@ model Person {
 
 model ReferralConnection {
     id           String    @id @default(cuid())
-    personId     String    @unique
-    person       Person    @relation(fields: [personId], references: [id], onDelete: Cascade)
+    contactId     String    @unique
+    contact       Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
     referalNotes String?
     deleted      Boolean?  @default(false)
     deletedAt    DateTime?
@@ -130,7 +130,7 @@ model Workspace {
     title            String                   @default("Untitled Workspace")
     createdAt        DateTime                 @default(now())
     usersOnWorkspace UserOnWorkspace[]
-    people           Person[]
+    contact           Contact[]
     tags             Tag[]
     showings         Showing[]
     subscription     SubscriptionOnWorkspace?
@@ -185,7 +185,7 @@ model User {
     isRegistered     Boolean                   @default(false)
     subscriptions    SubscriptionOnWorkspace[]
     workspaceMeta    UserOnWorkspace[]
-    people           Person[]
+    contact          Contact[]
     tags             Tag[]
     showings         Showing[]
     notifications    Notification[]
@@ -206,7 +206,7 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-enum PersonOnShowingRole {
+enum ContactOnShowingRole {
     CLIENT
     AGENT
     OTHER

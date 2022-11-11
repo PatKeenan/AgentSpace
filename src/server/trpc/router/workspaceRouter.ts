@@ -1,6 +1,5 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 
 export const workspaceRouter = t.router({
     getAll: authedProcedure.query(async ({ ctx }) => {

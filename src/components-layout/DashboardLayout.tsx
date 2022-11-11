@@ -65,8 +65,8 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
             icon: RectangleGroupIcon,
         },
         {
-            name: "People",
-            href: `/workspace/${workspace.id}/people`,
+            name: "Contacts",
+            href: `/workspace/${workspace.id}/contacts`,
             icon: UserGroupIcon,
         },
     ];

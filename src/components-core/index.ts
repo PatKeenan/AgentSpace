@@ -1,4 +1,4 @@
-export * from "./people";
+export * from "./contacts";
 export * from "./projects";
 export * from "./settings";
 export * from "./ErrorBoundary";

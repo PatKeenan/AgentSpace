@@ -1,10 +1,10 @@
-import { PersonSchema } from "server/schemas";
+import { Schemas } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 
-const personSchema = PersonSchema();
+const contactSchema = Schemas.contact();
 
-export const peopleRouter = t.router({
+export const contactsRouter = t.router({
     getAll: authedProcedure
         .input(
             z.object({
@@ -12,18 +12,54 @@ export const peopleRouter = t.router({
             })
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.person.findMany({
+            return await ctx.prisma.contact.findMany({
                 where: {
                     workspaceId: input.workspaceId,
                     deleted: false,
                 },
                 include: {
-                    personMeta: {
+                    contactMeta: {
                         where: {
                             isPrimaryContact: true,
                             deleted: false,
                         },
                     },
+                },
+            });
+        }),
+    search: authedProcedure
+        .input(
+            z.object({
+                workspaceId: z.string(),
+                query: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.contact.findMany({
+                where: {
+                    AND: [
+                        { workspaceId: input.workspaceId },
+                        {
+                            OR: [
+                                {
+                                    name: {
+                                        startsWith: input.query,
+                                        mode: "insensitive",
+                                    },
+                                },
+                                {
+                                    contactMeta: {
+                                        some: {
+                                            firstName: {
+                                                startsWith: input.query,
+                                                mode: "insensitive",
+                                            },
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    ],
                 },
             });
         }),
@@ -35,14 +71,14 @@ export const peopleRouter = t.router({
             })
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.person.findFirst({
+            return await ctx.prisma.contact.findFirst({
                 where: {
                     id: input.id,
                     workspaceId: input.workspaceId,
                     deleted: false,
                 },
                 include: {
-                    personMeta: {
+                    contactMeta: {
                         where: {
                             deleted: false,
                         },
@@ -50,17 +86,17 @@ export const peopleRouter = t.router({
                 },
             });
         }),
-    createPerson: authedProcedure
-        .input(personSchema.create.person)
+    createContact: authedProcedure
+        .input(contactSchema.create.contact)
         .mutation(async ({ ctx, input }) => {
-            const { personMeta, ...personData } = input;
-            return await ctx.prisma.person.create({
+            const { contactMeta, ...contactData } = input;
+            return await ctx.prisma.contact.create({
                 data: {
-                    ...personData,
+                    ...contactData,
                     createdById: ctx.session.user.id,
-                    personMeta: {
+                    contactMeta: {
                         create: {
-                            ...personMeta,
+                            ...contactMeta,
                         },
                     },
                 },
@@ -68,12 +104,12 @@ export const peopleRouter = t.router({
         }),
     createMeta: authedProcedure
         .input(
-            personSchema.create.meta.extend({
-                personId: z.string(),
+            contactSchema.create.meta.extend({
+                contactId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.personMeta.create({
+            return await ctx.prisma.contactMeta.create({
                 data: {
                     ...input,
                 },
@@ -82,14 +118,14 @@ export const peopleRouter = t.router({
     softDelete: authedProcedure
         .input(
             z.object({
-                personId: z.string(),
+                contactId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
             const currentDate = new Date();
-            const person = await ctx.prisma.person.update({
+            const contact = await ctx.prisma.contact.update({
                 where: {
-                    id: input.personId,
+                    id: input.contactId,
                 },
                 data: {
                     deleted: true,
@@ -100,16 +136,16 @@ export const peopleRouter = t.router({
                     id: true,
                 },
             });
-            await ctx.prisma.personMeta.updateMany({
+            await ctx.prisma.contactMeta.updateMany({
                 where: {
-                    personId: input.personId,
+                    contactId: input.contactId,
                 },
                 data: {
                     deleted: true,
                     deletedAt: currentDate,
                 },
             });
-            return person;
+            return contact;
         }),
     softDeleteMany: authedProcedure
         .input(
@@ -119,7 +155,7 @@ export const peopleRouter = t.router({
         )
         .mutation(async ({ ctx, input }) => {
             const currentDate = new Date();
-            await ctx.prisma.person.updateMany({
+            await ctx.prisma.contact.updateMany({
                 where: {
                     id: {
                         in: input.ids,
@@ -130,9 +166,9 @@ export const peopleRouter = t.router({
                     deletedAt: currentDate,
                 },
             });
-            return await ctx.prisma.personMeta.updateMany({
+            return await ctx.prisma.contactMeta.updateMany({
                 where: {
-                    personId: {
+                    contactId: {
                         in: input.ids,
                     },
                 },
@@ -145,13 +181,13 @@ export const peopleRouter = t.router({
     hardDelete: authedProcedure
         .input(
             z.object({
-                personId: z.string(),
+                contactId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.person.delete({
+            return await ctx.prisma.contact.delete({
                 where: {
-                    id: input.personId,
+                    id: input.contactId,
                 },
             });
         }),
@@ -162,7 +198,7 @@ export const peopleRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.person.deleteMany({
+            return await ctx.prisma.contact.deleteMany({
                 where: {
                     id: {
                         in: input.ids,

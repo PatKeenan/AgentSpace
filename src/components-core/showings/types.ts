@@ -4,7 +4,7 @@ interface Id {
     id: string;
 }
 
-export interface Contact extends Id {
+export interface Person extends Id {
     name: string;
 }
 
@@ -15,8 +15,8 @@ export interface Status extends Id {
 
 export type ShowingFormState = {
     address: MapboxPlaces["features"] | undefined;
-    clients?: Contact[];
-    agent?: Contact | undefined;
+    clients?: Person[];
+    agents?: Person[];
     status?: Status | undefined;
     startTime?: string;
     endTime?: string;

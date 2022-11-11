@@ -1,39 +1,39 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
 import { Loading } from "components-common/Loading";
-import { usePeople, useWorkspace } from "hooks";
+import { useContacts, useWorkspace } from "hooks";
 import { useRouter } from "next/router";
 import { exists } from "utils/helpers";
 
 import type { NextPageExtended } from "types/index";
 
-export const PeopleDetailContainer: NextPageExtended = () => {
+export const ContactDetailContainer: NextPageExtended = () => {
     const workspace = useWorkspace();
     const router = useRouter();
-    const people = usePeople();
+    const contacts = useContacts();
 
-    const id = router.query.personId;
+    const id = router.query.contactId;
 
     const {
-        data: person,
+        data: contact,
         isLoading: loadingPerson,
-        isError: personError,
-    } = people.getOne(
+        isError: contactError,
+    } = contacts.getOne(
         { id: id as string, workspaceId: workspace.id as string },
         { enabled: exists(id) && exists(workspace.id) }
     );
-    return !person && loadingPerson ? (
+    return !contact && loadingPerson ? (
         <Loading />
     ) : (
         <>
             <Breadcrumb
                 items={[
                     {
-                        title: "People",
-                        href: `/workspace/${workspace.id}/people`,
+                        title: "Contacts",
+                        href: `/workspace/${workspace.id}/contacts`,
                     },
                     {
-                        title: person?.name ?? "Person Detail",
-                        href: `/workspace/${workspace.id}/people/${person?.id}`,
+                        title: contact?.name ?? "Person Detail",
+                        href: `/workspace/${workspace.id}/contacts/${contact?.id}`,
                     },
                 ]}
             />
@@ -41,12 +41,17 @@ export const PeopleDetailContainer: NextPageExtended = () => {
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>
-                            {person?.name}
+                            {contact?.name}
                         </SectionHeading.Title>
                     </SectionHeading.TitleContainer>
                 </SectionHeading>
+                {contact?.contactMeta.map((i) => (
+                    <div key={i.id}>
+                        <p>First: {i.firstName}</p> <p>Last: {i.lastName}</p>
+                    </div>
+                ))}
             </PageBody>
         </>
     );
 };
-PeopleDetailContainer.layout = "dashboard";
+ContactDetailContainer.layout = "dashboard";

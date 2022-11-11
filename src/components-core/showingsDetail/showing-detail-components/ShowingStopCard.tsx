@@ -168,7 +168,7 @@ export const ShowingStopCard = (props: {
                                 {showing.clients?.map((client) => (
                                     <li key={client.id}>
                                         <NextLink
-                                            href={`/people/${client.id}`}
+                                            href={`/contacts/${client.id}`}
                                             className="mr-1 hover:underline"
                                         >
                                             {client.name}
@@ -192,7 +192,7 @@ export const ShowingStopCard = (props: {
                             <ol className="flex items-center">
                                 <li>
                                     <NextLink
-                                        href={`/people/${showing.agent?.id}`}
+                                        href={`/contacts/${showing.agent?.id}`}
                                         className="mr-1 hover:underline"
                                     >
                                         {showing.agent?.name}

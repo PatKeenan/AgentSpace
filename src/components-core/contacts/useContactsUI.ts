@@ -1,12 +1,12 @@
 import { devtools } from "zustand/middleware";
 import create from "zustand";
 
-type PeopleState = {
+type ContactsState = {
     modalOpen: boolean;
     setModalOpen: (val: boolean) => void;
 };
 
-export const usePeopleUI = create<PeopleState>()(
+export const useContactsUI = create<ContactsState>()(
     devtools((set) => ({
         modalOpen: false,
         setModalOpen: (val) => set({ modalOpen: val }),

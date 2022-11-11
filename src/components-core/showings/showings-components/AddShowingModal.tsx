@@ -1,6 +1,11 @@
-import { useShowingDetailUI } from "../useShowingDetailUI";
 import { Dialog, Transition } from "@headlessui/react";
-import { useDebounceState } from "hooks";
+import { useShowingsUI } from "../useShowingsUI";
+import {
+    useDebounceState,
+    useContacts,
+    useShowings,
+    useWorkspace,
+} from "hooks";
 import { trpc } from "utils/trpc";
 import * as React from "react";
 import clsx from "clsx";
@@ -13,13 +18,11 @@ import {
     Button,
 } from "components-common";
 
-import type { Contact, ShowingFormState, Status } from "../types";
-
-const contacts: Contact[] = [
-    { id: "asd123fq", name: "Patrick" },
-    { id: "asd123saf", name: "Morgan" },
-    { id: "asd12dsvsq", name: "TIco" },
-];
+import type { ShowingFormState, Status } from "../types";
+import { exists } from "utils/helpers";
+import { CreateShowing, Schemas } from "server/schemas";
+import { useForm } from "react-hook-form";
+import { ContactOnShowing, ContactOnShowingRole } from "@prisma/client";
 
 const statusOptions: Status[] = [
     { id: "1", value: "confirmed", display: "Confirmed" },
@@ -30,13 +33,19 @@ const statusOptions: Status[] = [
 const initialFormState: ShowingFormState = {
     clients: [],
     address: undefined,
-    agent: undefined,
+    agents: [],
     status: statusOptions[1],
     startTime: "",
     endTime: "",
     buildingOrApt: "",
     note: "",
 };
+/*  res = {
+     address: data.features.address,
+     placeName: data.features.place_name,
+     longitude: data.features.geometry.coordinates[0],
+     latitude: data.features.geometry.coordinates[1],
+ }; */
 
 const showingFormReducer = (
     state: ShowingFormState,
@@ -48,50 +57,107 @@ const showingFormReducer = (
 
 type AddShowingModalProps = {
     showing?: ShowingFormState;
-    handleAddShowing: React.Dispatch<
-        React.SetStateAction<ShowingFormState[] | undefined>
-    >;
+    selectedDate: Date;
 };
 
 export const AddShowingModal = (props: AddShowingModalProps) => {
-    const { showing, handleAddShowing } = props;
-
-    const { editSliderOpen, setEditSliderOpen } = useShowingDetailUI();
-
+    const { showing, selectedDate } = props;
     const [state, setState] = React.useReducer(
         showingFormReducer,
         showing ?? initialFormState
     );
 
-    const {
-        state: addressQuery,
-        setState: setAddressQuery,
-        debounced: debouncedAddressQuery,
-    } = useDebounceState("");
+    const showingUI = useShowingsUI();
+    const showings = useShowings();
+    const workspace = useWorkspace();
+    const contacts = useContacts();
 
-    const { state: contactsQuery, setState: setContactsQuery } =
-        useDebounceState("");
+    const addressInput = useDebounceState("");
+    const contactsInput = useDebounceState("");
+    const agentsInput = useDebounceState("");
 
-    const { data } = trpc.addressSearch.search.useQuery(
-        { query: debouncedAddressQuery },
-        { enabled: addressQuery.trim().length > 4, refetchOnWindowFocus: false }
+    const sharedQueryOptions = { refetchOnWindowFocus: false };
+    const baseTopPadding = "pt-2";
+
+    const contactsQuery = contacts.search(
+        { workspaceId: workspace.id as string, query: contactsInput.debounced },
+        {
+            ...sharedQueryOptions,
+            enabled:
+                exists(workspace.id) &&
+                contactsInput.debounced.trim().length > 2,
+        }
+    );
+    const agentsQuery = contacts.search(
+        { workspaceId: workspace.id as string, query: agentsInput.debounced },
+        {
+            ...sharedQueryOptions,
+            enabled:
+                exists(workspace.id) && agentsInput.debounced.trim().length > 2,
+        }
     );
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        handleAddShowing((prev) => (prev ? [...prev, state] : [state]));
-    };
+    const { data } = trpc.addressSearch.search.useQuery(
+        { query: addressInput.debounced },
+        {
+            ...sharedQueryOptions,
+            enabled: addressInput.state.trim().length > 4,
+        }
+    );
 
-    const baseTopPadding = "pt-2";
+    const createShowing = showings.create();
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (state.address) {
+            const {
+                address,
+                clients,
+                agents,
+                status,
+                startTime,
+                endTime,
+                note,
+            } = state;
+
+            const agentsFormatted = agents?.map((i) => ({
+                contactId: i.id,
+                role: ContactOnShowingRole["AGENT"],
+            }));
+            const clientsFormatted = clients?.map((i) => ({
+                contactId: i.id,
+                role: ContactOnShowingRole["CLIENT"],
+            }));
+
+            const contacts:
+                | { contactId: string; role: ContactOnShowingRole }[]
+                | [] =
+                agentsFormatted && clientsFormatted
+                    ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      //@ts-ignore
+                      agentsFormatted.concat(clientsFormatted)
+                    : [];
+
+            createShowing.mutate({
+                address: state.address.address,
+                placeName: state.address.place_name,
+                longitude: String(state.address.geometry.coordinates[0]),
+                latitude: String(state.address.geometry.coordinates[1]),
+                workspaceId: workspace.id as string,
+                date: selectedDate.toISOString(),
+                note: note,
+                contacts,
+            });
+        }
+    };
 
     /////////////////////////////////////////////////////////////
 
     return (
-        <Transition.Root show={editSliderOpen} as={React.Fragment}>
+        <Transition.Root show={showingUI.modalOpen} as={React.Fragment}>
             <Dialog
                 as="div"
                 className="relative z-10"
-                onClose={setEditSliderOpen}
+                onClose={showingUI.setModalOpen}
             >
                 <Transition.Child
                     as={React.Fragment}
@@ -119,7 +185,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                             <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                                 <form
                                     className="space-y-6 divide-y divide-gray-200"
-                                    onSubmit={handleSubmit}
+                                    onSubmit={onSubmit}
                                     id="showing-form"
                                 >
                                     <div className="flex w-full gap-3 ">
@@ -130,16 +196,17 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                             )}
                                         >
                                             <AutoComplete
+                                                required
                                                 name="address"
                                                 selected={state.address}
                                                 onSelect={(e) =>
                                                     setState({ address: e })
                                                 }
                                                 label="Address"
-                                                query={addressQuery}
-                                                setQuery={setAddressQuery}
+                                                query={addressInput.state}
+                                                setQuery={addressInput.setState}
                                                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                                //@ts-ignore   TODO: Solve the ts warning
+                                                //@ts-ignore
                                                 options={data?.features}
                                                 displayField={"place_name"}
                                                 icon={false}
@@ -180,11 +247,16 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                                 onSelect={(e) =>
                                                     setState({ clients: e })
                                                 }
-                                                label="Clients"
-                                                query={contactsQuery}
-                                                setQuery={setContactsQuery}
-                                                options={contacts}
-                                                displayField="name"
+                                                label="Client"
+                                                pluralOrSingle
+                                                query={contactsInput.state}
+                                                setQuery={
+                                                    contactsInput.setState
+                                                }
+                                                options={
+                                                    contactsQuery?.data ?? []
+                                                }
+                                                displayField={"name"}
                                                 icon={false}
                                             />
                                         </div>
@@ -195,14 +267,17 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                             )}
                                         >
                                             <MultiAutoComplete
-                                                selected={state.clients}
+                                                selected={state.agents}
                                                 onSelect={(e) =>
-                                                    setState({ clients: e })
+                                                    setState({ agents: e })
                                                 }
-                                                label="Agent"
-                                                query={contactsQuery}
-                                                setQuery={setContactsQuery}
-                                                options={contacts}
+                                                label={`Agent`}
+                                                pluralOrSingle
+                                                query={agentsInput.state}
+                                                setQuery={agentsInput.setState}
+                                                options={
+                                                    agentsQuery?.data ?? []
+                                                }
                                                 displayField="name"
                                                 icon={false}
                                             />
@@ -272,7 +347,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                     <div className={baseTopPadding}>
                                         <Textarea
                                             id="note"
-                                            name="notes="
+                                            name="notes"
                                             label="Note"
                                             value={state.note ?? ""}
                                             onChange={(e) =>
@@ -291,7 +366,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                         className="w-full justify-center"
                                         form="showing-form"
                                     >
-                                        Save Showing
+                                        Save Contact
                                     </Button>
                                 </div>
                             </Dialog.Panel>

@@ -5,7 +5,7 @@ import { addressSearchRouter } from "./addressSearch";
 import { workspaceRouter } from "./workspaceRouter";
 import { showingsRouter } from "./showingsRouter";
 import { tagsRouter } from "./tagsRouter";
-import { peopleRouter } from "./peopleRouter";
+import { contactsRouter } from "./contactsRouter";
 import { userRouter } from "./userRouter";
 
 export const appRouter = t.router({
@@ -14,7 +14,7 @@ export const appRouter = t.router({
     workspace: workspaceRouter,
     showing: showingsRouter,
     tags: tagsRouter,
-    people: peopleRouter,
+    contacts: contactsRouter,
     user: userRouter,
 });
 

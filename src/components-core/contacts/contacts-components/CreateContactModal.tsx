@@ -1,54 +1,58 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useWorkspace, usePeople } from "hooks";
-import { usePeopleUI } from "../usePeopleUI";
-
+import { useWorkspace, useContacts } from "hooks";
+import { useContactsUI } from "../useContactsUI";
 import { Input } from "components-common/Input";
 import { useForm } from "react-hook-form";
 import * as React from "react";
-import * as z from "zod";
-import { CreatePerson, Schemas } from "server/schemas";
+import { Button } from "components-common/Button";
+import { CreateContact, Schemas } from "server/schemas";
 
-export const PeopleModal = () => {
-    const { modalOpen, setModalOpen } = usePeopleUI();
+export const CreateContactModal = () => {
+    const { modalOpen, setModalOpen } = useContactsUI();
     const workspace = useWorkspace();
-    const people = usePeople();
+    const contacts = useContacts();
 
-    const personSchema = Schemas.person();
+    const contactsSchema = Schemas.contact();
 
-    const {
-        mutate: createPerson,
-        isLoading: loadingCreatePerson,
-        isError: errorCreatingPerson,
-    } = people.createPerson();
+    const createContact = contacts.createContact();
 
-    const { register, handleSubmit } = useForm<
-        Omit<CreatePerson, "workspaceId">
+    const { register, handleSubmit, reset } = useForm<
+        Omit<CreateContact, "workspaceId">
     >({
         resolver: zodResolver(
-            personSchema.create.person.omit({ workspaceId: true })
+            contactsSchema.create.contact.omit({ workspaceId: true })
         ),
     });
 
     const onSubmit = handleSubmit(async (data) => {
         if (workspace.id) {
-            const { personMeta, ...rest } = data;
-            const person: CreatePerson = {
+            const { contactMeta, ...rest } = data;
+            const contact: CreateContact = {
                 ...rest,
                 workspaceId: workspace.id as string,
-                personMeta: {
-                    ...personMeta,
+                contactMeta: {
+                    ...contactMeta,
                     isPrimaryContact: true,
                 },
             };
-            createPerson(person, {
+            createContact.mutate(contact, {
                 onSuccess: (data) => {
-                    people.invalidateGetAll({ workspaceId: data.workspaceId });
+                    contacts.invalidateGetAll({
+                        workspaceId: data.workspaceId,
+                    });
                     setModalOpen(false);
                 },
             });
         }
     });
+
+    React.useEffect(() => {
+        // 🧹🧹🧹 Cleanup on close 😎
+        return () => {
+            if (!modalOpen) reset();
+        };
+    }, [modalOpen, reset]);
 
     return (
         <Transition.Root show={modalOpen} as={React.Fragment}>
@@ -78,18 +82,19 @@ export const PeopleModal = () => {
                         >
                             <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
                                 <form
-                                    name="create-person-form"
-                                    id="create-person-form"
+                                    name="create-contact-form"
+                                    id="create-contact-form"
                                     onSubmit={onSubmit}
                                 >
                                     <div className="mt-3 sm:mt-5">
                                         <div>
                                             <div>
                                                 <Input
+                                                    autoFocus
                                                     required
                                                     type="text"
                                                     label="Display Name"
-                                                    id="person-name"
+                                                    id="contact-name"
                                                     {...register("name")}
                                                 />
                                             </div>
@@ -100,9 +105,9 @@ export const PeopleModal = () => {
                                                         autoComplete="off"
                                                         type="text"
                                                         label="First"
-                                                        id="person-first-name"
+                                                        id="contact-first-name"
                                                         {...register(
-                                                            "personMeta.firstName"
+                                                            "contactMeta.firstName"
                                                         )}
                                                     />
                                                 </div>
@@ -111,9 +116,9 @@ export const PeopleModal = () => {
                                                         autoComplete="off"
                                                         type="text"
                                                         label="Last"
-                                                        id="person-last-name"
+                                                        id="contact-last-name"
                                                         {...register(
-                                                            "personMeta.lastName"
+                                                            "contactMeta.lastName"
                                                         )}
                                                     />
                                                 </div>
@@ -124,9 +129,9 @@ export const PeopleModal = () => {
                                                     autoComplete="off"
                                                     type="email"
                                                     label="Email"
-                                                    id="person-primary-email"
+                                                    id="contact-primary-email"
                                                     {...register(
-                                                        "personMeta.primaryEmail"
+                                                        "contactMeta.primaryEmail"
                                                     )}
                                                 />
                                             </div>
@@ -135,21 +140,24 @@ export const PeopleModal = () => {
                                                     autoComplete="off"
                                                     type="tel"
                                                     label="Phone"
-                                                    id="person-primary-phone"
+                                                    id="contact-primary-phone"
                                                     {...register(
-                                                        "personMeta.primaryPhone"
+                                                        "contactMeta.primaryPhone"
                                                     )}
                                                 />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="mt-5 sm:mt-6">
-                                        <button
+                                        <Button
                                             type="submit"
-                                            className="inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+                                            variant="primary"
+                                            className="w-full justify-center"
                                         >
-                                            Save Person
-                                        </button>
+                                            {createContact.isLoading
+                                                ? "Saving..."
+                                                : "Save Contact"}
+                                        </Button>
                                     </div>
                                 </form>
                             </Dialog.Panel>

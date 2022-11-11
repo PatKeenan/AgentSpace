@@ -1,47 +1,39 @@
-import { Fragment, useEffect, useRef } from "react";
+import { ShowingsModal } from "./showings-components/ShowingsModal";
+import { SectionHeading } from "components-layout/SectionHeading";
+import { Button } from "components-common/Button";
+import { Breadcrumb } from "components-layout/Breadcrumb";
+import { PageBody } from "components-layout/PageBody";
+import { NextLink } from "components-common/NextLink";
+import { useShowingsUI } from "./useShowingsUI";
+import { Tabs } from "components-common/Tabs";
+import { trpc } from "utils/trpc";
 import {
-    ChevronDownIcon,
-    ChevronLeftIcon,
+    CalendarIcon,
     ChevronRightIcon,
-    EllipsisHorizontalIcon,
+    MagnifyingGlassIcon,
+    TruckIcon,
 } from "@heroicons/react/20/solid";
 
-import { Menu, Transition } from "@headlessui/react";
-import { NextPageExtended } from "types/index";
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
-import { Breadcrumb } from "components-layout/Breadcrumb";
-import { useRouter } from "next/router";
-import { CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid";
-import clsx from "clsx";
-import {
-    isToday,
-    isThisMonth,
-    isSameDay,
-    isSameMonth,
-    format,
-    isTomorrow,
-    isYesterday,
-} from "date-fns";
-
+import type { NextPageExtended } from "types/index";
+import { MapPinIcon } from "@heroicons/react/24/outline";
+import { formatDate } from "utils/formatDate";
 import * as React from "react";
 import { useWorkspace } from "hooks/useWorkspace";
-import { useCalendar } from "hooks/useCalendar";
+import { useRouter } from "next/router";
 
 export const Showings2Container: NextPageExtended = () => {
-    const {
-        activeMonth,
-        handleChangeMonth,
-        firstDayOffset,
-        allDates,
-        monthName,
-    } = useCalendar({ activeMonth: new Date() });
-
-    const [selectedDate, setSelectedDate] = React.useState<Date>(
-        () => new Date()
-    );
+    const { activeTab, setActiveTab, setModalOpen } = useShowingsUI();
     const router = useRouter();
+
     const workspace = useWorkspace();
+
+    const handleChangeTab = (tab: string) => {
+        setActiveTab(tab as typeof activeTab);
+    };
+    const tabs: { title: typeof activeTab; count?: string }[] = [
+        { title: "Upcoming" },
+        { title: "All Showings" },
+    ];
 
     return (
         <>
@@ -49,144 +41,168 @@ export const Showings2Container: NextPageExtended = () => {
                 items={[
                     {
                         title: "Showings",
-                        href: `/workspace/${router.query.workspaceId}/showings`,
+                        href: `/workspace/${workspace.id}/showings`,
                     },
                 ]}
             />
-            <PageBody>
+            <ShowingsModal />
+            <PageBody fullHeight>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
-                        <SectionHeading.Title>Showings </SectionHeading.Title>
-                        <p className="mt-2 text-lg font-normal">
-                            {isToday(selectedDate)
-                                ? "Today "
-                                : isTomorrow(selectedDate)
-                                ? "Tomorrow "
-                                : isYesterday(selectedDate)
-                                ? "Yesterday "
-                                : `${format(selectedDate, "EEEE")}, `}
-                            {format(selectedDate, "PPP")}
-                        </p>
+                        <SectionHeading.Title>Showings</SectionHeading.Title>
                     </SectionHeading.TitleContainer>
+                    <SectionHeading.Actions>
+                        <>
+                            <label
+                                htmlFor="mobile-search-candidate"
+                                className="sr-only"
+                            >
+                                Search
+                            </label>
+                            <label
+                                htmlFor="desktop-search-candidate"
+                                className="sr-only"
+                            >
+                                Search
+                            </label>
+                            <div className="flex rounded-md shadow-sm">
+                                <div className="relative flex-grow focus-within:z-10">
+                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <MagnifyingGlassIcon
+                                            className="h-5 w-5 text-gray-400"
+                                            aria-hidden="true"
+                                        />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="block w-full border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:hidden"
+                                        placeholder="Search Showings"
+                                    />
+                                    <input
+                                        type="text"
+                                        className="hidden w-full  rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:block sm:text-sm"
+                                        placeholder="Search showings"
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    </SectionHeading.Actions>
                 </SectionHeading>
 
-                <div className="mt-10 lg:grid lg:grid-cols-12 lg:gap-x-16">
-                    <div className="text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-7">
-                        <div className="flex items-center text-gray-900">
-                            <button
-                                type="button"
-                                className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-                                onClick={() => handleChangeMonth("decrement")}
-                            >
-                                <span className="sr-only">Previous month</span>
-                                <ChevronLeftIcon
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                />
-                            </button>
-                            <div className="flex-auto font-semibold">
-                                {monthName}
-                            </div>
-                            <button
-                                type="button"
-                                className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-                                onClick={() => handleChangeMonth("increment")}
-                            >
-                                <span className="sr-only">Next month</span>
-                                <ChevronRightIcon
-                                    className="h-5 w-5"
-                                    aria-hidden="true"
-                                />
-                            </button>
-                        </div>
-                        <div className="mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500">
-                            {["M", "T", "W", "T", "F", "S", "S"].map(
-                                (i, idx) => (
-                                    <div key={idx}>{i}</div>
-                                )
-                            )}
-                        </div>
-                        <div className="isolate mt-2 grid grid-cols-7 gap-px bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-                            {[
-                                ...Array.from(
-                                    Array(
-                                        firstDayOffset !== 0
-                                            ? firstDayOffset - 1
-                                            : 0
-                                    ).keys()
-                                ),
-                            ].map((i) => (
-                                <div className="h-7 w-7" key={i}></div>
-                            ))}
-
-                            {allDates.map((day, dayIdx) => {
-                                const isTodayBoolean = isToday(day);
-                                const isCurrentMonthBoolean = isSameMonth(
-                                    day,
-                                    activeMonth
-                                );
-                                const isSelected = selectedDate
-                                    ? isSameDay(day, selectedDate)
-                                    : false;
-
-                                return (
-                                    <button
-                                        key={dayIdx}
-                                        type="button"
-                                        className={clsx(
-                                            "py-1.5 hover:bg-gray-100 focus:z-10",
-                                            isCurrentMonthBoolean
-                                                ? "bg-white"
-                                                : "bg-gray-50",
-                                            (isSelected || isToday(day)) &&
-                                                "font-semibold",
-                                            isSelected && "text-white",
-                                            !isSelected &&
-                                                isThisMonth(day) &&
-                                                !isTodayBoolean &&
-                                                "text-gray-900",
-                                            !isSelected &&
-                                                !isCurrentMonthBoolean &&
-                                                !isTodayBoolean &&
-                                                "text-gray-400",
-                                            isTodayBoolean &&
-                                                !isSelected &&
-                                                "text-indigo-600"
-                                        )}
-                                        onClick={() => setSelectedDate(day)}
-                                    >
-                                        <time
-                                            dateTime={day.toDateString()}
-                                            className={clsx(
-                                                "relative mx-auto flex h-7 w-7 items-center justify-center rounded-full",
-                                                isSelected &&
-                                                    isTodayBoolean &&
-                                                    "bg-indigo-600",
-                                                isSelected &&
-                                                    !isTodayBoolean &&
-                                                    "bg-gray-900"
-                                            )}
-                                        >
-                                            {String(day.getDate())}
-                                            {!isSelected && isTomorrow(day) && (
-                                                <div className="absolute bottom-0 h-[4px] w-[4px] rounded-full bg-green-600" />
-                                            )}
-                                        </time>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <button
-                            type="button"
-                            className="mt-8 w-full rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Add Showing
-                        </button>
+                <>
+                    <div className="px-4 sm:px-0">
+                        <Tabs
+                            tabs={tabs}
+                            id="showing-tabs"
+                            onTabClick={handleChangeTab}
+                            activeTab={activeTab}
+                            actions={
+                                <Button
+                                    variant="primary"
+                                    onClick={() => setModalOpen(true)}
+                                >
+                                    Add Showing
+                                </Button>
+                            }
+                        />
                     </div>
-                </div>
+                    {/* <ListView workspaceId={workspace.id} /> */}
+                </>
             </PageBody>
         </>
     );
 };
-
 Showings2Container.layout = "dashboard";
+
+/* const ListView = ({ workspaceId }: { workspaceId: string | undefined }) => {
+    const { setModalOpen } = useShowingsUI();
+
+
+    return isLoading ? (
+        <div>Loading...</div>
+    ) : (
+        <>
+            {showingGroups && !showingGroups.length ? (
+                <div className=" mt-2 grid h-full place-items-center rounded-lg border-2 border-dashed border-gray-300 p-2 hover:border-gray-400">
+                    <div className="text-center">
+                        <TruckIcon className="mx-auto h-24 w-24 text-gray-300" />
+                        <p className="text-sm text-gray-400">No Showings</p>
+                        <Button
+                            variant="primary"
+                            className="mt-8"
+                            onClick={() => setModalOpen(true)}
+                        >
+                            Add First Showing
+                        </Button>
+                    </div>
+                </div>
+            ) : (
+                <div className="overflow-hidden bg-white shadow sm:rounded-md">
+                    <ul role="list" className="divide-y divide-gray-200">
+                        {showingGroups?.map((showingGroup) => (
+                            <li key={showingGroup.id}>
+                                <NextLink
+                                    href={`/workspace/${showingGroup.workspace.id}/showings/${showingGroup.id}`}
+                                    className="group block hover:bg-gray-50"
+                                >
+                                    <div className="flex items-center px-4 py-4 sm:px-6">
+                                        <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
+                                            <div className="truncate">
+                                                <p className="truncate font-medium text-gray-600 group-hover:text-purple-600">
+                                                    {showingGroup.title}
+                                                </p>
+                                                <div className="mt-2 flex">
+                                                    <div className="flex items-center text-sm text-gray-500">
+                                                        <CalendarIcon
+                                                            className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                            aria-hidden="true"
+                                                        />
+
+                                                        <time
+                                                            dateTime={formatDate(
+                                                                showingGroup.date
+                                                            )}
+                                                        >
+                                                            {formatDate(
+                                                                showingGroup.date
+                                                            )}
+                                                        </time>
+                                                    </div>
+                                                    <div className="ml-4 flex items-center text-sm text-gray-500">
+                                                        <MapPinIcon
+                                                            className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
+                                                            aria-hidden="true"
+                                                        />
+                                                        <p>
+                                                            {
+                                                                showingGroup
+                                                                    .showings
+                                                                    .length
+                                                            }{" "}
+                                                            showing
+                                                            {showingGroup
+                                                                .showings
+                                                                .length !== 1 &&
+                                                                "s"}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="ml-5 flex-shrink-0">
+                                            <ChevronRightIcon
+                                                className="h-5 w-5 text-gray-400"
+                                                aria-hidden="true"
+                                            />
+                                        </div>
+                                    </div>
+                                </NextLink>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+        </>
+    );
+};
+ */

@@ -1,6 +1,6 @@
+import { dateUtils } from "utils/dateUtils";
 import { addMonths } from "date-fns";
 import * as React from "react";
-import { dateUtils } from "utils/dateUtils";
 
 export const useCalendar = (initialState?: { activeMonth?: Date }) => {
     const startDate = initialState?.activeMonth ?? new Date();

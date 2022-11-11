@@ -11,6 +11,8 @@ type MultiAutoCompleteProps<T, K> = {
     onSelect: (selectedItem: T[]) => void;
     displayField: K;
     icon?: boolean;
+    pluralOrSingle?: true;
+    name?: string;
 };
 
 export function MultiAutoComplete<
@@ -22,18 +24,23 @@ export function MultiAutoComplete<
         selected,
         onSelect,
         displayField,
+        setQuery,
         options,
+        pluralOrSingle,
         icon = true,
+        name,
     } = props;
 
     return (
         <Combobox as="div" value={selected} onChange={onSelect} multiple>
             <Combobox.Label className="block text-sm font-medium text-gray-700">
-                {label}
+                <span>{label}</span>
+                {pluralOrSingle ? <span>&#40;s&#41;</span> : null}
             </Combobox.Label>
             <div className="relative mt-1">
                 <Combobox.Input
-                    onChange={(e) => e}
+                    name={name ?? undefined}
+                    onChange={(event) => setQuery(event.target.value)}
                     className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                     autoComplete="off"
                     displayValue={(options: T[]) =>
