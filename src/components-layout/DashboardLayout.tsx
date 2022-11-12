@@ -10,6 +10,7 @@ import {
     UserGroupIcon,
     TruckIcon,
     RectangleGroupIcon,
+    ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
 
 import {
@@ -68,6 +69,11 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
             name: "Contacts",
             href: `/workspace/${workspace.id}/contacts`,
             icon: UserGroupIcon,
+        },
+        {
+            name: "Tasks",
+            href: `/workspace/${workspace.id}/tasks`,
+            icon: ViewColumnsIcon,
         },
     ];
 
@@ -142,37 +148,40 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     <div className="mt-5 h-0 flex-1 overflow-y-auto">
                                         <nav className="px-2">
                                             <div className="space-y-1">
-                                                {navigation.map((item) => (
-                                                    <NextLink
-                                                        href={item.href}
-                                                        key={item.name}
-                                                        className={clsx(
-                                                            router.pathname ==
-                                                                item.href
-                                                                ? "bg-gray-100 text-gray-900"
-                                                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                                                            "group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
-                                                        )}
-                                                        aria-current={
-                                                            router.pathname ==
-                                                            item.href
-                                                                ? "page"
-                                                                : undefined
-                                                        }
-                                                    >
-                                                        <item.icon
+                                                {navigation.map((item) => {
+                                                    const isActive =
+                                                        router.pathname.startsWith(
+                                                            `/workspace/[workspaceId]/${item.name.toLowerCase()}`
+                                                        );
+                                                    return (
+                                                        <NextLink
+                                                            href={item.href}
+                                                            key={item.name}
                                                             className={clsx(
-                                                                router.pathname ==
-                                                                    item.href
-                                                                    ? "text-gray-500"
-                                                                    : "text-gray-400 group-hover:text-gray-500",
-                                                                "mr-3 h-6 w-6 flex-shrink-0"
+                                                                isActive
+                                                                    ? "bg-gray-100 text-gray-900"
+                                                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                                                                "group flex items-center rounded-md px-2 py-2 text-base font-medium leading-5"
                                                             )}
-                                                            aria-hidden="true"
-                                                        />
-                                                        {item.name}
-                                                    </NextLink>
-                                                ))}
+                                                            aria-current={
+                                                                isActive
+                                                                    ? "page"
+                                                                    : undefined
+                                                            }
+                                                        >
+                                                            <item.icon
+                                                                className={clsx(
+                                                                    isActive
+                                                                        ? "text-gray-500"
+                                                                        : "text-gray-400 group-hover:text-gray-500",
+                                                                    "mr-3 h-6 w-6 flex-shrink-0"
+                                                                )}
+                                                                aria-hidden="true"
+                                                            />
+                                                            {item.name}
+                                                        </NextLink>
+                                                    );
+                                                })}
                                             </div>
                                             <div className="mt-8">
                                                 <NextLink
@@ -405,21 +414,27 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         key={item.name}
                                         href={item.href}
                                         className={clsx(
-                                            router.pathname == item.href
+                                            router.pathname.startsWith(
+                                                `/workspace/[workspaceId]/${item.name.toLowerCase()}`
+                                            )
                                                 ? "bg-gray-200 text-gray-900"
                                                 : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
                                             "group flex items-center rounded-md px-2 py-2 text-sm font-medium"
                                         )}
                                         aria-current={
-                                            router.pathname == item.href
+                                            router.pathname.startsWith(
+                                                `/workspace/[workspaceId]/${item.name.toLowerCase()}`
+                                            )
                                                 ? "page"
                                                 : undefined
                                         }
                                     >
                                         <item.icon
                                             className={clsx(
-                                                router.pathname == item.href
-                                                    ? "text-gray-500"
+                                                router.pathname.startsWith(
+                                                    `/workspace/[workspaceId]/${item.name.toLowerCase()}`
+                                                )
+                                                    ? "text-indigo-600"
                                                     : "text-gray-400 group-hover:text-gray-500",
                                                 "mr-3 h-6 w-6 flex-shrink-0"
                                             )}
