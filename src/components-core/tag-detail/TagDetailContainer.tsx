@@ -1,19 +1,23 @@
 import { PageBody } from "components-layout/PageBody";
 import { SectionHeading } from "components-layout/SectionHeading";
+import { useRouter } from "next/router";
+import React from "react";
 import { NextPageExtended } from "types/index";
 
-export const TagsContainer: NextPageExtended = () => {
+export const TagDetailContainer: NextPageExtended = () => {
+    const router = useRouter();
     return (
         <>
             <PageBody>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
-                        <SectionHeading.Title>Tags</SectionHeading.Title>
+                        <SectionHeading.Title>
+                            Tag Detail container - {router.query.tagId}
+                        </SectionHeading.Title>
                     </SectionHeading.TitleContainer>
                 </SectionHeading>
             </PageBody>
         </>
     );
 };
-
-TagsContainer.layout = "dashboard";
+TagDetailContainer.layout = "dashboard";

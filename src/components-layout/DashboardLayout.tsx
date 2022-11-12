@@ -447,7 +447,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                             <div className="mt-8">
                                 {/* Secondary navigation */}
                                 <NextLink
-                                    href={`workspace/${workspace.id}/tags`}
+                                    href={`/workspace/${workspace.id}/tags`}
                                     className="px-3 text-sm font-medium text-gray-500"
                                     id="desktop-teams-headline"
                                 >

@@ -6,3 +6,5 @@ export * from "./";
 export * from "./NotAuthorized";
 export * from "./home";
 export * from "./tasks";
+export * from "./tag-detail";
+export * from "./tags";
