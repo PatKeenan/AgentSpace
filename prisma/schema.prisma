@@ -131,7 +131,7 @@ model Workspace {
     title            String                   @default("Untitled Workspace")
     createdAt        DateTime                 @default(now())
     usersOnWorkspace UserOnWorkspace[]
-    contact           Contact[]
+    contacts         Contact[]
     tags             Tag[]
     showings         Showing[]
     subscription     SubscriptionOnWorkspace?

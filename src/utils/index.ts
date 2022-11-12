@@ -3,3 +3,4 @@ export * from "./trpc";
 export * from "./customLocalStorage";
 export * from "./formatDate";
 export * from "./dateUtils";
+export * from "./classNames";

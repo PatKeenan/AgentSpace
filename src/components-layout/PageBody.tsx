@@ -11,7 +11,10 @@ export const PageBody = (props: {
     const { fullWidth, fullHeight, noMaxWidth = false, ...rest } = props;
     return fullWidth ? (
         <div
-            className={clsx(fullHeight && "h-full flex-grow", "pt-8 pb-16")}
+            className={clsx(
+                fullHeight && "h-full flex-grow",
+                "pt-2 pb-16 sm:pt-4 lg:pt-8"
+            )}
             {...rest}
         />
     ) : (
@@ -19,13 +22,13 @@ export const PageBody = (props: {
             className={clsx(
                 fullHeight && "h-[calc(100vh-3.5rem)]",
                 noMaxWidth ? "w-full" : "max-w-6xl ",
-                "relative mx-auto md:px-8"
+                "relative mx-auto px-4 md:px-8"
             )}
         >
             <div
                 className={clsx(
                     fullHeight && "flex h-full flex-1 flex-col overflow-auto",
-                    "pt-8 pb-16"
+                    "pt-2 pb-16 sm:pt-4 lg:pt-8"
                 )}
                 {...rest}
             />

@@ -18,7 +18,6 @@ export const ShowingDetailList = (props: ShowingDetailListProps) => {
 
     return (
         <>
-            {/*   <AddShowingModal handleAddShowing={handleAddShowing} /> */}
             <div className="block">
                 <Button
                     variant="outlined"
@@ -31,16 +30,6 @@ export const ShowingDetailList = (props: ShowingDetailListProps) => {
                     />
                     Add Showing
                 </Button>
-                {/* 
-                <ol className="mt-3 divide-y divide-gray-100">
-                    {showings?.map((showing, index) => (
-                        <ShowingStopCard
-                            key={index}
-                            showing={showing}
-                            index={index}
-                        />
-                    ))}
-                </ol> */}
             </div>
         </>
     );

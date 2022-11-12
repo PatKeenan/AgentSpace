@@ -10,6 +10,7 @@ export function useWorkspace() {
 
     return {
         id,
+        getDashboard: workspace.getDashboard.useQuery,
         getAll: workspace.getAll.useQuery,
         getUsers: workspace.getUsers.useQuery,
         getUser: workspace.getUser.useQuery,

@@ -49,6 +49,28 @@ export const workspaceRouter = t.router({
                 },
             });
         }),
+    getDashboard: authedProcedure
+        .input(
+            z.object({
+                workspaceId: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.workspace.findUnique({
+                where: {
+                    id: input.workspaceId,
+                },
+                select: {
+                    title: true,
+                    _count: {
+                        select: {
+                            showings: true,
+                            contacts: true,
+                        },
+                    },
+                },
+            });
+        }),
     create: authedProcedure
         .input(
             z.object({

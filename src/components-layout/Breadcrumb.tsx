@@ -22,7 +22,10 @@ export const Breadcrumb = (props: BreadcrumbType) => {
     };
 
     return (
-        <nav className="flex px-4 py-4 sm:px-6 lg:px-8" aria-label="Breadcrumb">
+        <nav
+            className="flex px-4 pt-2 sm:px-6 md:py-4 lg:px-8"
+            aria-label="Breadcrumb"
+        >
             <ol role="list" className="flex items-center space-x-4">
                 <li>
                     <div>
