@@ -8,6 +8,7 @@ import { trpc } from "utils/trpc";
 import "../styles/globals.css";
 
 import type { Session } from "next-auth";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
 const MyApp: AppType<{ session: Session | null }> = ({
     Component,
