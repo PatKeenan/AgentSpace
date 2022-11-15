@@ -262,7 +262,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                                 options={
                                                     contactsQuery?.data ?? []
                                                 }
-                                                displayField={"name"}
+                                                displayField={"displayName"}
                                                 icon={false}
                                             />
                                         </div>
@@ -284,7 +284,7 @@ export const AddShowingModal = (props: AddShowingModalProps) => {
                                                 options={
                                                     agentsQuery?.data ?? []
                                                 }
-                                                displayField="name"
+                                                displayField="displayName"
                                                 icon={false}
                                             />
                                         </div>

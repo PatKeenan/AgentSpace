@@ -10,7 +10,10 @@ type TextAreaProps = {
     containerClass?: string;
 } & Omit<React.ComponentProps<"textarea">, "name">;
 
-export const ContactFormTextArea = (props: TextAreaProps) => {
+export const ContactFormTextArea = React.forwardRef<
+    HTMLTextAreaElement,
+    TextAreaProps
+>((props, forwardedRef) => {
     const {
         wasSubmitted,
         name,
@@ -41,6 +44,7 @@ export const ContactFormTextArea = (props: TextAreaProps) => {
             </label>
             <div className="relative mt-1 sm:col-span-2 sm:mt-0">
                 <textarea
+                    ref={forwardedRef}
                     name={name}
                     id={`${name}-input`}
                     autoComplete="off"
@@ -78,4 +82,5 @@ export const ContactFormTextArea = (props: TextAreaProps) => {
             </div>
         </div>
     );
-};
+});
+ContactFormTextArea.displayName = "ContactFormTextArea";

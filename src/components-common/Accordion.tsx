@@ -9,6 +9,7 @@ export function Accordion({
     className,
     toggleContainer,
     defaultOpen,
+    titleContainer,
 }: {
     label: string;
     description?: string;
@@ -16,6 +17,7 @@ export function Accordion({
     flag?: React.ReactNode | React.ReactNode[];
     children: React.ReactNode | React.ReactNode[];
     toggleContainer?: React.ReactNode | React.ReactNode[];
+    titleContainer?: React.ReactNode | React.ReactNode[];
     defaultOpen?: boolean;
 }) {
     return (
@@ -34,6 +36,7 @@ export function Accordion({
                                         <h3 className="text-lg font-medium leading-6 text-gray-900">
                                             {label}
                                         </h3>
+                                        {titleContainer}
                                     </div>
 
                                     {description ? (

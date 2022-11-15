@@ -6,7 +6,6 @@ import { Breadcrumb } from "components-layout/Breadcrumb";
 import { NextLink } from "components-common/NextLink";
 import { PageBody } from "components-layout/PageBody";
 import { useWorkspace } from "hooks/useWorkspace";
-import { CreateContactModal } from "./contacts-components";
 import { useContactsUI } from "./useContactsUI";
 import { useContacts } from "hooks/useContacts";
 import { useRouter } from "next/router";
@@ -117,7 +116,6 @@ export const ContactsContainer: NextPageExtended = () => {
     };
     return (
         <PageBody>
-            <CreateContactModal />
             <SectionHeading>
                 <SectionHeading.TitleContainer>
                     <SectionHeading.Title>Contacts</SectionHeading.Title>
@@ -307,16 +305,17 @@ export const ContactsContainer: NextPageExtended = () => {
                                                             href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
                                                             className="hover:text-purple-600"
                                                         >
-                                                            {contact.name}
+                                                            {
+                                                                contact.displayName
+                                                            }
                                                         </NextLink>
                                                     </td>
 
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                        {meta?.primaryEmail ||
-                                                            "---"}
+                                                        {meta?.email || "---"}
                                                     </td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                        {meta?.primaryPhone ||
+                                                        {meta?.phoneNumber ||
                                                             "---"}
                                                     </td>
 
@@ -327,7 +326,10 @@ export const ContactsContainer: NextPageExtended = () => {
                                                         >
                                                             Edit
                                                             <span className="sr-only">
-                                                                , {contact.name}
+                                                                ,{" "}
+                                                                {
+                                                                    contact.displayName
+                                                                }
                                                             </span>
                                                         </a>
                                                     </td>

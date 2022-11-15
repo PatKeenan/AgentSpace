@@ -10,22 +10,22 @@ export const Schemas = {
 //Start Contact Schema
 
 function contactSchema() {
-    const metaBase = z.object({
-        firstName: z.string(),
+    const meta = z.object({
+        firstName: z
+            .string()
+            .trim()
+            .min(2, "Display name must be greater than 2 characters"),
         lastName: z.string().optional(),
-        isPrimaryContact: z.boolean().default(false),
-        primaryEmail: z.string().email().optional(),
-        secondaryEmail: z.string().email().optional(),
-        primaryPhone: z.string().optional(),
-        secondaryPhone: z.string().optional(),
+        phoneNumber: z.string().optional(),
+        email: z.string().trim().email().optional().or(z.literal("")),
     });
 
     const contactBase = z.object({
-        name: z.string(),
-        workspaceId: z.string(),
-        referredById: z.string().optional(),
-        contactMeta: metaBase,
-        deleted: z.boolean().optional(),
+        displayName: z
+            .string()
+            .trim()
+            .min(2, "Display name must be greater than 2 characters"),
+        notes: z.string().trim().optional().or(z.literal("")),
     });
 
     const onShowingCreate = z.object({
@@ -35,7 +35,7 @@ function contactSchema() {
 
     const create = {
         contact: contactBase,
-        meta: metaBase,
+        meta: meta,
         onShowing: onShowingCreate,
     };
 

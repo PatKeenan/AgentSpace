@@ -171,7 +171,7 @@ export const ShowingCard = (props: ShowingCardProps) => {
                                                 href={`/workspace/${showing.workspaceId}/contacts/${i.contact.id}`}
                                                 className="mr-1 hover:underline"
                                             >
-                                                {i.contact.name}
+                                                {i.contact.displayName}
                                             </NextLink>
                                         </li>
                                     )) || "--"}
@@ -198,7 +198,7 @@ export const ShowingCard = (props: ShowingCardProps) => {
                                                 href={`/workspace/${showing.workspaceId}/contacts/${i.contact.id}`}
                                                 className="mr-1 hover:underline"
                                             >
-                                                {i.contact.name}
+                                                {i.contact.displayName}
                                             </NextLink>
                                         </li>
                                     ))}

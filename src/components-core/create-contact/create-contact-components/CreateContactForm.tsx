@@ -1,44 +1,103 @@
+import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { MinusCircleIcon } from "@heroicons/react/24/outline";
-import clsx from "clsx";
-import { Accordion } from "components-common/Accordion";
-import { Button } from "components-common/Button";
-import * as React from "react";
-import { ContactFormInput } from "./ContactFormInput";
 import { ContactFormTextArea } from "./ContactFormTextArea";
+import { Accordion } from "components-common/Accordion";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ContactFormInput } from "./ContactFormInput";
+import { Button, ButtonLink } from "components-common/Button";
+import { useForm } from "react-hook-form";
+import * as React from "react";
+import * as z from "zod";
+import { Schemas } from "server/schemas";
+import { useContacts } from "hooks/useContacts";
+import { useWorkspace } from "hooks/useWorkspace";
+import { useRouter } from "next/router";
+
+const initialMeta = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+};
 
 const initialState = {
     "display-name": "",
+    notes: "",
+    fields: [{ ...initialMeta }],
 };
 
-const initialMeta = { firstName: "", lastName: "", email: "", phoneNumber: "" };
+const contactSchema = Schemas.contact();
+
+const createContactFormSchema = contactSchema.create.contact.extend({
+    fields: z.array(contactSchema.create.meta),
+});
+
+type CreateContactFormType = z.infer<typeof createContactFormSchema>;
 
 export const CreateContactForm = () => {
-    const [formState, setFormState] = React.useState(() => initialState);
+    const [metaFields, setMetaFields] = React.useState<
+        CreateContactFormType["fields"]
+    >([{ ...initialMeta }]);
+    const workspace = useWorkspace();
+    const contacts = useContacts();
+    const router = useRouter();
 
-    const [metaFields, setMetaFields] = React.useState([{ ...initialMeta }]);
+    const createContact = contacts.createContact();
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-    };
+    const {
+        register,
+        getValues,
+        setValue,
+        setError,
+        handleSubmit: formSubmit,
+        formState: { errors },
+    } = useForm<CreateContactFormType>({
+        defaultValues: initialState,
+        resolver: zodResolver(createContactFormSchema),
+    });
 
-    const handleChangeMeta = (
-        index: number,
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const data = [...metaFields];
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        data[index][e.target.name] = e.target.value;
-        return setMetaFields(data);
-    };
+    const handleSubmit = formSubmit(async (data) => {
+        const { fields, ...rest } = data;
+        createContact.mutate(
+            {
+                ...rest,
+                workspaceId: workspace.id as string,
+                contactMeta: fields,
+            },
+            {
+                onSuccess: (data) =>
+                    router.push(
+                        `/workspace/${data.workspaceId}/contacts/${data.id}`
+                    ),
+            }
+        );
+    });
 
     const addFields = () => {
+        const fields = getValues("fields");
+        const newFields = [...fields, { ...initialMeta }];
+        setValue("fields", newFields);
         setMetaFields((prev) => [...prev, { ...initialMeta }]);
     };
+
     const removeField = (index: number) => {
-        const fields = [...metaFields];
+        const fields = [...getValues("fields")];
         fields.splice(index, 1);
+        setValue("fields", fields);
+        if (errors && errors.fields) {
+            removeErrors(index);
+        }
         setMetaFields(fields);
+    };
+
+    const removeErrors = (index: number) => {
+        if (errors.fields && errors.fields.length) {
+            const oldFields = errors.fields as Partial<
+                CreateContactFormType["fields"]
+            >;
+            oldFields.splice(index, 1);
+            setError("fields", oldFields as typeof errors.fields);
+        }
     };
 
     return (
@@ -53,32 +112,43 @@ export const CreateContactForm = () => {
                     description="This information will be
                                                 displayed publicly so be careful
                                                 what you share."
+                    titleContainer={
+                        errors["displayName"] ? (
+                            <ExclamationCircleIcon
+                                className="h-5 w-5 text-red-500"
+                                aria-hidden="true"
+                            />
+                        ) : null
+                    }
                 >
                     <div className="space-y-6 sm:space-y-5">
-                        <div className="space-y-6 sm:space-y-5">
-                            <ContactFormInput
-                                label="Display Name"
-                                name="name"
-                                className="max-w-xs"
-                                required
-                            />
-                            <ContactFormInput
-                                label="Tags"
-                                name="tags"
-                                className="max-w-xs"
-                            />
-                            <ContactFormInput
-                                label="Referred By"
-                                name="referredBy"
-                                className="max-w-xs"
-                            />
-                            <ContactFormTextArea
-                                label="Notes"
-                                name="notes"
-                                className="max-w-lg"
-                                rows={3}
-                            />
-                        </div>
+                        <ContactFormInput
+                            required
+                            label="Display Name"
+                            className="max-w-xs"
+                            {...register("displayName")}
+                            errorMessage={
+                                errors["displayName"] &&
+                                errors["displayName"].message
+                            }
+                        />
+
+                        <ContactFormInput
+                            label="Tags"
+                            name="tags"
+                            className="max-w-xs"
+                        />
+                        <ContactFormInput
+                            label="Referred By"
+                            name="referredBy"
+                            className="max-w-xs"
+                        />
+                        <ContactFormTextArea
+                            label="Notes"
+                            className="max-w-lg"
+                            {...register("notes")}
+                            rows={3}
+                        />
                     </div>
                 </Accordion>
             </div>
@@ -88,7 +158,7 @@ export const CreateContactForm = () => {
                     label="Mailing Address"
                     description="Use a permanent address where you can
                                     receive mail."
-                    className="pt-6"
+                    className={"pt-6"}
                 >
                     <div className="space-y-6 sm:space-y-5">
                         <ContactFormInput
@@ -115,9 +185,9 @@ export const CreateContactForm = () => {
                 </Accordion>
             </div>
             <div className="divide-y divide-gray-200">
-                {metaFields.map((fields, idx) => (
+                {metaFields?.map((_, idx) => (
                     <Accordion
-                        defaultOpen={idx == 0}
+                        defaultOpen={true}
                         key={idx}
                         label={
                             idx == 0
@@ -129,6 +199,14 @@ export const CreateContactForm = () => {
                             idx == 0
                                 ? "This information will be used for communication and scheduling."
                                 : ""
+                        }
+                        titleContainer={
+                            errors.fields && errors?.fields[idx] ? (
+                                <ExclamationCircleIcon
+                                    className="h-5 w-5 text-red-500"
+                                    aria-hidden="true"
+                                />
+                            ) : null
                         }
                         toggleContainer={
                             idx !== 0 ? (
@@ -151,34 +229,48 @@ export const CreateContactForm = () => {
                         <div className="space-y-6 sm:space-y-5">
                             <ContactFormInput
                                 label="First Name"
-                                required
-                                name="firstName"
-                                value={fields.firstName}
+                                {...register(`fields.${idx}.firstName`)}
                                 className="max-w-xs"
-                                onChange={(e) => handleChangeMeta(idx, e)}
+                                required
+                                errorMessage={
+                                    errors.fields &&
+                                    errors.fields[idx]?.firstName &&
+                                    errors.fields[idx]?.firstName?.message
+                                }
                             />
                             <ContactFormInput
                                 label="Last Name"
-                                name="lastName"
-                                value={fields.lastName}
+                                {...register(`fields.${idx}.lastName`)}
                                 className="max-w-xs"
-                                onChange={(e) => handleChangeMeta(idx, e)}
+                                errorMessage={
+                                    errors.fields &&
+                                    errors.fields[idx]?.lastName &&
+                                    errors.fields[idx]?.lastName?.message
+                                }
                             />
                             <ContactFormInput
                                 label="Email"
-                                name="email"
+                                {...register(`fields.${idx}.email`, {
+                                    required: false,
+                                })}
                                 type="email"
-                                value={fields.email}
                                 className="max-w-lg"
-                                onChange={(e) => handleChangeMeta(idx, e)}
+                                errorMessage={
+                                    errors.fields &&
+                                    errors.fields[idx]?.email &&
+                                    errors.fields[idx]?.email?.message
+                                }
                             />
                             <ContactFormInput
                                 label="Phone Number"
-                                name="phoneNumber"
+                                {...register(`fields.${idx}.phoneNumber`)}
                                 type="tel"
-                                value={fields.email}
                                 className="max-w-xs"
-                                onChange={(e) => handleChangeMeta(idx, e)}
+                                errorMessage={
+                                    errors.fields &&
+                                    errors.fields[idx]?.phoneNumber &&
+                                    errors.fields[idx]?.phoneNumber?.message
+                                }
                             />
                         </div>
                     </Accordion>
@@ -196,10 +288,15 @@ export const CreateContactForm = () => {
             </div>
 
             <div className="pt-5">
-                <div className="flex justify-end space-x-2">
-                    <Button variant="outlined">Cancel</Button>
+                <div className="flex justify-end space-x-4">
+                    <ButtonLink
+                        href={`/workspace/${workspace.id}/contacts`}
+                        variant="outlined"
+                    >
+                        Cancel
+                    </ButtonLink>
                     <Button variant="primary" type="submit">
-                        Save
+                        Save Contact
                     </Button>
                 </div>
             </div>

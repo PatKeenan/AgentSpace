@@ -42,7 +42,7 @@ export const contactsRouter = t.router({
                         {
                             OR: [
                                 {
-                                    name: {
+                                    displayName: {
                                         startsWith: input.query,
                                         mode: "insensitive",
                                     },
@@ -87,16 +87,28 @@ export const contactsRouter = t.router({
             });
         }),
     createContact: authedProcedure
-        .input(contactSchema.create.contact)
+        .input(
+            contactSchema.create.contact.extend({
+                contactMeta: z.array(contactSchema.create.meta),
+                workspaceId: z.string(),
+            })
+        )
         .mutation(async ({ ctx, input }) => {
             const { contactMeta, ...contactData } = input;
+            const additionalMeta = contactMeta.slice(0, 1);
+            const primaryMeta = contactMeta[0];
+            const formattedMeta = [
+                { ...primaryMeta, isPrimaryContact: true },
+                ...additionalMeta,
+            ];
             return await ctx.prisma.contact.create({
                 data: {
                     ...contactData,
+                    workspaceId: input.workspaceId,
                     createdById: ctx.session.user.id,
                     contactMeta: {
-                        create: {
-                            ...contactMeta,
+                        createMany: {
+                            data: [...formattedMeta],
                         },
                     },
                 },

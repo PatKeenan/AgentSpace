@@ -49,7 +49,7 @@ export const showingsRouter = t.router({
                             contact: {
                                 select: {
                                     id: true,
-                                    name: true,
+                                    displayName: true,
                                 },
                             },
                         },

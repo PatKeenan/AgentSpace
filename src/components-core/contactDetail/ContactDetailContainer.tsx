@@ -32,7 +32,7 @@ export const ContactDetailContainer: NextPageExtended = () => {
                         href: `/workspace/${workspace.id}/contacts`,
                     },
                     {
-                        title: contact?.name ?? "Person Detail",
+                        title: contact?.displayName ?? "Person Detail",
                         href: `/workspace/${workspace.id}/contacts/${contact?.id}`,
                     },
                 ]}
@@ -41,7 +41,7 @@ export const ContactDetailContainer: NextPageExtended = () => {
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>
-                            {contact?.name}
+                            {contact?.displayName}
                         </SectionHeading.Title>
                     </SectionHeading.TitleContainer>
                 </SectionHeading>

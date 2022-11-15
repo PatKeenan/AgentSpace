@@ -1,16 +1,9 @@
-import {
-    CalendarIcon,
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    EllipsisHorizontalIcon,
-    MapPinIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { SectionHeading, Breadcrumb, PageBody } from "components-layout";
 import { useWorkspace, useCalendar, useShowings } from "hooks";
 import { Loading, NoData, Button } from "components-common";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
-import { exists } from "utils/helpers";
 import * as React from "react";
 import clsx from "clsx";
 import {

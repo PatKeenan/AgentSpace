@@ -1,4 +1,10 @@
-import { ContactOnShowingRole, Showing, ShowingStatus } from "@prisma/client";
+import {
+    Contact,
+    ContactMeta,
+    ContactOnShowingRole,
+    Showing,
+    ShowingStatus,
+} from "@prisma/client";
 import { MapboxPlaces } from "types/map-box";
 
 interface Id {
@@ -16,8 +22,8 @@ export interface Status extends Id {
 
 export type ShowingFormState = {
     address: MapboxPlaces["features"] | undefined;
-    clients?: Person[];
-    agents?: Person[];
+    clients?: Contact[];
+    agents?: Contact[];
     status?: Status | undefined;
     startTime?: string;
     endTime?: string;
@@ -30,10 +36,7 @@ export type ShowingCardProps = {
     showing: Showing & {
         contacts: {
             role: ContactOnShowingRole;
-            contact: {
-                id: string;
-                name: string;
-            };
+            contact: Partial<Contact>;
         }[];
     };
 };
