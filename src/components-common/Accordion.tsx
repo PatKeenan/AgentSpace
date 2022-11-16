@@ -54,7 +54,7 @@ export function Accordion({
                             {toggleContainer}
                         </div>
                         <Transition>
-                            <Disclosure.Panel className="pt-4 pb-2 text-sm text-gray-500">
+                            <Disclosure.Panel className="pt-4 pb-2 text-sm">
                                 {children}
                             </Disclosure.Panel>
                         </Transition>
