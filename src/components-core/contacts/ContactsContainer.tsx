@@ -129,42 +129,6 @@ export const ContactsContainer: NextPageExtended = () => {
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>Contacts</SectionHeading.Title>
                     </SectionHeading.TitleContainer>
-                    <SectionHeading.Actions>
-                        <>
-                            <label
-                                htmlFor="mobile-search-candidate"
-                                className="sr-only"
-                            >
-                                Search
-                            </label>
-                            <label
-                                htmlFor="desktop-search-candidate"
-                                className="sr-only"
-                            >
-                                Search
-                            </label>
-                            <div className="flex rounded-md shadow-sm">
-                                <div className="relative flex-grow focus-within:z-10">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                        <MagnifyingGlassIcon
-                                            className="h-5 w-5 text-gray-400"
-                                            aria-hidden="true"
-                                        />
-                                    </div>
-                                    <input
-                                        type="text"
-                                        className="block w-full border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:hidden"
-                                        placeholder="Search Contacts"
-                                    />
-                                    <input
-                                        type="text"
-                                        className="hidden w-full  rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:block sm:text-sm"
-                                        placeholder="Search contacts"
-                                    />
-                                </div>
-                            </div>
-                        </>
-                    </SectionHeading.Actions>
                 </SectionHeading>
                 <div className="mt-7">
                     <div className="sm:flex sm:items-center">

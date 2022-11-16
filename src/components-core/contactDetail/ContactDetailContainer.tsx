@@ -1,29 +1,45 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
 import { Loading } from "components-common/Loading";
 import { useContacts, useWorkspace } from "hooks";
+import type { NextPageExtended } from "types/index";
+import { Tabs } from "components-common/Tabs";
 import { useRouter } from "next/router";
 import { exists } from "utils/helpers";
+import dynamic from "next/dynamic";
+import * as React from "react";
+import { useContactDetailUi } from "./useContactDetailUi";
 
-import type { NextPageExtended } from "types/index";
+const ContactDetailOverview = dynamic(
+    () => import("./contact-detail-components/ContactDetailOverview"),
+    { suspense: true }
+);
+const ContactDetailShowings = dynamic(
+    () => import("./contact-detail-components/ContactDetailShowings"),
+    { suspense: true }
+);
+
+type ContactDetailTabs = "Overview" | "Showings";
+
+const tabs: { title: ContactDetailTabs }[] = [
+    { title: "Overview" },
+    { title: "Showings" },
+];
+
+const activeContactDetailTabView: { [key in ContactDetailTabs]: JSX.Element } =
+    {
+        Overview: <ContactDetailOverview />,
+        Showings: <ContactDetailShowings />,
+    };
 
 export const ContactDetailContainer: NextPageExtended = () => {
-    const workspace = useWorkspace();
+    const [activeTabTitle, setActiveTabTitle] =
+        React.useState<ContactDetailTabs>("Overview");
     const router = useRouter();
-    const contacts = useContacts();
 
-    const id = router.query.contactId;
+    const workspace = useWorkspace();
+    const { contactDisplayName } = useContactDetailUi();
 
-    const {
-        data: contact,
-        isLoading: loadingPerson,
-        isError: contactError,
-    } = contacts.getOne(
-        { id: id as string, workspaceId: workspace.id as string },
-        { enabled: exists(id) && exists(workspace.id) }
-    );
-    return !contact && loadingPerson ? (
-        <Loading />
-    ) : (
+    return (
         <>
             <Breadcrumb
                 items={[
@@ -32,24 +48,31 @@ export const ContactDetailContainer: NextPageExtended = () => {
                         href: `/workspace/${workspace.id}/contacts`,
                     },
                     {
-                        title: contact?.displayName ?? "Person Detail",
-                        href: `/workspace/${workspace.id}/contacts/${contact?.id}`,
+                        title: contactDisplayName ?? "Contact Detail",
+                        href: `/workspace/${workspace.id}/contacts/${router.query.contactId}`,
                     },
                 ]}
             />
-            <PageBody>
+            <PageBody extraClassName="max-w-8xl">
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>
-                            {contact?.displayName}
+                            {contactDisplayName ?? "Contact Details"}
                         </SectionHeading.Title>
                     </SectionHeading.TitleContainer>
                 </SectionHeading>
-                {contact?.contactMeta.map((i) => (
-                    <div key={i.id}>
-                        <p>First: {i.firstName}</p> <p>Last: {i.lastName}</p>
-                    </div>
-                ))}
+                <div className="mb-6">
+                    <Tabs
+                        id="contact-detail-tabs"
+                        onTabClick={(tab) =>
+                            setActiveTabTitle(tab as ContactDetailTabs)
+                        }
+                        tabs={tabs}
+                    />
+                </div>
+                <React.Suspense fallback={"Loading..."}>
+                    {activeContactDetailTabView[activeTabTitle]}
+                </React.Suspense>
             </PageBody>
         </>
     );

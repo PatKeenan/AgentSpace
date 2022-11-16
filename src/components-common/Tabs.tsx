@@ -9,13 +9,25 @@ type Tab = {
 type TabProps = {
     tabs: Tab[];
     id: string;
-    activeTab: string;
+    activeTab?: string;
     actions?: React.ReactNode | React.ReactNode[];
-    onTabClick: (tab: string) => void;
+    onTabClick?: (tab: string) => void;
 };
 
 export const Tabs = (props: TabProps) => {
-    const { tabs, id, actions, onTabClick, activeTab } = props;
+    const { tabs, id, actions, onTabClick, activeTab: activeTabTitle } = props;
+
+    const [active, setActive] = React.useState(() =>
+        activeTabTitle ? tabs.map((i) => i.title).indexOf(activeTabTitle) : 0
+    );
+
+    const handleSetActive = (idx: number) => {
+        const selectedTab = tabs[idx];
+        setActive(idx);
+        if (onTabClick && selectedTab && selectedTab.title) {
+            onTabClick(selectedTab.title);
+        }
+    };
 
     return (
         <>
@@ -29,11 +41,10 @@ export const Tabs = (props: TabProps) => {
                     className={clsx(
                         "mt-4 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
                     )}
-                    value={tabs.find((tab) => tab.title == activeTab)?.title}
+                    value={tabs[active]?.title}
                     onChange={(e) =>
-                        onTabClick(
-                            tabs.find((tab) => tab.title == e.target.value)
-                                ?.title as string
+                        handleSetActive(
+                            tabs.map((i) => i.title).indexOf(e.target.value)
                         )
                     }
                 >
@@ -49,22 +60,22 @@ export const Tabs = (props: TabProps) => {
                         className={clsx("mt-2 -mb-px flex space-x-8")}
                         aria-label="Tabs"
                     >
-                        {tabs.map((tab) => (
+                        {tabs.map((tab, idx) => (
                             <button
                                 key={tab.title}
                                 className={clsx(
-                                    activeTab == tab.title
+                                    idx == active
                                         ? "border-purple-500 text-purple-600"
                                         : "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
                                     "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                                 )}
-                                onClick={() => onTabClick(tab.title)}
+                                onClick={() => handleSetActive(idx)}
                             >
                                 {tab.title}
                                 {tab.count ? (
                                     <span
                                         className={clsx(
-                                            activeTab == tab.title
+                                            idx == active
                                                 ? "bg-purple-100 text-purple-600"
                                                 : "bg-gray-100 text-gray-900",
                                             "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
