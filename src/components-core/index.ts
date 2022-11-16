@@ -8,3 +8,4 @@ export * from "./home";
 export * from "./tasks";
 export * from "./tag-detail";
 export * from "./tags";
+export * from "./projects-create";

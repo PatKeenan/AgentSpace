@@ -1,6 +1,8 @@
 import { Schemas } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
-import { z } from "zod";
+import { boolean, z } from "zod";
+import { exists } from "utils/helpers";
+import { ContactMeta } from "@prisma/client";
 
 const contactSchema = Schemas.contact();
 
@@ -95,12 +97,18 @@ export const contactsRouter = t.router({
         )
         .mutation(async ({ ctx, input }) => {
             const { contactMeta, ...contactData } = input;
-            const additionalMeta = contactMeta.slice(0, 1);
-            const primaryMeta = contactMeta[0];
-            const formattedMeta = [
-                { ...primaryMeta, isPrimaryContact: true },
-                ...additionalMeta,
-            ];
+
+            const metaData: (typeof contactMeta[number] & {
+                isPrimaryContact?: boolean;
+            })[] = contactMeta;
+            if (
+                metaData &&
+                metaData.length >= 1 &&
+                typeof metaData[0] !== "undefined"
+            ) {
+                metaData[0].isPrimaryContact = true;
+            }
+
             return await ctx.prisma.contact.create({
                 data: {
                     ...contactData,
@@ -108,7 +116,7 @@ export const contactsRouter = t.router({
                     createdById: ctx.session.user.id,
                     contactMeta: {
                         createMany: {
-                            data: [...formattedMeta],
+                            data: [...metaData],
                         },
                     },
                 },
