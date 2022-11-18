@@ -434,7 +434,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 router.pathname.startsWith(
                                                     `/workspace/[workspaceId]/${item.name.toLowerCase()}`
                                                 )
-                                                    ? "text-indigo-600"
+                                                    ? "text-gray-600"
                                                     : "text-gray-400 group-hover:text-gray-500",
                                                 "mr-3 h-6 w-6 flex-shrink-0"
                                             )}

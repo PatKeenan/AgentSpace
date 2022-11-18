@@ -49,7 +49,7 @@ export const DetailsRow = (
                 {title}
             </dt>
             <dd className={clsx(colSpan[valueSpan], "truncate text-gray-600")}>
-                {value}
+                {String(value).trim().length > 0 ? value : "---"}
             </dd>
             {action ? (
                 <div className={clsx(colSpan[actionSpan], "ml-auto")}>
