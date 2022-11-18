@@ -1,2 +1,2 @@
 export * from "./ContactDetailOverview";
-export * from "./ContactDetailShowings";
+export * from "./ContactDetailAppointments";

@@ -64,7 +64,7 @@ export const workspaceRouter = t.router({
                     title: true,
                     _count: {
                         select: {
-                            showings: true,
+                            appointments: true,
                             contacts: true,
                         },
                     },

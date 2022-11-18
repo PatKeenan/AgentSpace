@@ -161,10 +161,10 @@ export const HomeContainer: NextPageExtended = () => {
                                     <div className="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
                                         <div className="px-6 py-5 text-center text-sm font-medium">
                                             <span className="text-gray-900">
-                                                {data?._count.showings}
+                                                {data?._count.appointments}
                                             </span>{" "}
                                             <span className="text-gray-600">
-                                                Showings
+                                                Appointments
                                             </span>
                                         </div>
                                         <div className="px-6 py-5 text-center text-sm font-medium">

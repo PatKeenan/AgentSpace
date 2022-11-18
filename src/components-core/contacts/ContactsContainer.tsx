@@ -327,7 +327,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                     >
                                         <div className="hidden sm:block">
                                             <p className="text-sm text-gray-700">
-                                                Showing{" "}
+                                                Appointments{" "}
                                                 <span className="font-medium">
                                                     1
                                                 </span>{" "}

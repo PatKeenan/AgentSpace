@@ -56,19 +56,19 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
             icon: HomeIcon,
         },
         {
-            name: "Showings",
-            href: `/workspace/${workspace.id}/showings`,
+            name: "Contacts",
+            href: `/workspace/${workspace.id}/contacts`,
+            icon: UserGroupIcon,
+        },
+        {
+            name: "Appointments",
+            href: `/workspace/${workspace.id}/appointments`,
             icon: TruckIcon,
         },
         {
             name: "Projects",
             href: `/workspace/${workspace.id}/projects`,
             icon: RectangleGroupIcon,
-        },
-        {
-            name: "Contacts",
-            href: `/workspace/${workspace.id}/contacts`,
-            icon: UserGroupIcon,
         },
         {
             name: "Tasks",

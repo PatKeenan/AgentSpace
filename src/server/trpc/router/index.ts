@@ -3,7 +3,7 @@ import { t } from "../trpc";
 import { authRouter } from "./auth";
 import { addressSearchRouter } from "./addressSearch";
 import { workspaceRouter } from "./workspaceRouter";
-import { showingsRouter } from "./showingsRouter";
+import { appointmentRouter } from "./appointmentRouter";
 import { tagsRouter } from "./tagsRouter";
 import { contactsRouter } from "./contactsRouter";
 import { userRouter } from "./userRouter";
@@ -12,7 +12,7 @@ export const appRouter = t.router({
     auth: authRouter,
     addressSearch: addressSearchRouter,
     workspace: workspaceRouter,
-    showing: showingsRouter,
+    appointment: appointmentRouter,
     tags: tagsRouter,
     contacts: contactsRouter,
     user: userRouter,

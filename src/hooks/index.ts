@@ -3,4 +3,4 @@ export * from "./useWorkspace";
 export * from "./useContacts";
 export * from "./useDebounce";
 export * from "./useCalendar";
-export * from "./useShowings";
+export * from "./useAppointments";

@@ -9,3 +9,5 @@ export * from "./tasks";
 export * from "./tag-detail";
 export * from "./tags";
 export * from "./projects-create";
+export * from "./appointments";
+export * from "./appointment-detail";

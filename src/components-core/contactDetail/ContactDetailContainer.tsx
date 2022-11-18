@@ -15,22 +15,22 @@ const ContactDetailOverview = dynamic(
     () => import("./contact-detail-components/ContactDetailOverview"),
     { suspense: true }
 );
-const ContactDetailShowings = dynamic(
-    () => import("./contact-detail-components/ContactDetailShowings"),
+const ContactDetailAppointments = dynamic(
+    () => import("./contact-detail-components/ContactDetailAppointments"),
     { suspense: true }
 );
 
-type ContactDetailTabs = "Overview" | "Showings";
+type ContactDetailTabs = "Overview" | "Appointments";
 
 const tabs: { title: ContactDetailTabs }[] = [
     { title: "Overview" },
-    { title: "Showings" },
+    { title: "Appointments" },
 ];
 
 const activeContactDetailTabView: { [key in ContactDetailTabs]: JSX.Element } =
     {
         Overview: <ContactDetailOverview />,
-        Showings: <ContactDetailShowings />,
+        Appointments: <ContactDetailAppointments />,
     };
 
 export const ContactDetailContainer: NextPageExtended = () => {

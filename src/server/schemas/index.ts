@@ -1,10 +1,10 @@
-import { ContactOnShowingRole, ShowingStatus } from "@prisma/client";
+import { ContactOnAppointmentRole, AppointmentStatus } from "@prisma/client";
 import { dateUtils } from "utils";
 import { z } from "zod";
 
 export const Schemas = {
     contact: contactSchema,
-    showing: showingSchema,
+    appointment: appointmentSchema,
 };
 
 //Start Contact Schema
@@ -28,15 +28,15 @@ function contactSchema() {
         notes: z.string().trim().optional().or(z.literal("")),
     });
 
-    const onShowingCreate = z.object({
+    const onAppointmentCreate = z.object({
         contactId: z.string(),
-        role: z.nativeEnum(ContactOnShowingRole),
+        role: z.nativeEnum(ContactOnAppointmentRole),
     });
 
     const create = {
         contact: contactBase,
         meta: meta,
-        onShowing: onShowingCreate,
+        onAppointment: onAppointmentCreate,
     };
 
     return { create, contactBase };
@@ -50,14 +50,16 @@ export type CreateContactMeta = z.infer<typeof createContactMeta>;
 const contactBase = contactSchema().contactBase;
 export type CreateContact = z.infer<typeof createContact>;
 
-const createContactOnShowing = contactSchema().create.onShowing;
-export type CreateContactOnShowing = z.infer<typeof createContactOnShowing>;
+const createContactOnAppointment = contactSchema().create.onAppointment;
+export type CreateContactOnAppointment = z.infer<
+    typeof createContactOnAppointment
+>;
 
 //End Contact Schema
 
-//Start Showing Schema
+//Start Appointment Schema
 
-function showingSchema() {
+function appointmentSchema() {
     const create = z.object({
         date: z.string().transform((i) => dateUtils.transform(i).isoDateOnly),
         startTime: z.string().optional(),
@@ -65,7 +67,7 @@ function showingSchema() {
         address: z.string(),
         latitude: z.string().transform((i) => Number(i)),
         longitude: z.string().transform((i) => Number(i)),
-        status: z.nativeEnum(ShowingStatus).default("NO_STATUS"),
+        status: z.nativeEnum(AppointmentStatus).default("NO_STATUS"),
         note: z
             .string()
             .max(800, "Note must be less than 800 characters.")
@@ -74,7 +76,7 @@ function showingSchema() {
         deleted: z.boolean().optional().default(false),
         weight: z.number().optional(),
         contacts: z
-            .array(createContactOnShowing)
+            .array(createContactOnAppointment)
             .optional()
             .transform((i) => {
                 if (!i) {
@@ -88,5 +90,5 @@ function showingSchema() {
     };
 }
 
-export const createShowing = showingSchema().create;
-export type CreateShowing = z.infer<typeof createShowing>;
+export const createAppointment = appointmentSchema().create;
+export type CreateAppointment = z.infer<typeof createAppointment>;

@@ -22,61 +22,62 @@ model Notification {
     deletedAt DateTime?
 }
 
-model ContactOnShowing {
-    id        String              @id @default(cuid())
-    contact   Contact              @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    contactId String
-    role      ContactOnShowingRole
-    showing   Showing             @relation(fields: [showingId], references: [id], onDelete: Cascade)
-    showingId String
-    deleted   Boolean?            @default(false)
-    deletedAt DateTime?
+model ContactOnAppointment {
+    id            String                   @id @default(cuid())
+    contact       Contact                  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId     String
+    role          ContactOnAppointmentRole
+    appointment   Appointment              @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+    appointmentId String
+    deleted       Boolean?                 @default(false)
+    deletedAt     DateTime?
 }
 
-model Showing {
-    id           String            @id @default(cuid())
-    createdAt    DateTime          @default(now())
-    updatedAt    DateTime          @default(now())
-    workspace    Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+model Appointment {
+    id           String                 @id @default(cuid())
+    createdAt    DateTime               @default(now())
+    updatedAt    DateTime               @default(now())
+    workspace    Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
     workspaceId  String
-    createdBy    User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    createdBy    User                   @relation(fields: [createdById], references: [id], onDelete: Cascade)
     createdById  String
     date         String
-    status       ShowingStatus     @default(NO_STATUS)
+    status       AppointmentStatus      @default(NO_STATUS)
     startTime    String?
     endTime      String?
     tags         Tag[]
-    contacts     ContactOnShowing[]
+    contacts     ContactOnAppointment[]
     address      String
     latitude     Float
     longitude    Float
     note         String?
-    assignedTo   UserOnWorkspace?  @relation(fields: [assignedToId], references: [id])
+    assignedTo   UserOnWorkspace?       @relation(fields: [assignedToId], references: [id])
     assignedToId String?
-    deleted      Boolean?          @default(false)
+    deleted      Boolean?               @default(false)
     deletedAt    DateTime?
-    // If user decideds to reorder to the showings in a list. Default will be sorted by start time asending with created at ascending being a secondary if there are two of the same start times
-    weight       Int? @default(0)
+    // If user decideds to reorder to the appointments in a list. Default will be sorted by start time asending with created at ascending being a secondary if there are two of the same start times
+    weight       Int?                   @default(0)
 }
 
 model Tag {
-    id          String    @id @default(cuid())
-    createdAt   DateTime  @default(now())
-    createdBy   User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
-    createdById String
-    title       String
-    contact     Contact[]
-    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    workspaceId String
-    showings    Showing[]
-    deleted     Boolean?  @default(false)
-    deletedAt   DateTime?
+    id           String        @id @default(cuid())
+    createdAt    DateTime      @default(now())
+    createdBy    User          @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    createdById  String
+    title        String
+    contact      Contact[]
+    workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    workspaceId  String
+    appointments Appointment[]
+    deleted      Boolean?      @default(false)
+    deletedAt    DateTime?
 }
+
 model ContactMeta {
     id               String    @id @default(cuid())
     isPrimaryContact Boolean   @default(false)
     contact          Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    contactId        String   
+    contactId        String
     social           Json?
     email            String?
     phoneNumber      String?
@@ -87,40 +88,40 @@ model ContactMeta {
 }
 
 model Contact {
-    id           String              @id @default(cuid())
-    createdAt    DateTime            @default(now())
-    displayName  String
-    notes        String?
-    createdBy    User                @relation(fields: [createdById], references: [id], onDelete: Cascade)
-    createdById  String
-    contactMeta  ContactMeta[]
-    workspace    Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    workspaceId  String
-    tags         Tag[]
-    showingsMeta ContactOnShowing[] 
-    referredBy   ReferralConnection?
-    deleted      Boolean?            @default(false)
-    deletedAt    DateTime?
+    id               String                 @id @default(cuid())
+    createdAt        DateTime               @default(now())
+    displayName      String
+    notes            String?
+    createdBy        User                   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    createdById      String
+    contactMeta      ContactMeta[]
+    workspace        Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    workspaceId      String
+    tags             Tag[]
+    appointmentsMeta ContactOnAppointment[]
+    referredBy       ReferralConnection?
+    deleted          Boolean?               @default(false)
+    deletedAt        DateTime?
 }
 
 model ReferralConnection {
     id           String    @id @default(cuid())
-    contactId     String    @unique
-    contact       Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId    String    @unique
+    contact      Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
     referalNotes String?
     deleted      Boolean?  @default(false)
     deletedAt    DateTime?
 }
 
 model UserOnWorkspace {
-    id               String    @id @default(cuid())
-    role             ROLE      @default(USER)
-    workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-    workspaceId      String
-    user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId           String
-    assignedShowings Showing[]
-    locked           Boolean   @default(false)
+    id                   String        @id @default(cuid())
+    role                 ROLE          @default(USER)
+    workspace            Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    workspaceId          String
+    user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId               String
+    assignedAppointments Appointment[]
+    locked               Boolean       @default(false)
 
     @@unique([userId, workspaceId])
 }
@@ -132,7 +133,7 @@ model Workspace {
     usersOnWorkspace UserOnWorkspace[]
     contacts         Contact[]
     tags             Tag[]
-    showings         Showing[]
+    appointments     Appointment[]
     subscription     SubscriptionOnWorkspace?
 }
 
@@ -187,7 +188,7 @@ model User {
     workspaceMeta    UserOnWorkspace[]
     contact          Contact[]
     tags             Tag[]
-    showings         Showing[]
+    appointments     Appointment[]
     notifications    Notification[]
     defaultWorkspace String?
     name             String?
@@ -206,9 +207,11 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-enum ContactOnShowingRole {
+enum ContactOnAppointmentRole {
     CLIENT
     AGENT
+    CONTRACTOR
+    INSPECTOR
     OTHER
 }
 
@@ -224,7 +227,7 @@ enum SUBSCRIPTION_TYPE {
     BROKERAGE
 }
 
-enum ShowingStatus {
+enum AppointmentStatus {
     NO_STATUS
     CONFIRMED
     CANCELED

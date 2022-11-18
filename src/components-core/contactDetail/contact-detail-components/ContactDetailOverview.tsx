@@ -282,10 +282,10 @@ const ContactDetailOverview = () => {
                         </section>
                     </div>
                 </div>
-                {/* Upcoming Showings */}
+                {/* Upcoming Appointments */}
                 <div className="col-span-1 col-start-3">
                     <GridCard>
-                        <GridSectionTitle title="Upcoming Showings" />
+                        <GridSectionTitle title="Upcoming Appointments" />
                         <ul
                             role="list"
                             className="-mt-3 flow-root divide-y divide-gray-200"
