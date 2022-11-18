@@ -1,15 +1,12 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
-import { Loading } from "components-common/Loading";
-import { useContacts, useWorkspace } from "hooks";
+import { useWorkspace } from "hooks";
 import type { NextPageExtended } from "types/index";
 import { Tabs } from "components-common/Tabs";
 import { useRouter } from "next/router";
-import { exists } from "utils/helpers";
 import dynamic from "next/dynamic";
 import * as React from "react";
 import { useContactDetailUi } from "./useContactDetailUi";
-import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
-import { ToggleMenu } from "components-common/ToggleMenu";
+import { TrashIcon } from "@heroicons/react/20/solid";
 
 const ContactDetailOverview = dynamic(
     () => import("./contact-detail-components/ContactDetailOverview"),
@@ -68,21 +65,11 @@ export const ContactDetailContainer: NextPageExtended = () => {
                                 type="button"
                                 className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                <PhoneIcon
+                                <TrashIcon
                                     className="-ml-1 mr-2 h-5 w-5 text-gray-400"
                                     aria-hidden="true"
                                 />
-                                <span>Phone</span>
-                            </button>
-                            <button
-                                type="button"
-                                className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                <EnvelopeIcon
-                                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                />
-                                <span>Email</span>
+                                <span>Delete</span>
                             </button>
                         </div>
                     </SectionHeading.Actions>
