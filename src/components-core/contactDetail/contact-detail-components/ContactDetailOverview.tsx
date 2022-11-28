@@ -1,23 +1,25 @@
-import { useContacts } from "hooks/useContacts";
-import { useWorkspace } from "hooks/useWorkspace";
-import { useRouter } from "next/router";
-import React from "react";
-import { exists } from "utils/helpers";
-import { Loading } from "components-common/Loading";
-import { useContactDetailUi } from "../useContactDetailUi";
-import { Button } from "components-common/Button";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { ToggleMenu } from "components-common/ToggleMenu";
 import { EnvelopeIcon, PhoneIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { GridCard } from "./GridCard";
+import { useContactDetailUi } from "../useContactDetailUi";
+import { ToggleMenu } from "components-common/ToggleMenu";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import { GridSectionTitle } from "./GridSectionTitle";
-import clsx from "clsx";
+import { Loading } from "components-common/Loading";
+import { Button } from "components-common/Button";
+import { useWorkspace } from "hooks/useWorkspace";
+import { useContacts } from "hooks/useContacts";
 import { DetailsRow } from "./DetailsRow";
+import { useRouter } from "next/router";
+import { exists } from "utils/helpers";
+import { GridCard } from "./GridCard";
+import React from "react";
+import { ContactDetailOverviewModal } from "./ContactDetailOverviewModal";
 
 const ContactDetailOverview = () => {
     const workspace = useWorkspace();
     const router = useRouter();
     const contacts = useContacts();
+
+    const { setModalOpen, setDefaultModalData } = useContactDetailUi();
 
     const id = router.query.contactId;
     const { setContactDisplayName } = useContactDetailUi();
@@ -51,91 +53,14 @@ const ContactDetailOverview = () => {
         <Loading />
     ) : (
         <div>
+            <ContactDetailOverviewModal />
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 {/* General Info */}
-                <div className="grid grid-cols-1 gap-4 lg:col-span-2">
+                <div className="grid grid-cols-1 gap-4 pb-4 lg:col-span-2 lg:pb-0">
                     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                         <section>
                             <div className="space-y-6">
                                 <div>
-                                    <GridSectionTitle
-                                        title="General Information"
-                                        subTitle="Personal details and application."
-                                        actions={
-                                            <ToggleMenu
-                                                items={[
-                                                    {
-                                                        text: "Edit",
-                                                        onClick: () => "",
-                                                    },
-                                                ]}
-                                            />
-                                        }
-                                    />
-                                    <GridCard>
-                                        <dl className="space-y-3 divide-y">
-                                            <DetailsRow
-                                                title="Display Name:"
-                                                value={contact?.displayName}
-                                            />
-                                            {/* <DetailsRow
-                                                title="First Name:"
-                                                value={
-                                                    primaryContact?.firstName
-                                                }
-                                                className="pt-3"
-                                            />
-
-                                            <DetailsRow
-                                                title="Last Name:"
-                                                value={primaryContact?.lastName}
-                                                className="pt-3"
-                                            /> */}
-
-                                            <DetailsRow
-                                                title="Primary Phone:"
-                                                value={
-                                                    primaryContact?.phoneNumber
-                                                }
-                                                action={
-                                                    primaryContact?.phoneNumber ? (
-                                                        <Button
-                                                            variant="outlined"
-                                                            className="w-24 justify-center"
-                                                        >
-                                                            <PhoneIcon
-                                                                className="-ml-1 mr-2 h-4 w-4 text-gray-400"
-                                                                aria-hidden="true"
-                                                            />
-                                                            <span>Phone</span>
-                                                        </Button>
-                                                    ) : null
-                                                }
-                                                className="pt-3"
-                                            />
-                                            <DetailsRow
-                                                title="Primary Email:"
-                                                value={primaryContact?.email}
-                                                action={
-                                                    primaryContact?.email ? (
-                                                        <Button
-                                                            variant="outlined"
-                                                            className="w-24 justify-center"
-                                                        >
-                                                            <EnvelopeIcon
-                                                                className="-ml-1 mr-2 h-4 w-4 text-gray-400"
-                                                                aria-hidden="true"
-                                                            />
-                                                            <span>Email</span>
-                                                        </Button>
-                                                    ) : null
-                                                }
-                                                className="pt-3"
-                                            />
-                                        </dl>
-                                    </GridCard>
-                                </div>
-                                <div className="pt-6">
                                     <GridSectionTitle
                                         title="Contacts"
                                         titleIcon={
@@ -152,7 +77,12 @@ const ContactDetailOverview = () => {
                                         }
                                         subTitle="Personal details and application."
                                         actions={
-                                            <Button variant="outlined">
+                                            <Button
+                                                variant="outlined"
+                                                onClick={() =>
+                                                    setModalOpen(true)
+                                                }
+                                            >
                                                 <PlusIcon className="mr-1 h-4 w-4 text-gray-400" />
                                                 <span>Add</span>
                                             </Button>
@@ -178,10 +108,14 @@ const ContactDetailOverview = () => {
                                                                     {
                                                                         text: "Edit",
                                                                         onClick:
-                                                                            () =>
-                                                                                alert(
-                                                                                    "Clicked!"
+                                                                            () => {
+                                                                                setModalOpen(
+                                                                                    true
                                                                                 ),
+                                                                                    setDefaultModalData(
+                                                                                        i
+                                                                                    );
+                                                                            },
                                                                     },
                                                                     {
                                                                         text: "Update",
@@ -248,7 +182,7 @@ const ContactDetailOverview = () => {
                     </div>
                 </div>
                 {/* Upcoming Appointments */}
-                <div className="col-span-1 col-start-3 space-y-8">
+                <div className="col-span-1 col-start-3 space-y-8 border-t pt-4 lg:mt-0 lg:border-t-0 lg:pt-0">
                     <GridCard>
                         <GridSectionTitle title="Upcoming Appointments" />
                         <ul

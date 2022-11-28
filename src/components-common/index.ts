@@ -15,3 +15,5 @@ export * from "./Loading";
 export * from "./NoData";
 export * from "./Accordion";
 export * from "./ToggleMenu";
+export * from "./Modal";
+export * from "./InputGroup";

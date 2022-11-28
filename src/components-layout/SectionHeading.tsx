@@ -2,13 +2,10 @@
 import type { ChildrenPropsObj } from "types/index";
 
 export const SectionHeading = (props: ChildrenPropsObj) => (
-    <div
-        className="mb-4 md:flex md:items-center md:justify-between"
-        {...props}
-    />
+    <div className="mb-4 flex items-center justify-between" {...props} />
 );
 SectionHeading.TitleContainer = (props: ChildrenPropsObj) => (
-    <div className="min-w-0 flex-1" {...props} />
+    <div className="min-w-0 flex-1 items-center" {...props} />
 );
 SectionHeading.Title = (props: ChildrenPropsObj) => (
     <h2
@@ -23,5 +20,5 @@ SectionHeading.Subtitle = (props: ChildrenPropsObj) => (
     />
 );
 SectionHeading.Actions = (props: ChildrenPropsObj) => (
-    <div className="mt-3 sm:mt-0 sm:ml-4" {...props} />
+    <div className="sm:mt-0 sm:ml-4" {...props} />
 );

@@ -135,6 +135,23 @@ export const contactsRouter = t.router({
                 },
             });
         }),
+    updateMeta: authedProcedure
+        .input(
+            contactSchema.create.meta.extend({
+                contactId: z.string(),
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.contactMeta.update({
+                where: {
+                    id: input.contactId,
+                },
+                data: {
+                    ...input,
+                },
+            });
+        }),
     softDelete: authedProcedure
         .input(
             z.object({

@@ -8,15 +8,10 @@ export const GridSectionTitle = (props: {
 }) => {
     const { title, subTitle, actions, titleIcon } = props;
     return (
-        <div className="mb-4 flex items-center">
-            <div
-                className={clsx(
-                    "flex-shrink-0 space-y-1",
-                    !actions && "flex-grow"
-                )}
-            >
-                <div className="inline-flex items-center space-x-2">
-                    <h3 className="text-lg font-medium leading-6 text-gray-900">
+        <div className="mb-4 flex items-center ">
+            <div className={clsx("space-y-1", !actions && "flex-grow")}>
+                <div className="flex items-center space-x-2">
+                    <h3 className=" text-md font-medium leading-6 text-gray-900 lg:text-lg">
                         {title}
                     </h3>
                     {titleIcon ? titleIcon : null}

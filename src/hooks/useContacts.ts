@@ -12,6 +12,7 @@ export const useContacts = () => {
         getOne: contacts.getOne.useQuery,
         createContact: contacts.createContact.useMutation,
         createMeta: contacts.createMeta,
+        updateMeta: contacts.updateMeta.useMutation,
         softDelete: contacts.softDelete.useMutation,
         hardDelete: contacts.hardDelete.useMutation,
         softDeleteMany: contacts.softDeleteMany.useMutation,
