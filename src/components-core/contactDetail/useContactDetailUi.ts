@@ -1,17 +1,16 @@
 import { devtools } from "zustand/middleware";
 import create from "zustand";
 import { ContactMeta } from "@prisma/client";
+import { ContactMetaSchema } from "server/schemas";
 
 type ContactDetailUi = {
     contactDisplayName: string | undefined;
     setContactDisplayName: (e: string | undefined) => void;
     modalOpen: boolean;
     setModalOpen: (val: boolean) => void;
-    defaultModalData: Partial<ContactMeta> | undefined;
+    defaultModalData: ContactMetaSchema["update"] | undefined;
     setDefaultModalData: (
-        data:
-            | (Partial<ContactMeta> & { id: string; contactId: string })
-            | undefined
+        data: ContactMetaSchema["update"] | undefined
     ) => void;
 };
 

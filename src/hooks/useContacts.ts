@@ -1,21 +1,26 @@
+import { useRouter } from "next/router";
 import { trpc } from "utils/trpc";
 
 export const useContacts = () => {
     const { contacts } = trpc;
+    const router = useRouter();
     const utils = trpc.useContext();
-    utils.contacts.getAll.invalidate;
-
+    const contactId = router.query.contactId;
     return {
         getAll: contacts.getAll.useQuery,
         search: contacts.search.useQuery,
         invalidateGetAll: utils.contacts.getAll.invalidate,
         getOne: contacts.getOne.useQuery,
         createContact: contacts.createContact.useMutation,
-        createMeta: contacts.createMeta,
+        createMeta: contacts.createMeta.useMutation,
         updateMeta: contacts.updateMeta.useMutation,
         softDelete: contacts.softDelete.useMutation,
+        softDeleteMeta: contacts.softDeleteMeta.useMutation,
         hardDelete: contacts.hardDelete.useMutation,
         softDeleteMany: contacts.softDeleteMany.useMutation,
         hardDeleteMany: contacts.hardDeleteMany.useMutation,
+        utils: utils.contacts,
+        // Can only be used on a contact detail path
+        contactId,
     };
 };

@@ -1,8 +1,6 @@
-import { Schemas } from "server/schemas";
+import { ContactMetaSchema, Schemas } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
-import { boolean, z } from "zod";
-import { exists } from "utils/helpers";
-import { ContactMeta } from "@prisma/client";
+import { z } from "zod";
 
 const contactSchema = Schemas.contact();
 
@@ -56,6 +54,7 @@ export const contactsRouter = t.router({
                                                 startsWith: input.query,
                                                 mode: "insensitive",
                                             },
+                                            deleted: false,
                                         },
                                     },
                                 },
@@ -84,6 +83,10 @@ export const contactsRouter = t.router({
                         where: {
                             deleted: false,
                         },
+                        orderBy: [
+                            { isPrimaryContact: "desc" },
+                            { createdAt: "asc" },
+                        ],
                     },
                 },
             });
@@ -91,16 +94,29 @@ export const contactsRouter = t.router({
     createContact: authedProcedure
         .input(
             contactSchema.create.contact.extend({
-                contactMeta: z.array(contactSchema.create.meta),
+                contactMeta: z.array(
+                    ContactMetaSchema().create.omit({ contactId: true })
+                ),
                 workspaceId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
             const { contactMeta, ...contactData } = input;
 
+            // Add 1 millisecond for the createdAt in ContactMeta create many function, used for sorting
+            const newContactData = contactMeta.map((element, index) => {
+                const now = new Date();
+                now.setMilliseconds(now.getMilliseconds() + index);
+                return {
+                    ...element,
+                    createdAt: now,
+                };
+            });
+
             const metaData: (typeof contactMeta[number] & {
                 isPrimaryContact?: boolean;
-            })[] = contactMeta;
+            })[] = newContactData;
+
             if (
                 metaData &&
                 metaData.length >= 1 &&
@@ -123,11 +139,7 @@ export const contactsRouter = t.router({
             });
         }),
     createMeta: authedProcedure
-        .input(
-            contactSchema.create.meta.extend({
-                contactId: z.string(),
-            })
-        )
+        .input(ContactMetaSchema().create)
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.contactMeta.create({
                 data: {
@@ -136,16 +148,11 @@ export const contactsRouter = t.router({
             });
         }),
     updateMeta: authedProcedure
-        .input(
-            contactSchema.create.meta.extend({
-                contactId: z.string(),
-                id: z.string(),
-            })
-        )
+        .input(ContactMetaSchema().update)
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.contactMeta.update({
                 where: {
-                    id: input.contactId,
+                    id: input.id,
                 },
                 data: {
                     ...input,
@@ -183,6 +190,23 @@ export const contactsRouter = t.router({
                 },
             });
             return contact;
+        }),
+    softDeleteMeta: authedProcedure
+        .input(
+            z.object({
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            return ctx.prisma.contactMeta.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    deleted: true,
+                    deletedAt: new Date(),
+                },
+            });
         }),
     softDeleteMany: authedProcedure
         .input(

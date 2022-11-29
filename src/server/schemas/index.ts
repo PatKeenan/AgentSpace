@@ -2,6 +2,8 @@ import { ContactOnAppointmentRole, AppointmentStatus } from "@prisma/client";
 import { dateUtils } from "utils";
 import { z } from "zod";
 
+export * from "./contact";
+
 export const Schemas = {
     contact: contactSchema,
     appointment: appointmentSchema,

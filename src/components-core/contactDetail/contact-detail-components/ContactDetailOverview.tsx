@@ -1,9 +1,11 @@
-import { EnvelopeIcon, PhoneIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { ContactDetailOverviewModal } from "./ContactDetailOverviewModal";
 import { useContactDetailUi } from "../useContactDetailUi";
 import { ToggleMenu } from "components-common/ToggleMenu";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/20/solid";
 import { GridSectionTitle } from "./GridSectionTitle";
 import { Loading } from "components-common/Loading";
+import { ContactMetaSchema } from "server/schemas";
 import { Button } from "components-common/Button";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useContacts } from "hooks/useContacts";
@@ -12,24 +14,57 @@ import { useRouter } from "next/router";
 import { exists } from "utils/helpers";
 import { GridCard } from "./GridCard";
 import React from "react";
-import { ContactDetailOverviewModal } from "./ContactDetailOverviewModal";
+
+import type { ContactMeta } from "@prisma/client";
 
 const ContactDetailOverview = () => {
     const workspace = useWorkspace();
     const router = useRouter();
-    const contacts = useContacts();
+    const { softDeleteMeta, getOne } = useContacts();
 
-    const { setModalOpen, setDefaultModalData } = useContactDetailUi();
+    const { setModalOpen, setDefaultModalData, setContactDisplayName } =
+        useContactDetailUi();
 
     const id = router.query.contactId;
-    const { setContactDisplayName } = useContactDetailUi();
 
-    const { data: contact, isLoading: loadingPerson } = contacts.getOne(
+    const {
+        data: contact,
+        isLoading: loadingPerson,
+        refetch,
+    } = getOne(
         { id: id as string, workspaceId: workspace.id as string },
         {
             enabled: exists(id) && exists(workspace.id),
         }
     );
+
+    const { mutate: deleteMetaMutation } = softDeleteMeta();
+
+    const handleClick = (contactMeta: ContactMeta) => {
+        setModalOpen(true);
+        const { lastName, firstName, email, phoneNumber, contactId, id } =
+            contactMeta;
+
+        setDefaultModalData({
+            lastName: lastName as string | undefined,
+            email: email as string | undefined,
+            firstName: firstName as string,
+            phoneNumber: phoneNumber as string | undefined,
+            contactId,
+            id,
+        });
+    };
+
+    const handleDeleteMeta = (id: string) => {
+        deleteMetaMutation(
+            { id },
+            {
+                onSuccess: (data) => {
+                    refetch();
+                },
+            }
+        );
+    };
 
     React.useEffect(() => {
         return () => {
@@ -40,14 +75,8 @@ const ContactDetailOverview = () => {
     }, [router, setContactDisplayName, contact]);
 
     React.useEffect(() => {
-        if (contact) {
-            setContactDisplayName(contact.displayName);
-        }
+        setContactDisplayName(contact?.displayName);
     }, [setContactDisplayName, contact]);
-
-    const primaryContact = React.useMemo(() => {
-        return contact?.contactMeta.find((i) => i.isPrimaryContact);
-    }, [contact]);
 
     return loadingPerson && !contact ? (
         <Loading />
@@ -93,7 +122,7 @@ const ContactDetailOverview = () => {
                                         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                             {contact?.contactMeta.map(
                                                 (i, idx) => (
-                                                    <GridCard key={i.contactId}>
+                                                    <GridCard key={i.id}>
                                                         <div className="mb-4 grid grid-cols-2 gap-2">
                                                             <div className="inline-flex space-x-2">
                                                                 <h4 className="flex-shrink-0 font-medium">
@@ -108,21 +137,9 @@ const ContactDetailOverview = () => {
                                                                     {
                                                                         text: "Edit",
                                                                         onClick:
-                                                                            () => {
-                                                                                setModalOpen(
-                                                                                    true
-                                                                                ),
-                                                                                    setDefaultModalData(
-                                                                                        i
-                                                                                    );
-                                                                            },
-                                                                    },
-                                                                    {
-                                                                        text: "Update",
-                                                                        onClick:
                                                                             () =>
-                                                                                alert(
-                                                                                    "Clicked!"
+                                                                                handleClick(
+                                                                                    i
                                                                                 ),
                                                                     },
                                                                     {
@@ -139,7 +156,11 @@ const ContactDetailOverview = () => {
                                                                         ),
                                                                         extraClasses:
                                                                             "border-t border-gray-200",
-                                                                        href: "/Cool",
+                                                                        onClick:
+                                                                            () =>
+                                                                                handleDeleteMeta(
+                                                                                    i.id
+                                                                                ),
                                                                     },
                                                                 ]}
                                                             />
