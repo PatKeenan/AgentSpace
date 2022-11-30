@@ -21,6 +21,25 @@ export const appointmentRouter = t.router({
                 },
             });
         }),
+    getAllForContact: authedProcedure
+        .input(z.object({ contactId: z.string(), take: z.number().optional() }))
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.contactOnAppointment.findMany({
+                where: {
+                    contactId: input.contactId,
+                    deleted: false,
+                },
+                include: {
+                    appointment: true,
+                },
+                orderBy: {
+                    appointment: {
+                        date: "desc",
+                    },
+                },
+                take: input.take,
+            });
+        }),
     getByMonth: authedProcedure
         .input(
             z.object({

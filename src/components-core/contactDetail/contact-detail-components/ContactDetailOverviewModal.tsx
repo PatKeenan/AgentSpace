@@ -12,6 +12,7 @@ import { useWorkspace } from "hooks/useWorkspace";
 import { router } from "@trpc/server";
 import { exists } from "utils/helpers";
 import { useRouter } from "next/router";
+import { useContactMeta } from "hooks/useContactMeta";
 
 export const ContactDetailOverviewModal = () => {
     const { modalOpen, setModalOpen, setDefaultModalData } =
@@ -47,12 +48,14 @@ export const ContactDetailOverviewModal = () => {
 };
  */
 const ContactMetaForm = () => {
+    const router = useRouter();
     const { setModalOpen, defaultModalData, setDefaultModalData, modalOpen } =
         useContactDetailUi();
     const [defaultFormState, setDefaultFormState] =
         React.useState(defaultModalData);
 
-    const { updateMeta, utils, createMeta, contactId } = useContacts();
+    const { updateMeta, utils, createMeta } = useContactMeta();
+
     const { id } = useWorkspace();
 
     const { mutate: updateMetaMutation } = updateMeta();
@@ -80,10 +83,9 @@ const ContactMetaForm = () => {
                 },
                 {
                     onSuccess: (data) => {
-                        utils.getOne
+                        utils.getAllForContact
                             .invalidate({
-                                workspaceId: id as string,
-                                id: data.contactId,
+                                contactId: data.contactId,
                             })
                             .then(() => setModalOpen(false));
                     },
@@ -91,15 +93,14 @@ const ContactMetaForm = () => {
             );
         }
 
-        if (!defaultFormState && contactId && id) {
+        if (!defaultFormState && router.query.contactId && id) {
             createMetaMutation(
-                { ...data, contactId: contactId as string },
+                { ...data, contactId: router.query.contactId as string },
                 {
                     onSuccess: (data) =>
-                        utils.getOne
+                        utils.getAllForContact
                             .invalidate({
-                                id: data.contactId,
-                                workspaceId: id as string,
+                                contactId: data.contactId,
                             })
                             .then(() => setModalOpen(false)),
                 }

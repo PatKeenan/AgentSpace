@@ -5,6 +5,7 @@ export const useAppointments = () => {
     const { appointment } = trpc;
 
     return {
+        getAllForContact: appointment.getAllForContact.useQuery,
         getAll: appointment.getAll.useQuery,
         getByMonth: appointment.getByMonth.useQuery,
         getByDate: appointment.getByDate.useQuery,

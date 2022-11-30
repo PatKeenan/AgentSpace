@@ -79,15 +79,18 @@ export const contactsRouter = t.router({
                     deleted: false,
                 },
                 include: {
-                    contactMeta: {
-                        where: {
-                            deleted: false,
+                    appointmentsMeta: {
+                        include: {
+                            appointment: true,
                         },
-                        orderBy: [
-                            { isPrimaryContact: "desc" },
-                            { createdAt: "asc" },
-                        ],
+                        take: 2,
+                        orderBy: {
+                            appointment: {
+                                date: "desc",
+                            },
+                        },
                     },
+                    tags: true,
                 },
             });
         }),
@@ -112,7 +115,6 @@ export const contactsRouter = t.router({
                     createdAt: now,
                 };
             });
-
             const metaData: (typeof contactMeta[number] & {
                 isPrimaryContact?: boolean;
             })[] = newContactData;
@@ -135,27 +137,6 @@ export const contactsRouter = t.router({
                             data: [...metaData],
                         },
                     },
-                },
-            });
-        }),
-    createMeta: authedProcedure
-        .input(ContactMetaSchema().create)
-        .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.contactMeta.create({
-                data: {
-                    ...input,
-                },
-            });
-        }),
-    updateMeta: authedProcedure
-        .input(ContactMetaSchema().update)
-        .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.contactMeta.update({
-                where: {
-                    id: input.id,
-                },
-                data: {
-                    ...input,
                 },
             });
         }),
@@ -190,23 +171,6 @@ export const contactsRouter = t.router({
                 },
             });
             return contact;
-        }),
-    softDeleteMeta: authedProcedure
-        .input(
-            z.object({
-                id: z.string(),
-            })
-        )
-        .mutation(async ({ ctx, input }) => {
-            return ctx.prisma.contactMeta.update({
-                where: {
-                    id: input.id,
-                },
-                data: {
-                    deleted: true,
-                    deletedAt: new Date(),
-                },
-            });
         }),
     softDeleteMany: authedProcedure
         .input(

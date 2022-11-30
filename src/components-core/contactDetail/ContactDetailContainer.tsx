@@ -1,5 +1,5 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
-import { useWorkspace } from "hooks";
+import { useContacts, useWorkspace } from "hooks";
 import type { NextPageExtended } from "types/index";
 import { Tabs } from "components-common/Tabs";
 import { useRouter } from "next/router";
@@ -43,6 +43,8 @@ export const ContactDetailContainer: NextPageExtended = () => {
 
     const workspace = useWorkspace();
     const { contactDisplayName } = useContactDetailUi();
+
+    const { getOne } = useContacts();
 
     return (
         <>
