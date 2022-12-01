@@ -1,9 +1,9 @@
 import { ContactOnAppointmentRole, AppointmentStatus } from "@prisma/client";
 import { dateUtils } from "utils";
-import { z } from "zod";
+import { boolean, z } from "zod";
 
 /* ------   Shared Schemas Parts   ------ */
-const idSchema = z.object({
+export const idSchema = z.object({
     id: z.string(),
 });
 
@@ -27,18 +27,25 @@ export function ContactSchema() {
             .min(2, errMsg("Display Name", "greater", 2)),
         notes: z.string().trim().optional().or(z.literal("")),
     });
+    const baseBooleans = z.object({
+        displayName: z.boolean(),
+        notes: z.boolean(),
+    });
 
     return {
         base,
         create: base,
+        baseBooleans,
     };
 }
 const baeContact = ContactSchema().base;
 const createContact = ContactSchema().create;
+const baseContactBooleans = ContactSchema().baseBooleans;
 
 export type ContactSchema = {
     base: z.infer<typeof baeContact>;
     create: z.infer<typeof createContact>;
+    baseBooleans: z.infer<typeof baseContactBooleans>;
 };
 
 /**

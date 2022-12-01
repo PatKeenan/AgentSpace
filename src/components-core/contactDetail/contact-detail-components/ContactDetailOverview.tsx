@@ -14,36 +14,10 @@ import { ContactMetaList } from "./ContactMetaList";
 import { ContactAppointmentList } from "./ContactAppointmentList";
 
 const ContactDetailOverview = () => {
-    const workspace = useWorkspace();
     const router = useRouter();
-    const { getOne } = useContacts();
-
-    const { setContactDisplayName } = useContactDetailUi();
-
     const id = router.query.contactId;
 
-    const { data: contact, isLoading: loadingPerson } = getOne(
-        { id: id as string, workspaceId: workspace.id as string },
-        {
-            enabled: exists(id) && exists(workspace.id),
-        }
-    );
-
-    React.useEffect(() => {
-        return () => {
-            if (router.query.contactId !== contact?.id) {
-                setContactDisplayName(undefined);
-            }
-        };
-    }, [router, setContactDisplayName, contact]);
-
-    React.useEffect(() => {
-        setContactDisplayName(contact?.displayName);
-    }, [setContactDisplayName, contact]);
-
-    return loadingPerson && !contact ? (
-        <Loading />
-    ) : (
+    return (
         <div>
             <ContactDetailOverviewModal />
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
@@ -51,18 +25,14 @@ const ContactDetailOverview = () => {
                 <div className="grid grid-cols-1 gap-4 pb-4 lg:col-span-2 lg:pb-0">
                     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                         {router.query.contactId && (
-                            <ContactMetaList
-                                contactId={router.query.contactId as string}
-                            />
+                            <ContactMetaList contactId={id as string} />
                         )}
                     </div>
                 </div>
                 {/* Upcoming Appointments */}
                 <div className="col-span-1 col-start-3 space-y-8 border-t pt-4 lg:mt-0 lg:border-t-0 lg:pt-0">
                     {router.query.contactId && (
-                        <ContactAppointmentList
-                            contactId={router.query.contactId as string}
-                        />
+                        <ContactAppointmentList contactId={id as string} />
                     )}
                 </div>
             </div>

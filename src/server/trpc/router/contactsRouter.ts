@@ -1,9 +1,15 @@
-import { ContactMetaSchema, Schemas } from "server/schemas";
+import {
+    ContactMetaSchema,
+    ContactSchema,
+    idSchema,
+    Schemas,
+} from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 
-const contactSchema = Schemas.contact();
+import type { Contact } from "@prisma/client";
 
+const contactSchema = Schemas.contact();
 export const contactsRouter = t.router({
     getAll: authedProcedure
         .input(
@@ -65,32 +71,17 @@ export const contactsRouter = t.router({
             });
         }),
     getOne: authedProcedure
-        .input(
-            z.object({
-                id: z.string(),
-                workspaceId: z.string(),
-            })
-        )
+        .input(ContactSchema().baseBooleans.partial().merge(idSchema))
         .query(async ({ ctx, input }) => {
+            const { id, displayName = false, notes = false } = input;
             return await ctx.prisma.contact.findFirst({
                 where: {
                     id: input.id,
-                    workspaceId: input.workspaceId,
                     deleted: false,
                 },
-                include: {
-                    appointmentsMeta: {
-                        include: {
-                            appointment: true,
-                        },
-                        take: 2,
-                        orderBy: {
-                            appointment: {
-                                date: "desc",
-                            },
-                        },
-                    },
-                    tags: true,
+                select: {
+                    displayName,
+                    notes,
                 },
             });
         }),
@@ -137,6 +128,19 @@ export const contactsRouter = t.router({
                             data: [...metaData],
                         },
                     },
+                },
+            });
+        }),
+    update: authedProcedure
+        .input(ContactSchema().base.merge(idSchema))
+        .mutation(async ({ ctx, input }) => {
+            const { id, ...rest } = input;
+            return await ctx.prisma.contact.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    ...rest,
                 },
             });
         }),

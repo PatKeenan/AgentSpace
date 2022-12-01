@@ -13,23 +13,26 @@ import type { ContactMeta } from "@prisma/client";
 
 export const ContactMetaList = ({ contactId }: { contactId: string }) => {
     const { getAllForContact, softDeleteMeta } = useContactMeta();
-    const { setModalOpen, setDefaultModalData } = useContactDetailUi();
+    const { setModal } = useContactDetailUi();
 
     const { data: contactMetas, refetch } = getAllForContact({ contactId });
     const { mutate: deleteMetaMutation } = softDeleteMeta();
 
     const handleClick = (contactMeta: ContactMeta) => {
-        setModalOpen(true);
+        setModal({ state: true });
         const { lastName, firstName, email, phoneNumber, contactId, id } =
             contactMeta;
 
-        setDefaultModalData({
-            lastName: lastName as string | undefined,
-            email: email as string | undefined,
-            firstName: firstName as string,
-            phoneNumber: phoneNumber as string | undefined,
-            contactId,
-            id,
+        setModal({
+            defaultData: {
+                lastName: lastName as string | undefined,
+                email: email as string | undefined,
+                firstName: firstName as string,
+                phoneNumber: phoneNumber as string | undefined,
+                contactId,
+                id,
+            },
+            form: "contactMeta",
         });
     };
 
@@ -63,7 +66,12 @@ export const ContactMetaList = ({ contactId }: { contactId: string }) => {
                         actions={
                             <Button
                                 variant="outlined"
-                                onClick={() => setModalOpen(true)}
+                                onClick={() =>
+                                    setModal({
+                                        state: true,
+                                        form: "contactMeta",
+                                    })
+                                }
                             >
                                 <PlusIcon className="mr-1 h-4 w-4 text-gray-400" />
                                 <span>Add</span>

@@ -6,53 +6,99 @@ import { ContactFormTextArea } from "components-core/create-contact/create-conta
 import { useForm } from "react-hook-form";
 import { useContactDetailUi } from "../useContactDetailUi";
 import * as React from "react";
-import { ContactMetaSchema } from "server/schemas";
+import { ContactMetaSchema, ContactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
-import { router } from "@trpc/server";
-import { exists } from "utils/helpers";
 import { useRouter } from "next/router";
 import { useContactMeta } from "hooks/useContactMeta";
 
 export const ContactDetailOverviewModal = () => {
-    const { modalOpen, setModalOpen, setDefaultModalData } =
-        useContactDetailUi();
+    const { modal, setModal } = useContactDetailUi();
 
     return (
-        <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <ContactMetaForm />
+        <Modal
+            open={modal.state || false}
+            onClose={() => setModal({ state: false })}
+        >
+            {modal?.form && modal.form == "contactMeta" ? (
+                <ContactMetaForm />
+            ) : (
+                <EditContactForm />
+            )}
         </Modal>
     );
 };
 
-/* const EditContactForm = () => {
-    const { setModalOpen } = useContactDetailUi();
+const EditContactForm = () => {
+    const { modal, setModal } = useContactDetailUi();
+    const router = useRouter();
+    const id = router.query.contactId;
+    const { update, utils } = useContacts();
+    const { mutate: updateContact } = update();
+
+    const { register, handleSubmit } = useForm<ContactSchema["base"]>({
+        resolver: zodResolver(ContactSchema().base),
+        defaultValues:
+            modal.form == "contact"
+                ? (modal.defaultData as ContactSchema["base"])
+                : undefined,
+    });
+
+    const onSubmit = handleSubmit(async (data) => {
+        if (id) {
+            updateContact(
+                { ...data, id: id as string },
+                {
+                    onSuccess: (data) => {
+                        utils.getOne.invalidate({ id: data.id });
+                        setModal({ state: false });
+                    },
+                }
+            );
+        }
+    });
+
+    React.useEffect(() => {
+        return () => setModal({ defaultData: undefined });
+    }, [modal.state]);
+
     return (
-        <form>
+        <form onSubmit={onSubmit}>
             <h3 className="text-sm font-medium leading-6">Edit General Info</h3>
             <InputGroup
                 label="Display Name"
-                name="displayName"
+                {...register("displayName")}
                 direction="row"
             />
-            <ContactFormTextArea label="Notes" name="notes" />
+            <ContactFormTextArea label="Notes" {...register("notes")} />
 
             <div className="mt-6 flex justify-end space-x-3">
-                <Button variant="outlined" onClick={() => setModalOpen(false)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setModal({ state: false })}
+                >
                     Cancel
                 </Button>
-                <Button variant="primary">Save</Button>
+                <Button variant="primary" type="submit">
+                    Save
+                </Button>
             </div>
         </form>
     );
 };
- */
+
 const ContactMetaForm = () => {
     const router = useRouter();
-    const { setModalOpen, defaultModalData, setDefaultModalData, modalOpen } =
-        useContactDetailUi();
-    const [defaultFormState, setDefaultFormState] =
-        React.useState(defaultModalData);
+    const { modal, setModal } = useContactDetailUi();
+    const [defaultFormState] = React.useState<
+        ContactMetaSchema["update"] | ContactMetaSchema["create"] | undefined
+    >(
+        modal.form == "contactMeta"
+            ? (modal.defaultData as
+                  | ContactMetaSchema["create"]
+                  | ContactMetaSchema["update"])
+            : undefined
+    );
 
     const { updateMeta, utils, createMeta } = useContactMeta();
 
@@ -64,7 +110,7 @@ const ContactMetaForm = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ContactMetaSchema["create"] | ContactMetaSchema["update"]>({
+    } = useForm<ContactMetaSchema["update"] | ContactMetaSchema["create"]>({
         resolver: zodResolver(
             defaultFormState
                 ? ContactMetaSchema().update
@@ -74,7 +120,7 @@ const ContactMetaForm = () => {
     });
 
     const onSubmit = handleSubmit(async (data) => {
-        if (defaultFormState) {
+        if (defaultFormState && "id" in defaultFormState) {
             updateMetaMutation(
                 {
                     ...data,
@@ -87,7 +133,7 @@ const ContactMetaForm = () => {
                             .invalidate({
                                 contactId: data.contactId,
                             })
-                            .then(() => setModalOpen(false));
+                            .then(() => setModal({ state: false }));
                     },
                 }
             );
@@ -102,19 +148,19 @@ const ContactMetaForm = () => {
                             .invalidate({
                                 contactId: data.contactId,
                             })
-                            .then(() => setModalOpen(false)),
+                            .then(() => setModal({ state: false })),
                 }
             );
         }
     });
     React.useEffect(() => {
-        return () => setDefaultModalData(undefined);
-    }, [modalOpen]);
+        return () => setModal({ defaultData: undefined });
+    }, [modal.state]);
 
     return (
         <form onSubmit={onSubmit}>
             <h3 className="font-medium leading-6">
-                {defaultModalData ? "Edit" : "Add"} Contact
+                {modal.defaultData ? "Edit" : "Add"} Contact
             </h3>
 
             <InputGroup
@@ -148,7 +194,10 @@ const ContactMetaForm = () => {
                 }
             />
             <div className="mt-6 flex justify-end space-x-3">
-                <Button variant="outlined" onClick={() => setModalOpen(false)}>
+                <Button
+                    variant="outlined"
+                    onClick={() => setModal({ state: false })}
+                >
                     Cancel
                 </Button>
                 <Button variant="primary" type="submit">

@@ -16,6 +16,7 @@ export const useContacts = () => {
         hardDelete: contacts.hardDelete.useMutation,
         softDeleteMany: contacts.softDeleteMany.useMutation,
         hardDeleteMany: contacts.hardDeleteMany.useMutation,
+        update: contacts.update.useMutation,
         utils: utils.contacts,
         // Can only be used on a contact detail path
         contactId,

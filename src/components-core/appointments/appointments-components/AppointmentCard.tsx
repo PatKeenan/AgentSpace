@@ -22,7 +22,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
         <div className="block text-gray-500">
             <div className="flex items-center justify-between text-sm ">
                 <div className="flex items-center text-sm">
-                    <h3 className="mr-4 text-sm font-semibold text-purple-600">
+                    <h3 className="mr-4 text-sm font-semibold text-indigo-600">
                         Appointment {index + 1}
                     </h3>
                     <time dateTime="2022-01-10T17:00">5:30pm to 6:00pm</time>
