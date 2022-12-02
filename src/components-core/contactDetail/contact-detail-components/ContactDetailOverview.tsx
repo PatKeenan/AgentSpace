@@ -12,6 +12,7 @@ import { GridCard } from "./GridCard";
 import React from "react";
 import { ContactMetaList } from "./ContactMetaList";
 import { ContactAppointmentList } from "./ContactAppointmentList";
+import { ContactTagsList } from "./ContactTagsList";
 
 const ContactDetailOverview = () => {
     const router = useRouter();
@@ -21,7 +22,7 @@ const ContactDetailOverview = () => {
         <div>
             <ContactDetailOverviewModal />
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-                {/* General Info */}
+                {/* Main Content */}
                 <div className="grid grid-cols-1 gap-4 pb-4 lg:col-span-2 lg:pb-0">
                     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                         {router.query.contactId && (
@@ -29,11 +30,14 @@ const ContactDetailOverview = () => {
                         )}
                     </div>
                 </div>
-                {/* Upcoming Appointments */}
+                {/* Sidebar */}
                 <div className="col-span-1 col-start-3 space-y-8 border-t pt-4 lg:mt-0 lg:border-t-0 lg:pt-0">
-                    {router.query.contactId && (
-                        <ContactAppointmentList contactId={id as string} />
-                    )}
+                    {router.query.contactId ? (
+                        <React.Fragment>
+                            <ContactAppointmentList contactId={id as string} />
+                            <ContactTagsList contactId={id as string} />
+                        </React.Fragment>
+                    ) : null}
                 </div>
             </div>
         </div>
