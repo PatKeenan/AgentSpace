@@ -56,11 +56,12 @@ export const AppointmentsContainer: NextPageExtended = () => {
     );
 
     const filteredAppointmentsByDate = React.useCallback(() => {
-        const data = appointmentsQuery.data?.filter(
-            (i) =>
-                dateUtils.transform(i.date).isoDateOnly ==
+        const data = appointmentsQuery.data?.filter((i) => {
+            return (
+                dateUtils.transform(new Date(i.date)).isoDateOnly ==
                 dateUtils.transform(selectedDate).isoDateOnly
-        );
+            );
+        });
 
         if (data) {
             return data;
