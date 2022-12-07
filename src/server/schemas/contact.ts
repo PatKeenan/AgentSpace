@@ -1,14 +1,8 @@
-import { ContactOnAppointmentRole, AppointmentStatus } from "@prisma/client";
-import { dateUtils } from "utils";
-import { boolean, z } from "zod";
+import { z } from "zod";
 
 /* ------   Shared Schemas Parts   ------ */
 export const idSchema = z.object({
     id: z.string(),
-});
-
-const workspaceId = z.object({
-    workspaceId: z.string(),
 });
 
 /* ------   Main Schemas   ------ */

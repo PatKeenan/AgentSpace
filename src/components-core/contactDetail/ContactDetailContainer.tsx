@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import * as React from "react";
 import { useContactDetailUi } from "./useContactDetailUi";
 import { ContactDetailOverviewTitle } from "./contact-detail-components/ContactDetailOverviewTitle";
+import { ContactDetailOverviewModal } from "./contact-detail-components/ContactDetailOverviewModal";
 
 const ContactDetailOverview = dynamic(
     () => import("./contact-detail-components/ContactDetailOverview"),
@@ -16,24 +17,24 @@ const ContactDetailAppointments = dynamic(
     () => import("./contact-detail-components/ContactDetailAppointments"),
     { suspense: true }
 );
-const ContactDetailTags = dynamic(
-    () => import("./contact-detail-components/ContactDetailTags"),
+const ContactDetailProfiles = dynamic(
+    () => import("./contact-detail-components/ContactDetailProfiles"),
     { suspense: true }
 );
 
-type ContactDetailTabs = "Overview" | "Appointments" | "Tags";
+type ContactDetailTabs = "Overview" | "Appointments" | "Profiles";
 
 const tabs: { title: ContactDetailTabs }[] = [
     { title: "Overview" },
     { title: "Appointments" },
-    { title: "Tags" },
+    { title: "Profiles" },
 ];
 
 const activeContactDetailTabView: { [key in ContactDetailTabs]: JSX.Element } =
     {
         Overview: <ContactDetailOverview />,
         Appointments: <ContactDetailAppointments />,
-        Tags: <ContactDetailTags />,
+        Profiles: <ContactDetailProfiles />,
     };
 
 export const ContactDetailContainer: NextPageExtended = () => {
@@ -57,6 +58,7 @@ export const ContactDetailContainer: NextPageExtended = () => {
                     },
                 ]}
             />
+            <ContactDetailOverviewModal />
             <PageBody extraClassName="max-w-8xl">
                 <ContactDetailOverviewTitle />
                 <div className="mb-6">
@@ -68,9 +70,11 @@ export const ContactDetailContainer: NextPageExtended = () => {
                         tabs={tabs}
                     />
                 </div>
+                {/* Acts as Router Outlet fro tabs */}
                 <React.Suspense fallback={"Loading..."}>
                     {activeContactDetailTabView[activeTabTitle]}
                 </React.Suspense>
+                {/* End Outlet */}
             </PageBody>
         </>
     );

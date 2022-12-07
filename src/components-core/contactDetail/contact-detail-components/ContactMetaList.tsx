@@ -62,7 +62,7 @@ export const ContactMetaList = ({ contactId }: { contactId: string }) => {
                                 </div>
                             ) : null
                         }
-                        subTitle="Personal details and application."
+                        subTitle="People that are associated with each other."
                         actions={
                             <Button
                                 variant="outlined"

@@ -3,6 +3,7 @@ import { dateUtils } from "utils";
 import { z } from "zod";
 
 export * from "./contact";
+export * from "./profile";
 
 export const Schemas = {
     contact: contactSchema,

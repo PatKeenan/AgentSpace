@@ -8,6 +8,7 @@ type InputGroupProps = {
     wasSubmitted?: boolean;
     errorMessage?: string;
     containerClass?: string;
+    startIcon?: React.ReactNode[] | React.ReactNode;
     direction?: "row" | "column";
 } & Omit<React.ComponentProps<"input">, "name">;
 
@@ -22,6 +23,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
             containerClass,
             className,
             required,
+            startIcon,
             type = "text",
             ...rest
         } = props;
@@ -32,7 +34,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
             <div
                 className={clsx(
                     direction == "row" ? "sm:gap-4" : "gap-0",
-                    "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 sm:first:border-t sm:first:border-gray-200",
+                    "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 ",
                     containerClass
                 )}
             >
@@ -52,6 +54,11 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
                         "relative pt-1 sm:mt-0"
                     )}
                 >
+                    {startIcon && (
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            {startIcon}
+                        </div>
+                    )}
                     <input
                         name={name}
                         type={type}
@@ -63,11 +70,11 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
                         ref={forwardedRef}
                         className={clsx(
                             className,
-
+                            startIcon && "pl-7",
                             errorMessage
                                 ? "border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500"
                                 : "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500",
-                            "block w-full rounded-md border pr-10 focus:outline-none sm:text-sm"
+                            "block w-full rounded-md border pr-3 focus:outline-none sm:text-sm"
                         )}
                         {...rest}
                     />

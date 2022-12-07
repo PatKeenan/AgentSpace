@@ -1,18 +1,10 @@
 import { ContactDetailOverviewModal } from "./ContactDetailOverviewModal";
-import { useContactDetailUi } from "../useContactDetailUi";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { GridSectionTitle } from "./GridSectionTitle";
-import { Loading } from "components-common/Loading";
-import { Button } from "components-common/Button";
-import { useWorkspace } from "hooks/useWorkspace";
-import { useContacts } from "hooks/useContacts";
 import { useRouter } from "next/router";
-import { exists } from "utils/helpers";
-import { GridCard } from "./GridCard";
 import React from "react";
 import { ContactMetaList } from "./ContactMetaList";
 import { ContactAppointmentList } from "./ContactAppointmentList";
-import { ContactTagsList } from "./ContactTagsList";
+import { ContactProfilesList } from "./ContactProfilesList";
 
 const ContactDetailOverview = () => {
     const router = useRouter();
@@ -20,14 +12,15 @@ const ContactDetailOverview = () => {
 
     return (
         <div>
-            <ContactDetailOverviewModal />
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
                 {/* Main Content */}
                 <div className="grid grid-cols-1 gap-4 pb-4 lg:col-span-2 lg:pb-0">
-                    <div className="grid grid-cols-1 gap-4 lg:col-span-2">
+                    <div className="grid grid-cols-1 gap-4 divide-y lg:col-span-2">
                         {router.query.contactId && (
                             <ContactMetaList contactId={id as string} />
                         )}
+
+                        <ContactProfilesList className="mt-5 pt-5" />
                     </div>
                 </div>
                 {/* Sidebar */}
@@ -35,7 +28,7 @@ const ContactDetailOverview = () => {
                     {router.query.contactId ? (
                         <React.Fragment>
                             <ContactAppointmentList contactId={id as string} />
-                            <ContactTagsList contactId={id as string} />
+                            {/*   <ContactTagsList contactId={id as string} /> */}
                         </React.Fragment>
                     ) : null}
                 </div>

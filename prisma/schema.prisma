@@ -21,6 +21,26 @@ model Notification {
     deletedAt DateTime?
 }
 
+model Profile {
+    id           String                 @id @default(cuid())
+    createdAt    DateTime               @default(now())
+    updatedAt    DateTime               @updatedAt
+    name         String
+    wokspace     Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    workspaceId  String
+    active       Boolean                @default(true)
+    type         PROFILE_TYPES
+    appointments ContactOnAppointment[]
+    contact      Contact                @relation(fields: [contactId], references: [id])
+    contactId    String
+    notes        String?
+    deleted      Boolean?               @default(false)
+    deletedAt    DateTime?
+    createdBy    User                   @relation(fields: [createdById], references: [id])
+    createdById  String
+    metafFields  Json?
+}
+
 model ContactOnAppointment {
     id            String                   @id @default(cuid())
     createdAt     DateTime                 @default(now())
@@ -32,6 +52,8 @@ model ContactOnAppointment {
     appointmentId String
     deleted       Boolean?                 @default(false)
     deletedAt     DateTime?
+    profile       Profile?                 @relation(fields: [profileId], references: [id])
+    profileId     String?
 }
 
 model Appointment {
@@ -104,6 +126,7 @@ model Contact {
     workspaceId      String
     tags             Tag[]
     appointmentsMeta ContactOnAppointment[]
+    profiles         Profile[]
     referredBy       ReferralConnection?
     deleted          Boolean?               @default(false)
     deletedAt        DateTime?
@@ -145,6 +168,7 @@ model Workspace {
     tags             Tag[]
     appointments     Appointment[]
     subscription     SubscriptionOnWorkspace?
+    profiles         Profile[]
 }
 
 model SubscriptionOnWorkspace {
@@ -195,6 +219,7 @@ model User {
     createdAt        DateTime                  @default(now())
     accounts         Account[]
     sessions         Session[]
+    profiles         Profile[]
     isRegistered     Boolean                   @default(false)
     subscriptions    SubscriptionOnWorkspace[]
     workspaceMeta    UserOnWorkspace[]
@@ -246,4 +271,14 @@ enum AppointmentStatus {
     RESCHEDULED
     PENDING
     DENIED
+}
+
+enum PROFILE_TYPES {
+    BUYER
+    SELLER
+    RENTER
+    RENTEE
+    AGENT
+    VENDOR
+    OTHER
 }

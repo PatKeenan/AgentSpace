@@ -8,6 +8,7 @@ import { contactMetaRouter } from "./contactMetaRouter";
 import { tagsRouter } from "./tagsRouter";
 import { contactsRouter } from "./contactsRouter";
 import { userRouter } from "./userRouter";
+import { profileRouter } from "./profileRouter";
 
 export const appRouter = t.router({
     auth: authRouter,
@@ -18,6 +19,7 @@ export const appRouter = t.router({
     contacts: contactsRouter,
     user: userRouter,
     contactMeta: contactMetaRouter,
+    profile: profileRouter,
 });
 
 // export type definition of API

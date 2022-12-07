@@ -4,33 +4,44 @@ import { InputGroup } from "components-common/InputGroup";
 import { Modal } from "components-common/Modal";
 import { ContactFormTextArea } from "components-core/create-contact/create-contact-components";
 import { useForm } from "react-hook-form";
-import { useContactDetailUi } from "../useContactDetailUi";
+import {
+    DefaultProfileDataType,
+    useContactDetailUi,
+} from "../useContactDetailUi";
+import { string, z } from "zod";
 import * as React from "react";
-import { ContactMetaSchema, ContactSchema } from "server/schemas";
+import {
+    ContactMetaSchema,
+    ContactSchema,
+    profileSchema,
+    ProfileSchema,
+} from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
 import { useContactMeta } from "hooks/useContactMeta";
+import { useProfile } from "hooks/useProfile";
+import { Textarea } from "components-common/Textarea";
+import { Select } from "components-common/Select";
+import { ContactOnAppointment, Profile, PROFILE_TYPES } from "@prisma/client";
 
 export const ContactDetailOverviewModal = () => {
-    const { modal, setModal } = useContactDetailUi();
-
+    const { modal, resetModal } = useContactDetailUi();
     return (
         <Modal
             open={modal.state || false}
-            onClose={() => setModal({ state: false })}
+            onClose={resetModal}
+            showInnerContainer={modal.form !== undefined}
         >
-            {modal?.form && modal.form == "contactMeta" ? (
-                <ContactMetaForm />
-            ) : (
-                <EditContactForm />
-            )}
+            {modal?.form == "contact" && <EditContactForm />}
+            {modal?.form == "contactMeta" && <ContactMetaForm />}
+            {modal?.form == "profile" && <AddProfileForm />}
         </Modal>
     );
 };
 
 const EditContactForm = () => {
-    const { modal, setModal } = useContactDetailUi();
+    const { modal, resetModal } = useContactDetailUi();
     const router = useRouter();
     const id = router.query.contactId;
     const { update, utils } = useContacts();
@@ -51,16 +62,12 @@ const EditContactForm = () => {
                 {
                     onSuccess: (data) => {
                         utils.getOne.invalidate({ id: data.id });
-                        setModal({ state: false });
+                        resetModal();
                     },
                 }
             );
         }
     });
-
-    React.useEffect(() => {
-        return () => setModal({ defaultData: undefined });
-    }, [modal.state]);
 
     return (
         <form onSubmit={onSubmit}>
@@ -73,10 +80,7 @@ const EditContactForm = () => {
             <ContactFormTextArea label="Notes" {...register("notes")} />
 
             <div className="mt-6 flex justify-end space-x-3">
-                <Button
-                    variant="outlined"
-                    onClick={() => setModal({ state: false })}
-                >
+                <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>
                 <Button variant="primary" type="submit">
@@ -89,7 +93,7 @@ const EditContactForm = () => {
 
 const ContactMetaForm = () => {
     const router = useRouter();
-    const { modal, setModal } = useContactDetailUi();
+    const { modal, resetModal } = useContactDetailUi();
     const [defaultFormState] = React.useState<
         ContactMetaSchema["update"] | ContactMetaSchema["create"] | undefined
     >(
@@ -133,7 +137,7 @@ const ContactMetaForm = () => {
                             .invalidate({
                                 contactId: data.contactId,
                             })
-                            .then(() => setModal({ state: false }));
+                            .then(() => resetModal());
                     },
                 }
             );
@@ -148,18 +152,15 @@ const ContactMetaForm = () => {
                             .invalidate({
                                 contactId: data.contactId,
                             })
-                            .then(() => setModal({ state: false })),
+                            .then(() => resetModal()),
                 }
             );
         }
     });
-    React.useEffect(() => {
-        return () => setModal({ defaultData: undefined });
-    }, [modal.state]);
 
     return (
         <form onSubmit={onSubmit}>
-            <h3 className="font-medium leading-6">
+            <h3 className="text-sm font-medium leading-6">
                 {modal.defaultData ? "Edit" : "Add"} Contact
             </h3>
 
@@ -194,10 +195,145 @@ const ContactMetaForm = () => {
                 }
             />
             <div className="mt-6 flex justify-end space-x-3">
-                <Button
-                    variant="outlined"
-                    onClick={() => setModal({ state: false })}
-                >
+                <Button variant="outlined" onClick={resetModal}>
+                    Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                    Save
+                </Button>
+            </div>
+        </form>
+    );
+};
+
+const AddProfileForm = () => {
+    const { resetModal, modal } = useContactDetailUi();
+    const { create, utils, update } = useProfile();
+    const router = useRouter();
+
+    const [defaultFormState] = React.useState<
+        DefaultProfileDataType | undefined
+    >(
+        modal.form == "profile"
+            ? (modal.defaultData as DefaultProfileDataType)
+            : undefined
+    );
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<ProfileSchema["create"]>({
+        defaultValues: {
+            name: defaultFormState?.name,
+            notes: defaultFormState?.notes as string | undefined,
+            type: defaultFormState?.type,
+        },
+        resolver: zodResolver(
+            profileSchema().create.pick({
+                name: true,
+                notes: true,
+                active: true,
+            })
+        ),
+    });
+    const { mutate } = create();
+    const { mutate: updateMutation } = update();
+    const onSubmit = handleSubmit(async (data) => {
+        const workspaceId = router.query.workspaceId;
+        const contactId = router.query.contactId;
+        if (!defaultFormState && workspaceId && contactId && selected)
+            return mutate(
+                {
+                    ...data,
+                    workspaceId: workspaceId as string,
+                    contactId: contactId as string,
+                    type: selected.value as PROFILE_TYPES,
+                },
+                {
+                    onSuccess: (data) =>
+                        utils.getManyForContact
+                            .invalidate({ contactId: data.contactId, take: 5 })
+                            .then(() => resetModal()),
+                }
+            );
+        if (defaultFormState && workspaceId && contactId && selected) {
+            return updateMutation(
+                {
+                    id: defaultFormState.id,
+                    ...data,
+                    type: selected.value as PROFILE_TYPES,
+                },
+                {
+                    onSuccess: (data) =>
+                        utils.getManyForContact
+                            .invalidate({ contactId: data.contactId, take: 5 })
+                            .then(() => resetModal()),
+                }
+            );
+        }
+    });
+
+    const generateOptions = () => {
+        const data = Object.keys(PROFILE_TYPES).map((i, index) => {
+            return {
+                id: String(index + 1),
+                value: i,
+                display: i.toLowerCase(),
+            };
+        });
+        return data;
+    };
+
+    const options: {
+        id: string;
+        value: PROFILE_TYPES[number];
+        display: string;
+    }[] = generateOptions();
+
+    const [selected, setSelected] = React.useState(
+        options.filter((i) => i.value == defaultFormState?.type)[0] ||
+            options[0]
+    );
+
+    return (
+        <form onSubmit={onSubmit}>
+            <h3 className="text-sm font-medium leading-6">
+                {modal.defaultData ? "Edit" : "Add"} Profile
+            </h3>
+            <InputGroup
+                required
+                label="Name"
+                {...register("name")}
+                errorMessage={errors && errors.name && errors.name.message}
+            />
+            <Select
+                options={options}
+                label="Type"
+                displayField="display"
+                direction="row"
+                selected={selected}
+                setSelected={setSelected}
+                className={"max-h-[125px]"}
+            />
+            <Textarea
+                id="notes"
+                label="Notes"
+                direction="row"
+                {...register("notes")}
+            />
+            <div>
+                <InputGroup
+                    type="checkbox"
+                    label="Active"
+                    className="h-5 w-5"
+                    defaultChecked={true}
+                    {...register("active")}
+                />
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+                <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>
                 <Button variant="primary" type="submit">

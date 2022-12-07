@@ -14,7 +14,9 @@ type AutoCompleteProps<T, K> = {
     icon?: boolean;
     multiple?: boolean;
     name?: string;
+    direction?: "row" | "column";
     required?: boolean;
+    className?: string;
 };
 
 export function AutoComplete<
@@ -31,20 +33,41 @@ export function AutoComplete<
         options,
         icon = true,
         name,
+        direction = "row",
+        className,
         required = false,
     } = props;
 
     return (
-        <Combobox as="div" value={selected} onChange={onSelect}>
-            <Combobox.Label className="block text-sm font-medium text-gray-700">
+        <Combobox
+            as="div"
+            value={selected}
+            onChange={onSelect}
+            className={clsx(
+                className,
+                direction == "row" ? "sm:gap-4" : "gap-0",
+                "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 sm:first:border-t sm:first:border-gray-200"
+            )}
+        >
+            <Combobox.Label
+                className={clsx(
+                    direction == "row" && "pt-2",
+                    "block text-sm font-medium text-gray-700"
+                )}
+            >
                 {label}
             </Combobox.Label>
-            <div className="relative mt-1">
+            <div
+                className={clsx(
+                    direction == "row" ? "sm:col-span-2" : "col-span-3",
+                    "sm:mt-0, relative  pt-1"
+                )}
+            >
                 <Combobox.Input
                     required={required}
                     name={name}
                     value={query}
-                    className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                    className="w-full rounded-md border border-gray-300 bg-white pb-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                     onChange={(event) => setQuery(event.target.value)}
                     autoComplete="off"
                     displayValue={(option: T) => {
