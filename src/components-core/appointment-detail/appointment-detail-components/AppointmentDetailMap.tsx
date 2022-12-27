@@ -10,8 +10,8 @@ export const AppointmentDetailMap = (props: AppointmentDetialMapProps) => {
     const { appointments } = props;
 
     const cords = appointments?.map((appointment) => ({
-        longitude: appointment.address?.center[1],
-        latitude: appointment.address?.center[0],
+        longitude: /* appointment.address?.center[1] */ -70,
+        latitude: /* appointment.address?.center[0] */ 20,
     }));
     return <Map cords={cords} />;
 };

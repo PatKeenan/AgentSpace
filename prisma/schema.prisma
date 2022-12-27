@@ -31,7 +31,7 @@ model Profile {
     active       Boolean                @default(true)
     type         PROFILE_TYPES
     appointments ContactOnAppointment[]
-    contact      Contact                @relation(fields: [contactId], references: [id])
+    contact      Contact                @relation(fields: [contactId], references: [id], onDelete: Cascade)
     contactId    String
     notes        String?
     deleted      Boolean?               @default(false)
@@ -42,18 +42,16 @@ model Profile {
 }
 
 model ContactOnAppointment {
-    id            String                   @id @default(cuid())
-    createdAt     DateTime                 @default(now())
-    updatedAt     DateTime                 @updatedAt
-    contact       Contact                  @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    contactId     String
-    role          ContactOnAppointmentRole
-    appointment   Appointment              @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-    appointmentId String
-    deleted       Boolean?                 @default(false)
-    deletedAt     DateTime?
-    profile       Profile?                 @relation(fields: [profileId], references: [id])
-    profileId     String?
+    id               String      @id @default(cuid())
+    createdAt        DateTime    @default(now())
+    updatedAt        DateTime    @updatedAt
+    contact          Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId        String
+    appointment      Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+    appointmentId    String
+    deleted          Boolean?    @default(false)
+    deletedAt        DateTime?
+    attachedProfiles Profile[]
 }
 
 model Appointment {

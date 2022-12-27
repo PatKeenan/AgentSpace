@@ -65,16 +65,16 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
             href: `/workspace/${workspace.id}/appointments`,
             icon: TruckIcon,
         },
-        /*         {
+        /*             {
             name: "Projects",
             href: `/workspace/${workspace.id}/projects`,
             icon: RectangleGroupIcon,
-        },
+        }, */
         {
             name: "Tasks",
             href: `/workspace/${workspace.id}/tasks`,
             icon: ViewColumnsIcon,
-        }, */
+        },
     ];
 
     return status == "loading" ? (

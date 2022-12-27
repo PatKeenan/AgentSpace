@@ -64,7 +64,6 @@ export const appointmentRouter = t.router({
                 include: {
                     contacts: {
                         select: {
-                            role: true,
                             contact: {
                                 select: {
                                     id: true,

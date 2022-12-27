@@ -1,6 +1,5 @@
 import { useAppointments } from "hooks/useAppointments";
 import { useRouter } from "next/router";
-import React from "react";
 
 const ContactDetailAppointments = () => {
     const router = useRouter();

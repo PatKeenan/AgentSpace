@@ -8,7 +8,6 @@ import {
     DefaultProfileDataType,
     useContactDetailUi,
 } from "../useContactDetailUi";
-import { string, z } from "zod";
 import * as React from "react";
 import {
     ContactMetaSchema,
@@ -23,7 +22,8 @@ import { useContactMeta } from "hooks/useContactMeta";
 import { useProfile } from "hooks/useProfile";
 import { Textarea } from "components-common/Textarea";
 import { Select } from "components-common/Select";
-import { ContactOnAppointment, Profile, PROFILE_TYPES } from "@prisma/client";
+import { PROFILE_TYPES } from "@prisma/client";
+import { ModalTitle } from "components-common/ModalTitle";
 
 export const ContactDetailOverviewModal = () => {
     const { modal, resetModal } = useContactDetailUi();
@@ -71,7 +71,7 @@ const EditContactForm = () => {
 
     return (
         <form onSubmit={onSubmit}>
-            <h3 className="text-sm font-medium leading-6">Edit General Info</h3>
+            <ModalTitle>Edit General Info</ModalTitle>
             <InputGroup
                 label="Display Name"
                 {...register("displayName")}
@@ -160,9 +160,9 @@ const ContactMetaForm = () => {
 
     return (
         <form onSubmit={onSubmit}>
-            <h3 className="text-sm font-medium leading-6">
+            <ModalTitle>
                 {modal.defaultData ? "Edit" : "Add"} Contact
-            </h3>
+            </ModalTitle>
 
             <InputGroup
                 required
@@ -228,6 +228,7 @@ const AddProfileForm = () => {
             name: defaultFormState?.name,
             notes: defaultFormState?.notes as string | undefined,
             type: defaultFormState?.type,
+            active: defaultFormState?.active == false ? false : true,
         },
         resolver: zodResolver(
             profileSchema().create.pick({
@@ -298,9 +299,9 @@ const AddProfileForm = () => {
 
     return (
         <form onSubmit={onSubmit}>
-            <h3 className="text-sm font-medium leading-6">
+            <ModalTitle>
                 {modal.defaultData ? "Edit" : "Add"} Profile
-            </h3>
+            </ModalTitle>
             <InputGroup
                 required
                 label="Name"
@@ -327,7 +328,6 @@ const AddProfileForm = () => {
                     type="checkbox"
                     label="Active"
                     className="h-5 w-5"
-                    defaultChecked={true}
                     {...register("active")}
                 />
             </div>

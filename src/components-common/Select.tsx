@@ -39,7 +39,7 @@ export function Select<
             as={"div"}
             className={clsx(
                 direction == "row" ? "sm:gap-4" : "gap-0",
-                "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 sm:first:border-t sm:first:border-gray-200",
+                "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5",
                 containerClass
             )}
         >

@@ -17,3 +17,8 @@ export * from "./Accordion";
 export * from "./ToggleMenu";
 export * from "./Modal";
 export * from "./InputGroup";
+export * from "./Card";
+export * from "./ModalTitle";
+export * from "./TransitionDelay";
+export * from "./ComboboxOption";
+export * from "./Tag";

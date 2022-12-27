@@ -13,7 +13,7 @@ export function useDebounce(value: string, delay: number) {
     return debouncedValue;
 }
 
-export function useDebounceState(initialState: string, delay = 700) {
+export function useDebounceState(initialState?: string, delay = 700) {
     const [state, setState] = useState(initialState);
-    return { state, setState, debounced: useDebounce(state, delay) };
+    return { state, setState, debounced: useDebounce(state || "", delay) };
 }

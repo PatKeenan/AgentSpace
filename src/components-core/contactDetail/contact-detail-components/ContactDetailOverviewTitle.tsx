@@ -1,9 +1,4 @@
-import {
-    EnvelopeIcon,
-    PencilIcon,
-    PhoneIcon,
-    TrashIcon,
-} from "@heroicons/react/20/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Button } from "components-common/Button";
 import { SectionHeading } from "components-layout/SectionHeading";
 import { useContacts } from "hooks/useContacts";
@@ -16,7 +11,7 @@ export const ContactDetailOverviewTitle = () => {
     const router = useRouter();
     const id = router.query.contactId;
 
-    const { data: contact, isLoading: loadingPerson } = getOne(
+    const { data: contact } = getOne(
         { id: router.query.contactId as string, displayName: true },
         {
             enabled: exists(id),

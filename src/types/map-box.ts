@@ -39,7 +39,7 @@ export const features = z.object({
 
 export const mapboxPlaces = z.object({
     attribution: z.string(),
-    features,
+    features: z.array(features),
     query: z.array(z.string()),
     type: z.string(),
 });

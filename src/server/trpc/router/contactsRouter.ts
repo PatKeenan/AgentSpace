@@ -2,12 +2,13 @@ import {
     ContactMetaSchema,
     ContactSchema,
     idSchema,
+    profileSchema,
     Schemas,
 } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 
-import type { Contact } from "@prisma/client";
+import type { Contact, Profile } from "@prisma/client";
 
 const contactSchema = Schemas.contact();
 export const contactsRouter = t.router({
@@ -28,6 +29,11 @@ export const contactsRouter = t.router({
                         where: {
                             isPrimaryContact: true,
                             deleted: false,
+                        },
+                    },
+                    _count: {
+                        select: {
+                            appointmentsMeta: true,
                         },
                     },
                 },
@@ -67,6 +73,14 @@ export const contactsRouter = t.router({
                             ],
                         },
                     ],
+                },
+                include: {
+                    profiles: {
+                        where: {
+                            active: true,
+                            deleted: false,
+                        },
+                    },
                 },
             });
         }),
@@ -126,6 +140,45 @@ export const contactsRouter = t.router({
                     contactMeta: {
                         createMany: {
                             data: [...metaData],
+                        },
+                    },
+                },
+            });
+        }),
+    createContactAndProfile: authedProcedure
+        .input(
+            contactSchema.create.contact.extend({
+                contactMeta: ContactMetaSchema().create.omit({
+                    contactId: true,
+                }),
+                profile: profileSchema()
+                    .create.omit({ contactId: true, workspaceId: true })
+                    .optional(),
+                workspaceId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { contactMeta, profile, ...contactData } = input;
+
+            return await ctx.prisma.contact.create({
+                data: {
+                    ...contactData,
+                    workspaceId: input.workspaceId,
+                    createdById: ctx.session.user.id,
+                    profiles: {
+                        create: profile
+                            ? {
+                                  ...profile,
+                                  active: true,
+                                  createdById: ctx.session.user.id,
+                                  workspaceId: input.workspaceId,
+                              }
+                            : undefined,
+                    },
+                    contactMeta: {
+                        create: {
+                            ...input.contactMeta,
+                            isPrimaryContact: true,
                         },
                     },
                 },

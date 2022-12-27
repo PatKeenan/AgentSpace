@@ -12,6 +12,7 @@ export const useContacts = () => {
         invalidateGetAll: utils.contacts.getAll.invalidate,
         getOne: contacts.getOne.useQuery,
         createContact: contacts.createContact.useMutation,
+        createContactAndProfile: contacts.createContactAndProfile.useMutation,
         softDelete: contacts.softDelete.useMutation,
         hardDelete: contacts.hardDelete.useMutation,
         softDeleteMany: contacts.softDeleteMany.useMutation,

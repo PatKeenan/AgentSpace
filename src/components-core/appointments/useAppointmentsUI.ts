@@ -1,22 +1,37 @@
 import { devtools } from "zustand/middleware";
 import create from "zustand";
+import { Appointment, ContactOnAppointment } from "@prisma/client";
 
-const appointmentsTabs = ["All Appointments", "Upcoming"] as const;
+export type AppointmentsUiType = {
+    modal: {
+        state: boolean;
 
-type AppointmentTab = typeof appointmentsTabs[number];
-
-type AppointmentsState = {
-    activeTab: AppointmentTab;
-    setActiveTab: (tab: AppointmentTab) => void;
-    modalOpen: boolean;
-    setModalOpen: (val: boolean) => void;
+        defaultData?:
+            | (ContactOnAppointment & { appointment: Appointment })
+            | undefined;
+    };
+    setModal: (opts: {
+        state?: boolean;
+        defaultData?:
+            | (ContactOnAppointment & { appointment: Appointment })
+            | undefined;
+    }) => void;
+    resetModal: () => void;
 };
 
-export const useAppointmentsUI = create<AppointmentsState>()(
+export const useAppointmentsUI = create<AppointmentsUiType>()(
     devtools((set) => ({
-        activeTab: "Upcoming",
-        setActiveTab: (tab) => set(() => ({ activeTab: tab })),
-        modalOpen: false,
-        setModalOpen: (val) => set({ modalOpen: val }),
+        modal: { state: false },
+        setModal: (opts) =>
+            set((state) => ({
+                modal: { ...state.modal, ...opts },
+            })),
+        resetModal: () =>
+            set(() => ({
+                modal: {
+                    state: false,
+                    defaultData: undefined,
+                },
+            })),
     }))
 );

@@ -22,11 +22,13 @@ export const DetailsRow = (
         valueSpan?: keyof typeof colSpan;
         actionSpan?: keyof typeof colSpan;
         cols?: keyof typeof colsOptions;
+        rawText?: boolean;
     } & React.ComponentProps<"div">
 ) => {
     const {
         title,
         value = "---",
+        rawText = false,
         action,
         className,
         cols = 4,
@@ -37,7 +39,12 @@ export const DetailsRow = (
     } = props;
     return (
         <div
-            className={clsx(colsOptions[cols], "grid items-center", className)}
+            className={clsx(
+                colsOptions[cols],
+                rawText ? "items-start" : "items-center",
+                "grid",
+                className
+            )}
             {...htmlProps}
         >
             <dt
@@ -48,7 +55,15 @@ export const DetailsRow = (
             >
                 {title}
             </dt>
-            <dd className={clsx(colSpan[valueSpan], "truncate text-gray-600")}>
+            <dd
+                className={clsx(
+                    colSpan[valueSpan],
+                    rawText
+                        ? "-ml-2  max-h-[150px] overflow-auto whitespace-pre-line rounded-md border border-gray-200 p-2 shadow-inner"
+                        : "truncate",
+                    "text-gray-600"
+                )}
+            >
                 {String(value).trim().length > 0 ? value : "---"}
             </dd>
             {action ? (

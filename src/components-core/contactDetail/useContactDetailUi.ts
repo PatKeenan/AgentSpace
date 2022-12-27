@@ -16,6 +16,7 @@ export type DefaultProfileDataType = Profile & {
 
 export type ContactDetailUiType = {
     modal: {
+        title?: string;
         state?: boolean;
         form?: "contact" | "contactMeta" | "profile";
         defaultData?:
@@ -24,6 +25,7 @@ export type ContactDetailUiType = {
             | DefaultProfileDataType;
     };
     setModal: (opts: {
+        title?: string;
         state?: boolean;
         form?: "contact" | "contactMeta" | "profile";
         defaultData?:
@@ -49,6 +51,7 @@ export const useContactDetailUi = create<ContactDetailUiType>()(
         resetModal: () =>
             set(() => ({
                 modal: {
+                    title: undefined,
                     state: false,
                     defaultData: undefined,
                     form: undefined,

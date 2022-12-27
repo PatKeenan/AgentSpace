@@ -1,11 +1,10 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
-import { useContacts, useWorkspace } from "hooks";
+import { useWorkspace } from "hooks";
 import type { NextPageExtended } from "types/index";
 import { Tabs } from "components-common/Tabs";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import * as React from "react";
-import { useContactDetailUi } from "./useContactDetailUi";
 import { ContactDetailOverviewTitle } from "./contact-detail-components/ContactDetailOverviewTitle";
 import { ContactDetailOverviewModal } from "./contact-detail-components/ContactDetailOverviewModal";
 

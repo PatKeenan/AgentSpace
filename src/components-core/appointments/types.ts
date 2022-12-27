@@ -1,9 +1,9 @@
 import {
     Contact,
     ContactMeta,
-    ContactOnAppointmentRole,
     Appointment,
     AppointmentStatus,
+    Profile,
 } from "@prisma/client";
 import { MapboxPlaces } from "types/map-box";
 
@@ -21,10 +21,14 @@ export interface Status extends Id {
 }
 
 export type AppointmentFormState = {
-    address: MapboxPlaces["features"] | undefined;
+    address: MapboxPlaces["features"][number] | undefined | null;
     clients?: Contact[];
     agents?: Contact[];
-    status?: Status | undefined;
+    status?: {
+        id: string;
+        value: AppointmentStatus[number];
+        display: string;
+    };
     startTime?: string;
     endTime?: string;
     buildingOrApt?: string;
@@ -35,8 +39,23 @@ export type AppointmentCardProps = {
     index: number;
     appointment: Appointment & {
         contacts: {
-            role: ContactOnAppointmentRole;
+            role: "";
             contact: Partial<Contact>;
         }[];
     };
+};
+
+export type Selected =
+    | {
+          selectedRoleId?: string;
+          data: Contact & {
+              profiles: Profile[];
+          };
+      }[]
+    | [];
+
+export type AddAppointmentModalProps = {
+    appointment?: AppointmentFormState;
+    selectedDate: Date;
+    onSuccessCallback?: () => void;
 };

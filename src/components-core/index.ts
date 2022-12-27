@@ -12,4 +12,3 @@ export * from "./projects-create";
 export * from "./appointments";
 export * from "./appointment-detail";
 export * from "./profiles";
-export * from "./profile-create";

@@ -1,4 +1,4 @@
-import { ContactOnAppointmentRole, AppointmentStatus } from "@prisma/client";
+import { AppointmentStatus } from "@prisma/client";
 import { dateUtils } from "utils";
 import { z } from "zod";
 
@@ -33,7 +33,7 @@ function contactSchema() {
 
     const onAppointmentCreate = z.object({
         contactId: z.string(),
-        role: z.nativeEnum(ContactOnAppointmentRole),
+        role: z.string(),
     });
 
     const create = {

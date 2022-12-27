@@ -13,6 +13,7 @@ import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
 import type { Contact, ContactMeta } from "@prisma/client";
+import { TransitionDelay } from "components-common";
 
 export const ContactsContainer: NextPageExtended = () => {
     const [indeterminate, setIndeterminate] = useState(false);
@@ -65,7 +66,10 @@ export const ContactsContainer: NextPageExtended = () => {
 
     const handleSelectContact = (
         e: React.ChangeEvent<HTMLInputElement>,
-        selectedContact: Contact & { contactMeta: ContactMeta[] }
+        selectedContact: Contact & {
+            contactMeta: ContactMeta[];
+            _count: { appointmentsMeta: number };
+        }
     ) => {
         const isChecked = e.target.checked;
         const newSelection =
@@ -147,226 +151,238 @@ export const ContactsContainer: NextPageExtended = () => {
                             </ButtonLink>
                         </div>
                     </div>
-                    <div className="mt-8 flex flex-col">
-                        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                                <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                                    {selectedContacts &&
-                                        selectedContacts.length > 0 && (
-                                            <div className="absolute top-0 left-12 flex h-12 items-center space-x-3 bg-gray-50 sm:left-16">
-                                                <Button
-                                                    variant="outlined"
-                                                    className="text-xs"
-                                                >
-                                                    Bulk edit
-                                                </Button>
-                                                <Button
-                                                    variant="outlined"
-                                                    className="text-xs"
-                                                    onClick={() =>
-                                                        handleDelete()
-                                                    }
-                                                >
-                                                    Delete{" "}
-                                                    {selectedContacts.length !==
-                                                        0 &&
-                                                    selectedContacts.length ==
-                                                        contactsQuery.data
-                                                            ?.length
-                                                        ? "all"
-                                                        : `(${selectedContacts.length})`}
-                                                </Button>
-                                            </div>
-                                        )}
-                                    <table className="min-w-full table-fixed divide-y divide-gray-300">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th
-                                                    scope="col"
-                                                    className="relative w-12 px-6 sm:w-16 sm:px-8"
-                                                >
-                                                    <input
-                                                        type="checkbox"
-                                                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
-                                                        ref={checkbox}
-                                                        checked={checked}
-                                                        onChange={toggleAll}
-                                                    />
-                                                </th>
-
-                                                {[
-                                                    "Contact",
-                                                    "Primary Email",
-                                                    "Primary Phone",
-                                                ].map((i, index) => (
-                                                    <th
-                                                        key={index}
-                                                        scope="col"
-                                                        className={clsx(
-                                                            index == 0
-                                                                ? "min-w-[12rem]"
-                                                                : "pl-3",
-                                                            "py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                                                        )}
+                    <TransitionDelay isLoading={contactsQuery.isLoading}>
+                        <div className="mt-8 flex flex-col">
+                            <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                                    <div className="relative overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                                        {selectedContacts &&
+                                            selectedContacts.length > 0 && (
+                                                <div className="absolute top-0 left-12 flex h-12 items-center space-x-3 bg-gray-50 sm:left-16">
+                                                    <Button
+                                                        variant="outlined"
+                                                        className="text-xs"
                                                     >
-                                                        {i}
-                                                    </th>
-                                                ))}
+                                                        Bulk edit
+                                                    </Button>
+                                                    <Button
+                                                        variant="outlined"
+                                                        className="text-xs"
+                                                        onClick={() =>
+                                                            handleDelete()
+                                                        }
+                                                    >
+                                                        Delete{" "}
+                                                        {selectedContacts.length !==
+                                                            0 &&
+                                                        selectedContacts.length ==
+                                                            contactsQuery.data
+                                                                ?.length
+                                                            ? "all"
+                                                            : `(${selectedContacts.length})`}
+                                                    </Button>
+                                                </div>
+                                            )}
 
-                                                <th
-                                                    scope="col"
-                                                    className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                                                >
-                                                    <span className="sr-only">
-                                                        Edit
-                                                    </span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 bg-white">
-                                            {contactsQuery.data?.map(
-                                                (contact) => {
-                                                    const meta = contact
-                                                        .contactMeta.length
-                                                        ? contact.contactMeta[0]
-                                                        : undefined;
-                                                    return (
-                                                        <tr
-                                                            key={contact.id}
-                                                            className={
-                                                                selectedContacts &&
-                                                                selectedContacts.includes(
-                                                                    contact
-                                                                )
-                                                                    ? "bg-gray-50"
-                                                                    : undefined
-                                                            }
+                                        <table className="min-w-full table-fixed divide-y divide-gray-300">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        className="relative w-12 px-6 sm:w-16 sm:px-8"
+                                                    >
+                                                        <input
+                                                            type="checkbox"
+                                                            className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
+                                                            ref={checkbox}
+                                                            checked={checked}
+                                                            onChange={toggleAll}
+                                                        />
+                                                    </th>
+
+                                                    {[
+                                                        "Contact",
+                                                        "Primary Email",
+                                                        "Primary Phone",
+                                                        "Appointments",
+                                                    ].map((i, index) => (
+                                                        <th
+                                                            key={index}
+                                                            scope="col"
+                                                            className={clsx(
+                                                                index == 0
+                                                                    ? "min-w-[12rem]"
+                                                                    : "pl-3",
+                                                                "py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
+                                                            )}
                                                         >
-                                                            <td className="relative w-12 px-6 sm:w-16 sm:px-8">
-                                                                {selectedContacts &&
+                                                            {i}
+                                                        </th>
+                                                    ))}
+
+                                                    <th
+                                                        scope="col"
+                                                        className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                                                    >
+                                                        <span className="sr-only">
+                                                            Edit
+                                                        </span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200 bg-white">
+                                                {contactsQuery.data?.map(
+                                                    (contact) => {
+                                                        const meta = contact
+                                                            .contactMeta.length
+                                                            ? contact
+                                                                  .contactMeta[0]
+                                                            : undefined;
+                                                        return (
+                                                            <tr
+                                                                key={contact.id}
+                                                                className={
+                                                                    selectedContacts &&
                                                                     selectedContacts.includes(
                                                                         contact
-                                                                    ) && (
-                                                                        <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
-                                                                    )}
-                                                                <input
-                                                                    type="checkbox"
-                                                                    className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
-                                                                    value={
-                                                                        contact.id
-                                                                    }
-                                                                    checked={
-                                                                        selectedContacts &&
-                                                                        selectedContacts.includes(
-                                                                            contact
-                                                                        )
-                                                                    }
-                                                                    onChange={(
-                                                                        e
-                                                                    ) =>
-                                                                        handleSelectContact(
-                                                                            e,
-                                                                            contact
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </td>
-                                                            <td
-                                                                className={clsx(
-                                                                    "whitespace-nowrap py-4 pr-3 text-sm font-medium",
-                                                                    selectedContacts &&
-                                                                        selectedContacts.includes(
-                                                                            contact
-                                                                        )
-                                                                        ? "text-indigo-600"
-                                                                        : "text-gray-900"
-                                                                )}
+                                                                    )
+                                                                        ? "bg-gray-50"
+                                                                        : undefined
+                                                                }
                                                             >
-                                                                <NextLink
-                                                                    href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
-                                                                    className="hover:text-purple-600"
+                                                                <td className="relative w-12 px-6 sm:w-16 sm:px-8">
+                                                                    {selectedContacts &&
+                                                                        selectedContacts.includes(
+                                                                            contact
+                                                                        ) && (
+                                                                            <div className="absolute inset-y-0 left-0 w-0.5 bg-indigo-600" />
+                                                                        )}
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 sm:left-6"
+                                                                        value={
+                                                                            contact.id
+                                                                        }
+                                                                        checked={
+                                                                            selectedContacts &&
+                                                                            selectedContacts.includes(
+                                                                                contact
+                                                                            )
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) =>
+                                                                            handleSelectContact(
+                                                                                e,
+                                                                                contact
+                                                                            )
+                                                                        }
+                                                                    />
+                                                                </td>
+                                                                <td
+                                                                    className={clsx(
+                                                                        "whitespace-nowrap py-4 pr-3 text-sm font-medium",
+                                                                        selectedContacts &&
+                                                                            selectedContacts.includes(
+                                                                                contact
+                                                                            )
+                                                                            ? "text-indigo-600"
+                                                                            : "text-gray-900"
+                                                                    )}
                                                                 >
-                                                                    {
-                                                                        contact.displayName
-                                                                    }
-                                                                </NextLink>
-                                                            </td>
-
-                                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                                {meta?.email ||
-                                                                    "---"}
-                                                            </td>
-                                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                                {meta?.phoneNumber ||
-                                                                    "---"}
-                                                            </td>
-
-                                                            <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                                <a
-                                                                    href="#"
-                                                                    className="text-indigo-600 hover:text-indigo-900"
-                                                                >
-                                                                    Edit
-                                                                    <span className="sr-only">
-                                                                        ,{" "}
+                                                                    <NextLink
+                                                                        href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
+                                                                        className="hover:text-purple-600"
+                                                                    >
                                                                         {
                                                                             contact.displayName
                                                                         }
-                                                                    </span>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    );
-                                                }
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    <nav
-                                        className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-                                        aria-label="Pagination"
-                                    >
-                                        <div className="hidden sm:block">
-                                            <p className="text-sm text-gray-700">
-                                                Appointments{" "}
-                                                <span className="font-medium">
-                                                    1
-                                                </span>{" "}
-                                                -{" "}
-                                                <span className="font-medium">
-                                                    {contactsQuery.data &&
-                                                        contactsQuery.data
-                                                            .length}
-                                                </span>{" "}
-                                                of{" "}
-                                                <span className="font-medium">
-                                                    {contactsQuery.data &&
-                                                        contactsQuery.data
-                                                            .length}
-                                                </span>{" "}
-                                                results
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-1 justify-between sm:justify-end">
-                                            <ButtonLink
-                                                href="#"
-                                                variant="outlined"
-                                                className="text-xs"
-                                            >
-                                                Previous
-                                            </ButtonLink>
-                                            <ButtonLink
-                                                href="#"
-                                                variant="outlined"
-                                                className="ml-2 text-xs"
-                                            >
-                                                Next
-                                            </ButtonLink>
-                                        </div>
-                                    </nav>
+                                                                    </NextLink>
+                                                                </td>
+
+                                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                                    {meta?.email ||
+                                                                        "---"}
+                                                                </td>
+                                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                                    {meta?.phoneNumber ||
+                                                                        "---"}
+                                                                </td>
+                                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                                    {contact
+                                                                        ._count
+                                                                        .appointmentsMeta ||
+                                                                        "---"}
+                                                                </td>
+
+                                                                <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                                                                    <a
+                                                                        href="#"
+                                                                        className="text-indigo-600 hover:text-indigo-900"
+                                                                    >
+                                                                        Edit
+                                                                        <span className="sr-only">
+                                                                            ,{" "}
+                                                                            {
+                                                                                contact.displayName
+                                                                            }
+                                                                        </span>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    }
+                                                )}
+                                            </tbody>
+                                        </table>
+
+                                        <nav
+                                            className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+                                            aria-label="Pagination"
+                                        >
+                                            <div className="hidden sm:block">
+                                                <p className="text-sm text-gray-700">
+                                                    Appointments{" "}
+                                                    <span className="font-medium">
+                                                        1
+                                                    </span>{" "}
+                                                    -{" "}
+                                                    <span className="font-medium">
+                                                        {contactsQuery.data &&
+                                                            contactsQuery.data
+                                                                .length}
+                                                    </span>{" "}
+                                                    of{" "}
+                                                    <span className="font-medium">
+                                                        {contactsQuery.data &&
+                                                            contactsQuery.data
+                                                                .length}
+                                                    </span>{" "}
+                                                    results
+                                                </p>
+                                            </div>
+                                            <div className="flex flex-1 justify-between sm:justify-end">
+                                                <ButtonLink
+                                                    href="#"
+                                                    variant="outlined"
+                                                    className="text-xs"
+                                                >
+                                                    Previous
+                                                </ButtonLink>
+                                                <ButtonLink
+                                                    href="#"
+                                                    variant="outlined"
+                                                    className="ml-2 text-xs"
+                                                >
+                                                    Next
+                                                </ButtonLink>
+                                            </div>
+                                        </nav>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </TransitionDelay>
                 </div>
             </PageBody>
         </>

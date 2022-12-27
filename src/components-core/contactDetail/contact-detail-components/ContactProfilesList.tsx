@@ -128,6 +128,7 @@ export const ContactProfilesList = (
                                                 title="Notes:"
                                                 value={i.notes}
                                                 valueSpan={3}
+                                                rawText
                                             />
                                         </dl>
                                     </GridCard>
