@@ -6,6 +6,7 @@ import { formatTime } from "utils/formatTime";
 
 import type { Appointment } from "@prisma/client";
 import clsx from "clsx";
+import { AppointmentFormType } from "./AppointmentModal";
 
 export const AppointmentCard = (props: {
     idx: number;
@@ -15,11 +16,46 @@ export const AppointmentCard = (props: {
                 id: string;
                 displayName: string;
             };
+            id: string;
+            profile: {
+                id: string;
+                name: string;
+            } | null;
         }[];
     };
 }) => {
     const { idx, appointment } = props;
     const { setModal } = useAppointmentsUI();
+
+    const defaultModalData: AppointmentFormType & {
+        id: string;
+    } = {
+        id: appointment.id,
+        address: appointment.address,
+        address_2: appointment?.address_2 || undefined,
+        status: appointment.status,
+        note: appointment?.note || undefined,
+        latitude: appointment?.latitude || undefined,
+        longitude: appointment?.longitude || undefined,
+        date: appointment.date,
+        startTime: appointment?.startTime || undefined,
+        endTime: appointment?.endTime || undefined,
+        contacts: appointment.contacts.map(({ id, contact, profile }) => ({
+            contactOnAppointmentId: id,
+            contactId: contact.id,
+            displayName: contact.displayName,
+            profileName: profile?.name,
+            selectedProfileId: profile?.id,
+        })),
+    };
+
+    const handleEdit = () => {
+        setModal({
+            state: true,
+            defaultData: defaultModalData,
+        });
+    };
+
     return (
         <GridCard>
             <div className="relative mb-4 -mt-2 grid grid-cols-2 gap-2 border-b py-2">
@@ -31,10 +67,7 @@ export const AppointmentCard = (props: {
                     items={[
                         {
                             text: "Edit",
-                            onClick: () =>
-                                setModal({
-                                    state: true,
-                                }),
+                            onClick: handleEdit,
                         },
                         {
                             text: (

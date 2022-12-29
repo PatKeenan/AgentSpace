@@ -35,7 +35,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const calendar = useCalendar({ activeMonth: new Date() });
     const appointments = useAppointments();
     const workspace = useWorkspace();
-    const { setModal } = useAppointmentsUI();
+    const { setModal, modal } = useAppointmentsUI();
     const router = useRouter();
 
     const [selectedDate, setSelectedDate] = React.useState<Date>(
@@ -80,10 +80,12 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     },
                 ]}
             />
-            <AppointmentModal
-                selectedDate={selectedDate.toUTCString()}
-                onSuccessCallback={() => appointmentsQuery.refetch()}
-            />
+            {modal.state && (
+                <AppointmentModal
+                    selectedDate={dateUtils.transform(selectedDate).isoDateOnly}
+                    onSuccessCallback={() => appointmentsQuery.refetch()}
+                />
+            )}
             <PageBody fullHeight>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>

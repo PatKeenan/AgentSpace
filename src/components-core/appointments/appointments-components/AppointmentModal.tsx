@@ -4,6 +4,7 @@ import { useAppointmentsUI } from "../useAppointmentsUI";
 import { Combobox, Transition } from "@headlessui/react";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { AppointmentStatus } from "@prisma/client";
+import { useAppointments } from "hooks";
 import { trpc } from "utils/trpc";
 import * as React from "react";
 
@@ -25,15 +26,16 @@ import {
     ContactOnAppointmentSchema,
     ContactOnAppointmentSchemaExtended,
 } from "server/schemas";
+import { formatDate } from "utils/formatDate";
 
-type AppointmentFormType = AppointmentSchema & {
+export type AppointmentFormType = AppointmentSchema & {
     contacts?: ContactOnAppointmentSchemaExtended[];
 };
 
 type AppointmentModalProps = {
     selectedDate: string;
+    onSuccessCallback: () => void;
     appointment?: AppointmentSchema;
-    onSuccessCallback?: () => void;
 };
 
 // Used for the select component when choosing an appointment status
@@ -52,8 +54,8 @@ const initialFormState: AppointmentFormType = {
     status: "NO_STATUS",
     startTime: "",
     endTime: "",
-    notes: undefined,
-    date: new Date().toUTCString(),
+    note: undefined,
+    date: new Date().toISOString(),
 };
 
 const appointmentReducer = (
@@ -65,18 +67,20 @@ const appointmentReducer = (
 });
 
 export const AppointmentModal = (props: AppointmentModalProps) => {
-    const { appointment, selectedDate } = props;
+    const { selectedDate, onSuccessCallback } = props;
+    const { resetModal, modal } = useAppointmentsUI();
     const [state, setState] = React.useReducer(
         appointmentReducer,
-        appointment ?? { ...initialFormState, date: selectedDate }
+        modal?.defaultData ?? { ...initialFormState, date: selectedDate }
     );
 
     const [addContactFormOpen, setAddContactFormOpen] = React.useState(false);
     const contactInputRef = React.useRef<HTMLInputElement>(null);
 
-    const { id } = useWorkspace();
+    const { id: workspaceId } = useWorkspace();
     const { search } = useContacts();
-    const { resetModal, modal } = useAppointmentsUI();
+
+    const { create, update } = useAppointments();
 
     const contactInput = useDebounceState("", 300);
     const addressInput = useDebounceState("");
@@ -136,11 +140,11 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
     };
 
     const { data: contactOptions, isFetched } = search(
-        { query: contactInput.debounced, workspaceId: id as string },
+        { query: contactInput.debounced, workspaceId: workspaceId as string },
         {
             enabled:
                 contactInput.debounced.trim().length > 2 &&
-                typeof id == "string" &&
+                typeof workspaceId == "string" &&
                 !addContactFormOpen,
             refetchOnWindowFocus: false,
             cacheTime: 0,
@@ -153,9 +157,53 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
         setTimeout(() => setState(initialFormState), 200);
     };
 
+    const { mutate: createAppointmentMutation } = create({
+        onSuccess: () => onSuccessCallback(),
+    });
+    const { mutate: updateAppointmentMutation } = update({
+        onSuccess: () => onSuccessCallback(),
+    });
+
     const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(state);
+        if (workspaceId && !modal?.defaultData) {
+            createAppointmentMutation({
+                ...state,
+                workspaceId: workspaceId as string,
+                contacts: state.contacts?.map((contact) => ({
+                    contactId: contact.contactId,
+                    selectedProfileId: contact.selectedProfileId,
+                })),
+            });
+        }
+        if (workspaceId && modal?.defaultData) {
+            const selectedContactIds = state.contacts?.flatMap(
+                (i) => i.contactOnAppointmentId
+            );
+            const defaultIds =
+                modal.defaultData.contacts?.flatMap(
+                    (i) => i.contactOnAppointmentId
+                ) || [];
+
+            const deletedIds =
+                defaultIds.filter(
+                    (i) => i && !selectedContactIds?.includes(i)
+                ) || [];
+
+            updateAppointmentMutation({
+                ...state,
+                id: modal.defaultData.id,
+                newContacts: state.contacts
+                    ?.filter((i) => !i.contactOnAppointmentId)
+                    ?.map((contact) => ({
+                        contactId: contact.contactId,
+                        selectedProfileId: contact.selectedProfileId,
+                    })),
+                removedContactOnAppointmentIds: deletedIds.map((i) => ({
+                    id: i as string,
+                })),
+            });
+        }
     };
 
     /////////////////////////////////////////////////////////////
@@ -165,7 +213,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                 <QuickAddContactFrom
                     defaultName={contactInput.state}
                     setDisplayName={contactInput.setState}
-                    workspaceId={id as string}
+                    workspaceId={workspaceId as string}
                     onCancel={() => setAddContactFormOpen(false)}
                     onSuccessCallback={(data) =>
                         handleSelectContacts(
@@ -198,8 +246,25 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                 />
             ) : (
                 <form onSubmit={onSubmit}>
-                    <ModalTitle>Add Appointment</ModalTitle>
+                    <ModalTitle>
+                        {modal?.defaultData ? "Edit" : "Add"} Appointment
+                    </ModalTitle>
 
+                    {/* Date only in edit mode */}
+                    {modal?.defaultData ? (
+                        <div className="col-span-8">
+                            <InputGroup
+                                type="date"
+                                label="Date"
+                                name="date"
+                                value={formatDate(state.date, "YYY-MM-DD")}
+                                onChange={(e) =>
+                                    setState({ date: e.target.value })
+                                }
+                                direction="column"
+                            />
+                        </div>
+                    ) : null}
                     {/* --- Address --- */}
                     <div className="grid w-full grid-cols-8 gap-2">
                         <div className="z-[99] col-span-6 mt-2">
@@ -475,14 +540,20 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                         </div>
                     </div>
 
-                    <Textarea label="Notes" name="notes" id="notes" />
+                    <Textarea
+                        label="Notes"
+                        name="notes"
+                        id="notes"
+                        value={state.note}
+                        onChange={(e) => setState({ note: e.target.value })}
+                    />
 
                     <div className="mt-8 flex justify-end space-x-3">
                         <Button variant="outlined" onClick={handleClose}>
                             Cancel
                         </Button>
                         <Button variant="primary" type="submit">
-                            Save
+                            {modal.defaultData ? "Update" : "Save"}
                         </Button>
                     </div>
                 </form>

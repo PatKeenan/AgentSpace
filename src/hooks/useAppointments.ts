@@ -9,5 +9,6 @@ export const useAppointments = () => {
         getByMonth: appointment.getByMonth.useQuery,
         getByDate: appointment.getByDate.useQuery,
         create: appointment.create.useMutation,
+        update: appointment.update.useMutation,
     };
 };

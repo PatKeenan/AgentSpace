@@ -62,15 +62,23 @@ export const appointmentRouter = t.router({
                 include: {
                     contacts: {
                         select: {
+                            id: true,
                             contact: {
                                 select: {
                                     id: true,
                                     displayName: true,
                                 },
                             },
+                            profile: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
                         },
                     },
                 },
+                orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
             });
         }),
     getByDate: authedProcedure
@@ -89,6 +97,25 @@ export const appointmentRouter = t.router({
                     deleted: false,
                     date: {
                         equals: input.date,
+                    },
+                },
+                include: {
+                    contacts: {
+                        select: {
+                            id: true,
+                            contact: {
+                                select: {
+                                    id: true,
+                                    displayName: true,
+                                },
+                            },
+                            profile: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
                     },
                 },
             });
@@ -114,11 +141,10 @@ export const appointmentRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const { contacts, date, ...rest } = input;
+            const { contacts, ...rest } = input;
             const contactsFormatted = contacts?.map((i) => {
                 const baseData = {
                     createdById: ctx.session.user.id,
-                    workspaceId: input.workspaceId,
                     contactId: i.contactId,
                 };
                 return i?.selectedProfileId
@@ -131,7 +157,6 @@ export const appointmentRouter = t.router({
                     ...rest,
                     workspaceId: input.workspaceId,
                     createdById: ctx.session.user.id,
-                    date: date,
                     contacts: contactsFormatted
                         ? {
                               createMany: {
@@ -139,6 +164,55 @@ export const appointmentRouter = t.router({
                               },
                           }
                         : undefined,
+                },
+            });
+        }),
+    update: authedProcedure
+        .input(
+            appointmentSchema.extend({
+                id: z.string(),
+                newContacts: z.array(contactOnAppointmentSchema).optional(),
+                removedContactOnAppointmentIds: z
+                    .array(z.object({ id: z.string() }))
+                    .optional(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const { newContacts, removedContactOnAppointmentIds, ...rest } =
+                input;
+
+            const newContactsFormatted = newContacts?.map((i) => {
+                const baseData = {
+                    createdById: ctx.session.user.id,
+                    contactId: i.contactId,
+                };
+                return i?.selectedProfileId
+                    ? { ...baseData, profileId: i.selectedProfileId }
+                    : baseData;
+            });
+
+            return await ctx.prisma.appointment.update({
+                where: {
+                    id: input.id,
+                },
+                data: {
+                    ...rest,
+                    contacts: {
+                        deleteMany: removedContactOnAppointmentIds
+                            ? {
+                                  id: {
+                                      in: removedContactOnAppointmentIds.flatMap(
+                                          (i) => i.id
+                                      ),
+                                  },
+                              }
+                            : undefined,
+                        createMany: newContactsFormatted
+                            ? {
+                                  data: newContactsFormatted,
+                              }
+                            : undefined,
+                    },
                 },
             });
         }),

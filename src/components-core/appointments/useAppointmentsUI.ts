@@ -1,20 +1,19 @@
 import { devtools } from "zustand/middleware";
 import create from "zustand";
-import { Appointment, ContactOnAppointment } from "@prisma/client";
+import { AppointmentFormType } from "./appointments-components";
 
 export type AppointmentsUiType = {
     modal: {
         state: boolean;
 
         defaultData?:
-            | (ContactOnAppointment & { appointment: Appointment })
+            | (AppointmentFormType & { id: string })
+            | undefined
             | undefined;
     };
     setModal: (opts: {
         state?: boolean;
-        defaultData?:
-            | (ContactOnAppointment & { appointment: Appointment })
-            | undefined;
+        defaultData?: (AppointmentFormType & { id: string }) | undefined;
     }) => void;
     resetModal: () => void;
 };
