@@ -1,14 +1,11 @@
+import { useDebounceState, useContacts, useWorkspace } from "hooks";
+import { QuickAddContactFrom } from "./QuickAddContactForm";
 import { useAppointmentsUI } from "../useAppointmentsUI";
+import { Combobox, Transition } from "@headlessui/react";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { AppointmentStatus } from "@prisma/client";
 import { trpc } from "utils/trpc";
 import * as React from "react";
-import {
-    useDebounceState,
-    useContacts,
-    useAppointments,
-    useWorkspace,
-} from "hooks";
-
-import { QuickAddContactFrom } from "./QuickAddContactForm";
 
 import {
     Textarea,
@@ -21,52 +18,73 @@ import {
     Tag,
     Autocomplete,
 } from "components-common";
+import { v4 } from "uuid";
 
-import type {
-    AddAppointmentModalProps,
-    AppointmentFormState,
-    Selected,
-} from "../types";
+import {
+    appointmentSchema,
+    AppointmentSchema,
+    ContactOnAppointmentSchema,
+    ContactOnAppointmentSchemaExtended,
+} from "server/schemas";
 
-import { Combobox, Transition } from "@headlessui/react";
-import { PlusIcon } from "@heroicons/react/20/solid";
-import { statusOptions } from "../appointments-utils";
-
-const initialFormState: AppointmentFormState = {
-    clients: [],
-    address: undefined,
-    agents: [],
-    status: statusOptions[0],
-    startTime: "",
-    endTime: "",
-    buildingOrApt: "",
-    note: "",
+type AppointmentFormType = AppointmentSchema & {
+    contacts?: ContactOnAppointmentSchemaExtended[];
 };
 
-const appointmentFormReducer = (
-    state: AppointmentFormState,
-    newState: Partial<AppointmentFormState>
+type AppointmentModalProps = {
+    selectedDate: string;
+    appointment?: AppointmentSchema;
+    onSuccessCallback?: () => void;
+};
+
+// Used for the select component when choosing an appointment status
+const statusOptions = Object.keys(AppointmentStatus).map((key, index) => ({
+    id: String(index),
+    value: key,
+    display: key.toLowerCase().replace("_", " "),
+}));
+
+const initialFormState: AppointmentFormType = {
+    address: "",
+    latitude: undefined,
+    longitude: undefined,
+    contacts: [],
+    address_2: undefined,
+    status: "NO_STATUS",
+    startTime: "",
+    endTime: "",
+    notes: undefined,
+    date: new Date().toUTCString(),
+};
+
+const appointmentReducer = (
+    state: AppointmentFormType,
+    newState: Partial<AppointmentFormType>
 ) => ({
     ...state,
     ...newState,
 });
 
-export const AppointmentModal = (props: AddAppointmentModalProps) => {
-    const { appointment, selectedDate, onSuccessCallback } = props;
-
+export const AppointmentModal = (props: AppointmentModalProps) => {
+    const { appointment, selectedDate } = props;
     const [state, setState] = React.useReducer(
-        appointmentFormReducer,
-        appointment ?? initialFormState
+        appointmentReducer,
+        appointment ?? { ...initialFormState, date: selectedDate }
     );
 
-    const addressInput = useDebounceState("");
+    const [addContactFormOpen, setAddContactFormOpen] = React.useState(false);
+    const contactInputRef = React.useRef<HTMLInputElement>(null);
+
+    const { id } = useWorkspace();
+    const { search } = useContacts();
     const { resetModal, modal } = useAppointmentsUI();
+
+    const contactInput = useDebounceState("", 300);
+    const addressInput = useDebounceState("");
 
     const sharedQueryOptions = { refetchOnWindowFocus: false };
 
-    const [selected, setSelected] = React.useState<Selected>([]);
-
-    const { data: addressOptions } = trpc.addressSearch.search.useQuery(
+    const addressQuery = trpc.addressSearch.search.useQuery(
         { query: addressInput.debounced },
         {
             ...sharedQueryOptions,
@@ -76,102 +94,156 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
         }
     );
 
-    const handleClose = () => {
-        resetModal();
-        // Accounts for the animation that runs before closing. This prevents a flash of the form resetting
-        setTimeout(() => setState(initialFormState), 200);
+    const handleSelectAddress = (
+        e:
+            | Pick<AppointmentSchema, "address" | "latitude" | "longitude">
+            | undefined
+    ) => {
+        setState({
+            address: e?.address,
+            latitude: e?.latitude,
+            longitude: e?.longitude,
+        });
     };
-    const { id } = useWorkspace();
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+
+    const handleAddAddressOption = () => {
+        setState({
+            address: addressInput.state,
+            latitude: undefined,
+            longitude: undefined,
+        });
     };
-    const {
-        state: input,
-        setState: setInput,
-        debounced: debouncedInput,
-    } = useDebounceState("", 300);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const { search } = useContacts();
-    const [selectedStatus, setSelectedStatus] = React.useState(
-        statusOptions[0]
-    );
-    const [addContactForm, setAddContactForm] = React.useState(false);
-    const handleDelete = (i: {
-        selectedRoleId?: string;
-        contactId: string;
-    }) => {
-        const filteredContacts = selected
-            ? selected.filter((selectedContact) => {
+
+    const handleSelectContacts = (value: AppointmentFormType["contacts"]) => {
+        setState({ contacts: value });
+        contactInputRef.current?.focus();
+        return contactInput.setState("");
+    };
+
+    const handleDeleteContact = (contact: ContactOnAppointmentSchema) => {
+        const filteredContacts = state.contacts
+            ? state.contacts.filter((selectedContact) => {
                   if (
-                      selectedContact.data.id == i.contactId &&
-                      selectedContact.selectedRoleId == i.selectedRoleId
+                      selectedContact.contactId == contact.contactId &&
+                      selectedContact.selectedProfileId ==
+                          contact.selectedProfileId
                   )
                       return false;
                   return true;
               })
             : [];
 
-        setSelected(filteredContacts);
+        return setState({ contacts: filteredContacts });
     };
+
     const { data: contactOptions, isFetched } = search(
-        { query: debouncedInput, workspaceId: id as string },
+        { query: contactInput.debounced, workspaceId: id as string },
         {
             enabled:
-                debouncedInput.trim().length > 2 &&
+                contactInput.debounced.trim().length > 2 &&
                 typeof id == "string" &&
-                !addContactForm,
+                !addContactFormOpen,
             refetchOnWindowFocus: false,
             cacheTime: 0,
         }
     );
-    const handleAddContact = () => {
-        setAddContactForm(true);
-    };
-    const handleCancel = () => {
-        return resetModal();
+
+    const handleClose = () => {
+        resetModal();
+        // Accounts for the animation that runs before closing. This prevents a flash of the form resetting
+        setTimeout(() => setState(initialFormState), 200);
     };
 
-    const handleChange = (i: Selected) => {
-        setSelected(i);
-        setInput("");
-        return inputRef.current?.focus();
-    };
-
-    const handleSelectAddress = (e: AppointmentFormState["address"]) => {
-        setState({ address: e });
+    const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(state);
     };
 
     /////////////////////////////////////////////////////////////
     return (
         <Modal open={modal.state || false} onClose={handleClose}>
-            {addContactForm ? (
+            {addContactFormOpen ? (
                 <QuickAddContactFrom
-                    defaultName={input}
-                    setDisplayName={setInput}
+                    defaultName={contactInput.state}
+                    setDisplayName={contactInput.setState}
                     workspaceId={id as string}
-                    onCancel={() => setAddContactForm(false)}
+                    onCancel={() => setAddContactFormOpen(false)}
+                    onSuccessCallback={(data) =>
+                        handleSelectContacts(
+                            state.contacts
+                                ? [
+                                      ...state.contacts,
+                                      {
+                                          contactId: data.id,
+                                          displayName: data.displayName,
+                                          profileName:
+                                              data.profiles[0]?.name ||
+                                              undefined,
+                                          selectedProfileId:
+                                              data.profiles[0]?.id || undefined,
+                                      },
+                                  ]
+                                : [
+                                      {
+                                          contactId: data.id,
+                                          displayName: data.displayName,
+                                          profileName:
+                                              data.profiles[0]?.name ||
+                                              undefined,
+                                          selectedProfileId:
+                                              data.profiles[0]?.id || undefined,
+                                      },
+                                  ]
+                        )
+                    }
                 />
             ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={onSubmit}>
                     <ModalTitle>Add Appointment</ModalTitle>
 
                     {/* --- Address --- */}
                     <div className="grid w-full grid-cols-8 gap-2">
-                        <div className="z-[99] col-span-6">
+                        <div className="z-[99] col-span-6 mt-2">
                             <Autocomplete
-                                name="address"
+                                required
                                 label="Address"
-                                selected={state?.address || null}
-                                onSelect={handleSelectAddress}
+                                name="address"
+                                selected={
+                                    state.address
+                                        ? {
+                                              id: "",
+                                              address: state.address,
+                                              latitude: undefined,
+                                              longitude: undefined,
+                                          }
+                                        : undefined
+                                }
+                                onSelect={(i) => handleSelectAddress(i)}
                                 value={addressInput.state}
                                 setValue={addressInput.setState}
                                 direction="column"
-                                options={addressOptions?.features}
-                                renderValue={(option) => option?.place_name}
+                                options={addressQuery.data?.features.map(
+                                    (i) => ({
+                                        id: i.id,
+                                        address: i.place_name,
+                                        latitude: i.center && i.center[1],
+                                        longitude: i.center && i?.center[0],
+                                    })
+                                )}
+                                renderValue={(option) =>
+                                    option ? option.address : ""
+                                }
                                 onClear={() => {
-                                    setState({ address: null });
+                                    setState({
+                                        address: undefined,
+                                        latitude: undefined,
+                                        longitude: undefined,
+                                    });
                                     return addressInput.setState(undefined);
                                 }}
+                                isFetched={addressQuery.isFetched}
+                                isLoading={addressQuery.isLoading}
+                                addOption={handleAddAddressOption}
                             />
                         </div>
                         <div className="col-span-2 ">
@@ -188,8 +260,8 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                     <div className="relative z-50 col-span-8 grid w-full">
                         <Combobox
                             as="div"
-                            value={selected}
-                            onChange={handleChange}
+                            value={state.contacts}
+                            onChange={(i) => handleSelectContacts(i)}
                             multiple
                             className="relative mt-4"
                         >
@@ -201,20 +273,22 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                     <div
                                         className="relative mt-1"
                                         onClick={() =>
-                                            inputRef.current?.focus()
+                                            contactInputRef.current?.focus()
                                         }
                                     >
                                         <div className="flex w-full items-center rounded-md border border-gray-300 bg-white pl-2 pr-10 shadow-sm focus-within:border-indigo-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-indigo-500 sm:text-sm">
                                             <Combobox.Input
                                                 as={React.Fragment}
                                                 onChange={(e) =>
-                                                    setInput(e.target.value)
+                                                    contactInput.setState(
+                                                        e.target.value
+                                                    )
                                                 }
                                             >
                                                 <input
-                                                    value={input}
+                                                    value={contactInput.state}
                                                     autoComplete="off"
-                                                    ref={inputRef}
+                                                    ref={contactInputRef}
                                                     className="mx-0 w-full border-0 px-2 ring-0 focus:border-0 focus:ring-0"
                                                 />
                                             </Combobox.Input>
@@ -222,8 +296,9 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                         <Transition
                                             show={
                                                 (open &&
-                                                    input &&
-                                                    input.trim().length > 2) ||
+                                                    contactInput.state &&
+                                                    contactInput.state.trim()
+                                                        .length > 2) ||
                                                 false
                                             }
                                             enter="transition duration-100 ease-out"
@@ -238,44 +313,62 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                                 className="absolute z-[99] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                                                 static
                                             >
-                                                {contactOptions?.map((i) => {
-                                                    return (
-                                                        <React.Fragment
-                                                            key={i.id}
-                                                        >
-                                                            <ComboboxOption
-                                                                value={{
-                                                                    data: i,
-                                                                }}
-                                                                display={
-                                                                    i.displayName
+                                                {contactOptions?.map(
+                                                    (contactOption) => {
+                                                        return (
+                                                            <React.Fragment
+                                                                key={
+                                                                    contactOption.id
                                                                 }
-                                                                key={i.id}
-                                                            />
+                                                            >
+                                                                <ComboboxOption
+                                                                    value={{
+                                                                        contactId:
+                                                                            contactOption.id,
+                                                                        displayName:
+                                                                            contactOption.displayName,
+                                                                    }}
+                                                                    display={
+                                                                        contactOption.displayName
+                                                                    }
+                                                                    key={
+                                                                        contactOption.id
+                                                                    }
+                                                                />
 
-                                                            {i.profiles.map(
-                                                                (p) => (
-                                                                    <ComboboxOption
-                                                                        value={{
-                                                                            selectedRoleId:
-                                                                                p.id,
-                                                                            data: i,
-                                                                        }}
-                                                                        display={`${i.displayName} - ${p.name}`}
-                                                                        key={
-                                                                            p.id
-                                                                        }
-                                                                    />
-                                                                )
-                                                            )}
-                                                        </React.Fragment>
-                                                    );
-                                                })}
+                                                                {contactOption.profiles.map(
+                                                                    (
+                                                                        profile
+                                                                    ) => (
+                                                                        <ComboboxOption
+                                                                            value={{
+                                                                                contactId:
+                                                                                    contactOption.id,
+                                                                                displayName:
+                                                                                    contactOption.displayName,
+                                                                                selectedProfileId:
+                                                                                    profile.id,
+                                                                                profileName:
+                                                                                    profile.name,
+                                                                            }}
+                                                                            display={`${contactOption.displayName} - ${profile.name}`}
+                                                                            key={
+                                                                                profile.id
+                                                                            }
+                                                                        />
+                                                                    )
+                                                                )}
+                                                            </React.Fragment>
+                                                        );
+                                                    }
+                                                )}
                                                 {open && isFetched && (
                                                     <button
                                                         className="relative w-full cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                                        onClick={
-                                                            handleAddContact
+                                                        onClick={() =>
+                                                            setAddContactFormOpen(
+                                                                true
+                                                            )
                                                         }
                                                     >
                                                         <div className="flex items-center space-x-2">
@@ -287,7 +380,9 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                                             />
                                                             <span>
                                                                 Add &quot;
-                                                                {input}
+                                                                {
+                                                                    contactInput.state
+                                                                }
                                                                 &quot; to
                                                                 Contacts
                                                             </span>
@@ -298,49 +393,38 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                         </Transition>
                                     </div>
 
-                                    {selected && selected.length > 0 && (
-                                        <ul className="mt-2  flex flex-wrap">
-                                            {selected.map((i) => (
-                                                <li
-                                                    key={
-                                                        i.selectedRoleId +
-                                                        i.data.id
-                                                    }
-                                                    className={"mr-2 mt-2"}
-                                                >
-                                                    <Tag
-                                                        onDelete={() =>
-                                                            handleDelete({
-                                                                selectedRoleId:
-                                                                    i.selectedRoleId,
-                                                                contactId:
-                                                                    i.data.id,
-                                                            })
-                                                        }
+                                    {state.contacts &&
+                                        state.contacts.length > 0 && (
+                                            <ul className="mt-2  flex flex-wrap">
+                                                {state.contacts.map((i) => (
+                                                    <li
+                                                        key={v4()}
+                                                        className={"mr-2 mt-2"}
                                                     >
-                                                        <span>
-                                                            {i.data.displayName}
-                                                        </span>
-
-                                                        {i?.selectedRoleId && (
-                                                            <span className="ml-1">
-                                                                - {}
-                                                                {
-                                                                    i.data.profiles.find(
-                                                                        (
-                                                                            profile
-                                                                        ) =>
-                                                                            profile.id ==
-                                                                            i.selectedRoleId
-                                                                    )?.name
-                                                                }
+                                                        <Tag
+                                                            onDelete={() =>
+                                                                handleDeleteContact(
+                                                                    i
+                                                                )
+                                                            }
+                                                        >
+                                                            <span>
+                                                                {i.displayName}
                                                             </span>
-                                                        )}
-                                                    </Tag>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
+
+                                                            {i.selectedProfileId && (
+                                                                <span className="ml-1">
+                                                                    - {}
+                                                                    {
+                                                                        i.profileName
+                                                                    }
+                                                                </span>
+                                                            )}
+                                                        </Tag>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
                                 </>
                             )}
                         </Combobox>
@@ -353,6 +437,10 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                 type="time"
                                 label="Start Time"
                                 name="start-time"
+                                value={state.startTime}
+                                onChange={(e) =>
+                                    setState({ startTime: e.target.value })
+                                }
                                 direction="column"
                             />
                         </div>
@@ -361,6 +449,10 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                 type="time"
                                 label="End Time"
                                 name="end-time"
+                                value={state.endTime}
+                                onChange={(e) =>
+                                    setState({ endTime: e.target.value })
+                                }
                                 direction="column"
                             />
                         </div>
@@ -370,8 +462,14 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                                 name="status"
                                 direction="col"
                                 displayField="display"
-                                selected={selectedStatus}
-                                setSelected={setSelectedStatus}
+                                selected={statusOptions.find(
+                                    (i) => i.value == state.status
+                                )}
+                                setSelected={(i) =>
+                                    setState({
+                                        status: i.value as AppointmentStatus,
+                                    })
+                                }
                                 className="max-h-[140px] capitalize"
                                 options={statusOptions}
                             />
@@ -381,10 +479,7 @@ export const AppointmentModal = (props: AddAppointmentModalProps) => {
                     <Textarea label="Notes" name="notes" id="notes" />
 
                     <div className="mt-8 flex justify-end space-x-3">
-                        <Button
-                            variant="outlined"
-                            onClick={() => handleCancel()}
-                        >
+                        <Button variant="outlined" onClick={handleClose}>
                             Cancel
                         </Button>
                         <Button variant="primary" type="submit">

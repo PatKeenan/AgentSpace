@@ -1,16 +1,12 @@
 import {
-    ContactMetaSchema,
-    ContactSchema,
+    contactMetaSchema,
+    contactSchema,
     idSchema,
     profileSchema,
-    Schemas,
 } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 
-import type { Contact, Profile } from "@prisma/client";
-
-const contactSchema = Schemas.contact();
 export const contactsRouter = t.router({
     getAll: authedProcedure
         .input(
@@ -55,7 +51,7 @@ export const contactsRouter = t.router({
                             OR: [
                                 {
                                     displayName: {
-                                        startsWith: input.query,
+                                        contains: input.query,
                                         mode: "insensitive",
                                     },
                                 },
@@ -63,7 +59,7 @@ export const contactsRouter = t.router({
                                     contactMeta: {
                                         some: {
                                             firstName: {
-                                                startsWith: input.query,
+                                                contains: input.query,
                                                 mode: "insensitive",
                                             },
                                             deleted: false,
@@ -85,12 +81,12 @@ export const contactsRouter = t.router({
             });
         }),
     getOne: authedProcedure
-        .input(ContactSchema().baseBooleans.partial().merge(idSchema))
+        .input(contactSchema().baseBooleans.partial().merge(idSchema))
         .query(async ({ ctx, input }) => {
             const { id, displayName = false, notes = false } = input;
             return await ctx.prisma.contact.findFirst({
                 where: {
-                    id: input.id,
+                    id: id,
                     deleted: false,
                 },
                 select: {
@@ -101,9 +97,9 @@ export const contactsRouter = t.router({
         }),
     createContact: authedProcedure
         .input(
-            contactSchema.create.contact.extend({
+            contactSchema().create.extend({
                 contactMeta: z.array(
-                    ContactMetaSchema().create.omit({ contactId: true })
+                    contactMetaSchema().create.omit({ contactId: true })
                 ),
                 workspaceId: z.string(),
             })
@@ -147,8 +143,8 @@ export const contactsRouter = t.router({
         }),
     createContactAndProfile: authedProcedure
         .input(
-            contactSchema.create.contact.extend({
-                contactMeta: ContactMetaSchema().create.omit({
+            contactSchema().create.extend({
+                contactMeta: contactMetaSchema().create.omit({
                     contactId: true,
                 }),
                 profile: profileSchema()
@@ -182,10 +178,13 @@ export const contactsRouter = t.router({
                         },
                     },
                 },
+                include: {
+                    profiles: true,
+                },
             });
         }),
     update: authedProcedure
-        .input(ContactSchema().base.merge(idSchema))
+        .input(contactSchema().base.merge(idSchema))
         .mutation(async ({ ctx, input }) => {
             const { id, ...rest } = input;
             return await ctx.prisma.contact.update({

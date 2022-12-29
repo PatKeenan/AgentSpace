@@ -81,7 +81,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                 ]}
             />
             <AppointmentModal
-                selectedDate={selectedDate}
+                selectedDate={selectedDate.toUTCString()}
                 onSuccessCallback={() => appointmentsQuery.refetch()}
             />
             <PageBody fullHeight>

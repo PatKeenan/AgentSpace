@@ -1,6 +1,4 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
-import { Accordion } from "components-common/Accordion";
-import { Button } from "components-common/Button";
 import { CreateContactForm } from "./create-contact-components";
 
 import type { NextPageExtended } from "types/index";

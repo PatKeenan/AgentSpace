@@ -2,10 +2,11 @@ import { Button, InputGroup, ModalTitle, Select } from "components-common";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PROFILE_TYPES } from "@prisma/client";
+import { Contact, Profile, PROFILE_TYPES } from "@prisma/client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { ContactMetaSchema, ContactSchema } from "server/schemas";
+import { contactMetaSchema, contactSchema } from "server/schemas";
+import type { ContactMetaSchema, ContactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 
 const profileOptions = Object.keys(PROFILE_TYPES).map((i, index) => ({
@@ -16,6 +17,11 @@ const profileOptions = Object.keys(PROFILE_TYPES).map((i, index) => ({
 
 type QuickAddContactProps = {
     setDisplayName: (input: string) => void;
+    onSuccessCallback: (
+        data: Contact & {
+            profiles: Profile[];
+        }
+    ) => void;
     title?: string;
     defaultName?: string;
     workspaceId: string;
@@ -26,7 +32,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
     const [attachProfile, setAttachProfile] = React.useState(false);
 
     const [selectedProfile, setSelectedProfile] = React.useState(
-        profileOptions[0]
+        profileOptions[4]
     );
 
     const {
@@ -35,6 +41,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         workspaceId,
         setDisplayName,
         onCancel,
+        onSuccessCallback,
     } = props;
 
     const handleOnCancel = () => {
@@ -50,9 +57,9 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
             Omit<ContactMetaSchema["create"], "contactId">
     >({
         resolver: zodResolver(
-            ContactMetaSchema()
+            contactMetaSchema()
                 .create.omit({ contactId: true })
-                .merge(ContactSchema().create)
+                .merge(contactSchema().create)
         ),
         defaultValues: {
             displayName: defaultName,
@@ -71,14 +78,20 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                     email: data?.email,
                     phoneNumber: data?.phoneNumber,
                 },
-                profile: selectedProfile
-                    ? {
-                          type: selectedProfile.value as PROFILE_TYPES,
-                          name: selectedProfile.name,
-                      }
-                    : undefined,
+                profile:
+                    attachProfile && selectedProfile
+                        ? {
+                              type: selectedProfile.value as PROFILE_TYPES,
+                              name: selectedProfile.name,
+                          }
+                        : undefined,
             },
-            { onSuccess: () => onCancel() }
+            {
+                onSuccess: (data) => {
+                    onSuccessCallback(data);
+                    onCancel();
+                },
+            }
         );
     });
 
@@ -92,7 +105,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         createContactAndProfile();
 
     React.useEffect(() => {
-        return () => setSelectedProfile(profileOptions[0]);
+        return () => setSelectedProfile(profileOptions[4]);
     }, [attachProfile]);
 
     return (

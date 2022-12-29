@@ -42,16 +42,19 @@ model Profile {
 }
 
 model ContactOnAppointment {
-    id               String      @id @default(cuid())
-    createdAt        DateTime    @default(now())
-    updatedAt        DateTime    @updatedAt
-    contact          Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
-    contactId        String
-    appointment      Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-    appointmentId    String
-    deleted          Boolean?    @default(false)
-    deletedAt        DateTime?
-    attachedProfiles Profile[]
+    id            String      @id @default(cuid())
+    createdAt     DateTime    @default(now())
+    updatedAt     DateTime    @updatedAt
+    createdBy     User        @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    createdById   String
+    contact       Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    contactId     String
+    appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+    appointmentId String
+    deleted       Boolean?    @default(false)
+    deletedAt     DateTime?
+    profile       Profile?    @relation(fields: [profileId], references: [id])
+    profileId     String?
 }
 
 model Appointment {
@@ -69,8 +72,9 @@ model Appointment {
     tags         Tag[]
     contacts     ContactOnAppointment[]
     address      String
-    latitude     Float
-    longitude    Float
+    address_2    String?
+    latitude     Float?
+    longitude    Float?
     note         String?
     assignedTo   UserOnWorkspace?       @relation(fields: [assignedToId], references: [id])
     assignedToId String?
@@ -213,25 +217,26 @@ model Session {
 }
 
 model User {
-    id               String                    @id @default(cuid())
-    createdAt        DateTime                  @default(now())
-    accounts         Account[]
-    sessions         Session[]
-    profiles         Profile[]
-    isRegistered     Boolean                   @default(false)
-    subscriptions    SubscriptionOnWorkspace[]
-    workspaceMeta    UserOnWorkspace[]
-    contact          Contact[]
-    tags             Tag[]
-    appointments     Appointment[]
-    notifications    Notification[]
-    defaultWorkspace String?
-    name             String?
-    brokerage        String?
-    email            String?                   @unique
-    emailVerified    DateTime?
-    image            String?
-    stripeCustomerId String?                   @unique
+    id                    String                    @id @default(cuid())
+    createdAt             DateTime                  @default(now())
+    accounts              Account[]
+    sessions              Session[]
+    profiles              Profile[]
+    isRegistered          Boolean                   @default(false)
+    subscriptions         SubscriptionOnWorkspace[]
+    workspaceMeta         UserOnWorkspace[]
+    contact               Contact[]
+    tags                  Tag[]
+    appointments          Appointment[]
+    notifications         Notification[]
+    defaultWorkspace      String?
+    name                  String?
+    brokerage             String?
+    email                 String?                   @unique
+    emailVerified         DateTime?
+    image                 String?
+    stripeCustomerId      String?                   @unique
+    contactOnAppointments ContactOnAppointment[]
 }
 
 model VerificationToken {

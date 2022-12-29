@@ -1,4 +1,4 @@
-import { ContactMetaSchema } from "server/schemas";
+import { contactMetaSchema } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 
@@ -15,7 +15,7 @@ export const contactMetaRouter = t.router({
             });
         }),
     create: authedProcedure
-        .input(ContactMetaSchema().create)
+        .input(contactMetaSchema().create)
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.contactMeta.create({
                 data: {
@@ -24,7 +24,7 @@ export const contactMetaRouter = t.router({
             });
         }),
     update: authedProcedure
-        .input(ContactMetaSchema().update)
+        .input(contactMetaSchema().update)
         .mutation(async ({ ctx, input }) => {
             return await ctx.prisma.contactMeta.update({
                 where: {

@@ -1,10 +1,8 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
-import { Schemas } from "server/schemas";
+import { appointmentSchema, contactOnAppointmentSchema } from "server/schemas";
 import { dateUtils } from "utils/dateUtils";
 import { addDays } from "date-fns";
-
-const appointmentSchema = Schemas.appointment();
 
 export const appointmentRouter = t.router({
     getAll: authedProcedure
@@ -110,22 +108,37 @@ export const appointmentRouter = t.router({
         }),
     create: authedProcedure
         .input(
-            appointmentSchema.create.extend({
+            appointmentSchema.extend({
                 workspaceId: z.string(),
+                contacts: z.array(contactOnAppointmentSchema).optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {
             const { contacts, date, ...rest } = input;
+            const contactsFormatted = contacts?.map((i) => {
+                const baseData = {
+                    createdById: ctx.session.user.id,
+                    workspaceId: input.workspaceId,
+                    contactId: i.contactId,
+                };
+                return i?.selectedProfileId
+                    ? { ...baseData, profileId: i.selectedProfileId }
+                    : baseData;
+            });
+
             return await ctx.prisma.appointment.create({
                 data: {
                     ...rest,
+                    workspaceId: input.workspaceId,
                     createdById: ctx.session.user.id,
                     date: date,
-                    contacts: {
-                        createMany: {
-                            data: contacts,
-                        },
-                    },
+                    contacts: contactsFormatted
+                        ? {
+                              createMany: {
+                                  data: contactsFormatted,
+                              },
+                          }
+                        : undefined,
                 },
             });
         }),

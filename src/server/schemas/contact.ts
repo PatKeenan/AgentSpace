@@ -13,7 +13,7 @@ export const idSchema = z.object({
  *
  */
 
-export function ContactSchema() {
+export const contactSchema = () => {
     const base = z.object({
         displayName: z
             .string()
@@ -31,10 +31,10 @@ export function ContactSchema() {
         create: base,
         baseBooleans,
     };
-}
-const baeContact = ContactSchema().base;
-const createContact = ContactSchema().create;
-const baseContactBooleans = ContactSchema().baseBooleans;
+};
+const baeContact = contactSchema().base;
+const createContact = contactSchema().create;
+const baseContactBooleans = contactSchema().baseBooleans;
 
 export type ContactSchema = {
     base: z.infer<typeof baeContact>;
@@ -48,7 +48,7 @@ export type ContactSchema = {
  *
  */
 
-export function ContactMetaSchema() {
+export const contactMetaSchema = () => {
     const base = z
         .object({
             firstName: z
@@ -65,10 +65,10 @@ export function ContactMetaSchema() {
     const create = base.omit({ id: true });
 
     return { base, create, update: base };
-}
-const baeContactMeta = ContactMetaSchema().base;
-const createContactMeta = ContactMetaSchema().create;
-const updateContactMeta = ContactMetaSchema().update;
+};
+const baeContactMeta = contactMetaSchema().base;
+const createContactMeta = contactMetaSchema().create;
+const updateContactMeta = contactMetaSchema().update;
 
 export type ContactMetaSchema = {
     base: z.infer<typeof baeContactMeta>;

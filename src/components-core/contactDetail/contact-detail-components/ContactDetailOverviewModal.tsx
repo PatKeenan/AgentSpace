@@ -10,11 +10,14 @@ import {
 } from "../useContactDetailUi";
 import * as React from "react";
 import {
-    ContactMetaSchema,
-    ContactSchema,
+    contactMetaSchema,
+    contactSchema,
     profileSchema,
     ProfileSchema,
 } from "server/schemas";
+
+import type { ContactMetaSchema, ContactSchema } from "server/schemas";
+
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
@@ -48,7 +51,7 @@ const EditContactForm = () => {
     const { mutate: updateContact } = update();
 
     const { register, handleSubmit } = useForm<ContactSchema["base"]>({
-        resolver: zodResolver(ContactSchema().base),
+        resolver: zodResolver(contactSchema().base),
         defaultValues:
             modal.form == "contact"
                 ? (modal.defaultData as ContactSchema["base"])
@@ -117,8 +120,8 @@ const ContactMetaForm = () => {
     } = useForm<ContactMetaSchema["update"] | ContactMetaSchema["create"]>({
         resolver: zodResolver(
             defaultFormState
-                ? ContactMetaSchema().update
-                : ContactMetaSchema().create.omit({ contactId: true })
+                ? contactMetaSchema().update
+                : contactMetaSchema().create.omit({ contactId: true })
         ),
         defaultValues: defaultFormState,
     });

@@ -8,7 +8,7 @@ import { Button, ButtonLink } from "components-common/Button";
 import { useForm } from "react-hook-form";
 import * as React from "react";
 import * as z from "zod";
-import { ContactMetaSchema, ContactSchema } from "server/schemas";
+import { contactMetaSchema, contactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
@@ -28,8 +28,8 @@ const initialState = {
 
 /* const contactSchema = Schemas.contact(); */
 
-const createContactFormSchema = ContactSchema().create.extend({
-    fields: z.array(ContactMetaSchema().create.omit({ contactId: true })),
+const createContactFormSchema = contactSchema().create.extend({
+    fields: z.array(contactMetaSchema().create.omit({ contactId: true })),
 });
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
