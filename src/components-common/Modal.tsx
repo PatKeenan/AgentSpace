@@ -1,5 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react";
-import clsx from "clsx";
 import * as React from "react";
 
 export type ModalState = {

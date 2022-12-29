@@ -8,7 +8,7 @@ export const statusOptions = Object.keys(AppointmentStatus).map(
     })
 );
 
-export function isEmpty(arr: any[] | undefined) {
+export function isEmpty(arr: unknown[] | undefined) {
     if (!arr || typeof arr == "undefined") return true;
     if (arr.length == 0) return true;
     return false;

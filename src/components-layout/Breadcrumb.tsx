@@ -1,5 +1,4 @@
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/24/outline";
-import { useGlobalStore } from "global-store/useGlobalStore";
 import Link from "next/link";
 
 export type BreadcrumbItem = {

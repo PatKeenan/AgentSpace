@@ -1,8 +1,4 @@
-import {
-    ContactMetaSchema,
-    ContactSchema,
-    ProfileSchema,
-} from "server/schemas";
+import { ContactMetaSchema, ContactSchema } from "server/schemas";
 import { devtools } from "zustand/middleware";
 import create from "zustand";
 import { ContactOnAppointment, Profile } from "@prisma/client";

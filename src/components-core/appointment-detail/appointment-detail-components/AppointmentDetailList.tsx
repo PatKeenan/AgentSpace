@@ -2,7 +2,6 @@ import { useAppointmentDetailUI } from "../useAppointmentDetailUI";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 import { Button } from "components-common/Button";
-import * as React from "react";
 import { AppointmentFormState } from "../types";
 
 type AppointmentDetailListProps = {
@@ -12,8 +11,7 @@ type AppointmentDetailListProps = {
     appointments: AppointmentFormState[] | undefined;
 };
 export const AppointmentDetailList = (props: AppointmentDetailListProps) => {
-    const { handleAddAppointment, appointments } = props;
-
+    const {} = props;
     const { setEditSliderOpen } = useAppointmentDetailUI();
 
     return (

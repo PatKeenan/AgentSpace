@@ -1,7 +1,5 @@
-import { Button, ButtonLink } from "components-common/Button";
-import { Breadcrumb } from "components-layout/Breadcrumb";
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
+import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
+import { ButtonLink } from "components-common/Button";
 import { useWorkspace } from "hooks/useWorkspace";
 import { NextPageExtended } from "types/index";
 

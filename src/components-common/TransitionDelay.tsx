@@ -3,7 +3,6 @@ import React from "react";
 
 export const TransitionDelay = ({
     isLoading,
-    delay = 250,
     children,
 }: {
     isLoading?: boolean;

@@ -1,12 +1,9 @@
 import { PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import { Button, ButtonLink } from "components-common/Button";
-import { ToggleMenu } from "components-common/ToggleMenu";
+import { Button, ToggleMenu } from "components-common";
 import { useProfile } from "hooks/useProfile";
-import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
 import React from "react";
-import { util } from "zod/lib/helpers/util";
 import { useContactDetailUi } from "../useContactDetailUi";
 import { DetailsRow } from "./DetailsRow";
 
@@ -16,7 +13,7 @@ import { GridSectionTitle } from "./GridSectionTitle";
 export const ContactProfilesList = (
     htmlProps: React.ComponentProps<"section">
 ) => {
-    const { getManyForContact, update, utils } = useProfile();
+    const { getManyForContact, update } = useProfile();
     const { setModal } = useContactDetailUi();
     const router = useRouter();
 

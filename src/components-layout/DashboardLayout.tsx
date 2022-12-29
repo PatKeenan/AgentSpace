@@ -9,7 +9,6 @@ import {
     XMarkIcon,
     UserGroupIcon,
     TruckIcon,
-    RectangleGroupIcon,
     ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
 

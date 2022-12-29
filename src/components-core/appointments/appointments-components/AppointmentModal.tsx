@@ -21,7 +21,6 @@ import {
 import { v4 } from "uuid";
 
 import {
-    appointmentSchema,
     AppointmentSchema,
     ContactOnAppointmentSchema,
     ContactOnAppointmentSchemaExtended,

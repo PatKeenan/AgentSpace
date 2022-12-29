@@ -9,7 +9,7 @@ type AppointmentDetialMapProps = {
 export const AppointmentDetailMap = (props: AppointmentDetialMapProps) => {
     const { appointments } = props;
 
-    const cords = appointments?.map((appointment) => ({
+    const cords = appointments?.map(() => ({
         longitude: /* appointment.address?.center[1] */ -70,
         latitude: /* appointment.address?.center[0] */ 20,
     }));

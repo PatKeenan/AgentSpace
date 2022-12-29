@@ -22,7 +22,7 @@ interface AutoCompleteProps<T>
 }
 
 export function Autocomplete<
-    T extends ({ id: string } & Record<string, any>) | undefined
+    T extends ({ id: string } & Record<string, unknown>) | undefined
 >(props: AutoCompleteProps<T | undefined>) {
     const {
         className,
@@ -37,7 +37,6 @@ export function Autocomplete<
         value,
         name,
         onClear,
-        isLoading,
         isFetched,
         addOption,
     } = props;

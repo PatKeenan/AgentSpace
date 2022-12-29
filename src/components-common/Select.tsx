@@ -16,6 +16,7 @@ type SelectProps<T, K> = {
 };
 
 export function Select<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     T extends { id: string } & Record<string, any>,
     K extends keyof T
 >(props: SelectProps<T, K>) {

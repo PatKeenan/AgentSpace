@@ -4,12 +4,12 @@ import { z } from "zod";
 
 import type { MapboxPlaces } from "types/map-box";
 
-type Reshape = {
+/* type Reshape = {
     address: string;
     placeName: string;
     longitude: number;
     latitude: number;
-};
+}; */
 
 export const addressSearchRouter = t.router({
     search: authedProcedure

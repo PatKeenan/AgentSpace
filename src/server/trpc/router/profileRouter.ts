@@ -57,7 +57,7 @@ export const profileRouter = t.router({
             const { id, ...rest } = input;
             return await ctx.prisma.profile.update({
                 where: {
-                    id: input.id,
+                    id: id,
                 },
                 data: {
                     ...rest,

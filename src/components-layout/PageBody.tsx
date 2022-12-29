@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 import clsx from "clsx";
-import { TransitionDelay } from "components-common/TransitionDelay";
 import { ChildrenProps } from "types/index";
 
 export const PageBody = (props: {

@@ -1,6 +1,3 @@
-import { useGlobalStore } from "global-store/useGlobalStore";
-import { trpc } from "utils/trpc";
-
 const AppointmentsAll = () => {
     return (
         <div>

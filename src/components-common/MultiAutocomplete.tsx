@@ -16,6 +16,7 @@ type MultiAutoCompleteProps<T, K> = {
 };
 
 export function MultiAutoComplete<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     T extends { id: string } & Record<string, any>,
     K extends keyof T
 >(props: MultiAutoCompleteProps<T, K>) {

@@ -173,7 +173,7 @@ export const contactsRouter = t.router({
                     },
                     contactMeta: {
                         create: {
-                            ...input.contactMeta,
+                            ...contactMeta,
                             isPrimaryContact: true,
                         },
                     },

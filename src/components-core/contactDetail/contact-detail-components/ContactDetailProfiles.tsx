@@ -1,5 +1,3 @@
-import React from "react";
-import { ContactAppointmentList } from "./ContactAppointmentList";
 import { ContactProfilesList } from "./ContactProfilesList";
 
 const ContactDetailProfiles = () => {

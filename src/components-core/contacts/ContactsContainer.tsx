@@ -1,19 +1,16 @@
+import { Button, ButtonLink, TransitionDelay } from "components-common";
 import { SectionHeading } from "components-layout/SectionHeading";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { Button, ButtonLink } from "components-common/Button";
 import { Breadcrumb } from "components-layout/Breadcrumb";
 import { NextLink } from "components-common/NextLink";
 import { PageBody } from "components-layout/PageBody";
+
 import { useWorkspace } from "hooks/useWorkspace";
-import { useContactsUI } from "./useContactsUI";
 import { useContacts } from "hooks/useContacts";
-import { useRouter } from "next/router";
 import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
 import type { Contact, ContactMeta } from "@prisma/client";
-import { TransitionDelay } from "components-common";
 
 export const ContactsContainer: NextPageExtended = () => {
     const [indeterminate, setIndeterminate] = useState(false);
@@ -22,10 +19,8 @@ export const ContactsContainer: NextPageExtended = () => {
         typeof contactsQuery.data
     >([]);
 
-    const { setModalOpen } = useContactsUI();
     const workspace = useWorkspace();
     const contacts = useContacts();
-    const router = useRouter();
 
     const checkbox = useRef<HTMLInputElement>(null);
 

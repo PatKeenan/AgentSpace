@@ -1,4 +1,4 @@
-import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
+import { Breadcrumb, PageBody } from "components-layout";
 import { useWorkspace } from "hooks";
 import type { NextPageExtended } from "types/index";
 import { Tabs } from "components-common/Tabs";

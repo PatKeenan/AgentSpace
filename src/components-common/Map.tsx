@@ -1,9 +1,9 @@
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import L from "leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
+/* import L from "leaflet"; */
 import getCenter from "geolib/es/getCenter";
 import "leaflet/dist/leaflet.css";
 
-const icon = L.icon({ iconUrl: "/images/marker-icon.png" });
+/* const icon = L.icon({ iconUrl: "/images/marker-icon.png" }); */
 
 const Map = ({
     cords,

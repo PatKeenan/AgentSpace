@@ -1,6 +1,6 @@
 import { SidebarList } from "./SidebarList";
 
-export const ContactTagsList = ({ contactId }: { contactId: string }) => {
+export const ContactTagsList = () => {
     return (
         <SidebarList
             title="Tags"
