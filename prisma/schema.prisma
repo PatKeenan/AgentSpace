@@ -271,7 +271,6 @@ enum AppointmentStatus {
     NO_STATUS
     CONFIRMED
     CANCELED
-    RESCHEDULED
     PENDING
     DENIED
 }

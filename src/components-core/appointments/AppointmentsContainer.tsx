@@ -30,6 +30,7 @@ import { useAppointmentsUI } from "./useAppointmentsUI";
 import type { NextPageExtended } from "types/index";
 import { dateUtils } from "utils/dateUtils";
 import { isEmpty } from "./appointments-utils";
+import { trpc } from "utils/trpc";
 
 export const AppointmentsContainer: NextPageExtended = () => {
     const calendar = useCalendar({ activeMonth: new Date() });
@@ -37,10 +38,16 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const workspace = useWorkspace();
     const { setModal, modal, resetModal } = useAppointmentsUI();
     const router = useRouter();
+    const utils = trpc.useContext();
 
     const [selectedDate, setSelectedDate] = React.useState<Date>(
         () => new Date()
     );
+    const invalidate = () =>
+        utils.appointment.getByMonth.invalidate({
+            date: String(calendar.activeMonth),
+            workspaceId: workspace.id as string,
+        });
 
     const appointmentsQuery = appointments.getByMonth(
         {
@@ -70,7 +77,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
     }, [selectedDate, appointmentsQuery]);
 
     const handleOnSuccess = () => {
-        appointmentsQuery.refetch().then(() => resetModal());
+        invalidate().then(() => resetModal());
     };
 
     ///////////////////////////////////
@@ -90,7 +97,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     onSuccessCallback={handleOnSuccess}
                 />
             )}
-            <PageBody fullHeight>
+            <PageBody fullHeight noMaxWidth extraClassName="max-w-7xl">
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>
@@ -139,9 +146,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                                 <AppointmentCard
                                                     idx={idx}
                                                     appointment={i}
-                                                    onDelete={() =>
-                                                        appointmentsQuery.refetch()
-                                                    }
+                                                    invalidate={invalidate}
                                                 />
                                             </li>
                                         )

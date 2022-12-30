@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 type SelectProps<T, K> = {
     options?: T[] | undefined;
-    label: string;
+    label?: string;
     displayField: K;
     selected: T | undefined;
     setSelected: (selected: T) => void;
@@ -46,18 +46,21 @@ export function Select<
         >
             {({ open }) => (
                 <>
-                    <Listbox.Label
-                        className={clsx(
-                            direction == "row" && "pt-2",
-                            "block text-sm font-medium text-gray-700"
-                        )}
-                    >
-                        {label}
-                    </Listbox.Label>
+                    {label && (
+                        <Listbox.Label
+                            className={clsx(
+                                direction == "row" && "pt-2",
+                                "block text-sm font-medium text-gray-700"
+                            )}
+                        >
+                            {label}
+                        </Listbox.Label>
+                    )}
                     <div
                         className={clsx(
                             direction == "row" ? "sm:col-span-2" : "col-span-3",
-                            "relative pt-1 sm:mt-0"
+                            label && "pt-1",
+                            "relative sm:mt-0"
                         )}
                     >
                         <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">

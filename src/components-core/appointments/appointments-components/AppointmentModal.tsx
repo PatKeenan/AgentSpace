@@ -315,6 +315,10 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                                 name="building"
                                 label="Building/Apt"
                                 direction="column"
+                                value={state.address_2}
+                                onChange={(e) =>
+                                    setState({ address_2: e.target.value })
+                                }
                             />
                         </div>
                     </div>

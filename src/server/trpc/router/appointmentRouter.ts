@@ -1,6 +1,10 @@
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
-import { appointmentSchema, contactOnAppointmentSchema } from "server/schemas";
+import {
+    appointmentSchema,
+    contactOnAppointmentSchema,
+    idSchema,
+} from "server/schemas";
 import { dateUtils } from "utils/dateUtils";
 import { addDays } from "date-fns";
 
@@ -214,6 +218,17 @@ export const appointmentRouter = t.router({
                             : undefined,
                     },
                 },
+            });
+        }),
+    quickUpdate: authedProcedure
+        .input(appointmentSchema.partial().merge(idSchema))
+        .mutation(async ({ ctx, input }) => {
+            const { id, ...rest } = input;
+            return await ctx.prisma.appointment.update({
+                where: {
+                    id: id,
+                },
+                data: { ...rest },
             });
         }),
     deleteSoft: authedProcedure
