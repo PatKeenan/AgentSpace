@@ -11,6 +11,7 @@ import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
 import type { Contact, ContactMeta } from "@prisma/client";
+import { PlusIcon } from "@heroicons/react/20/solid";
 
 export const ContactsContainer: NextPageExtended = () => {
     const [indeterminate, setIndeterminate] = useState(false);
@@ -142,7 +143,11 @@ export const ContactsContainer: NextPageExtended = () => {
                                 variant="primary"
                                 href={`/workspace/${workspace.id}/contacts/create`}
                             >
-                                Add Contact
+                                <PlusIcon
+                                    className="gray-600 -ml-0.5 mr-1 h-4 w-4"
+                                    aria-hidden
+                                />
+                                Add New
                             </ButtonLink>
                         </div>
                     </div>

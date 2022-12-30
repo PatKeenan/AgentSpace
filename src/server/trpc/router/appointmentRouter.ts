@@ -216,4 +216,26 @@ export const appointmentRouter = t.router({
                 },
             });
         }),
+    deleteSoft: authedProcedure
+        .input(z.object({ appointmentId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.update({
+                where: {
+                    id: input.appointmentId,
+                },
+                data: {
+                    deleted: true,
+                    deletedAt: new Date(),
+                },
+            });
+        }),
+    deleteHard: authedProcedure
+        .input(z.object({ appointmentId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.delete({
+                where: {
+                    id: input.appointmentId,
+                },
+            });
+        }),
 });

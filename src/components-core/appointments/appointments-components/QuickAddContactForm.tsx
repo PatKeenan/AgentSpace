@@ -156,7 +156,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                         }
                     />
                 </div>
-                <div className="col-span-8 mb-4 grid grid-cols-2 gap-x-4">
+                <div className="col-span-8 mb-2 grid grid-cols-2 gap-x-4">
                     <InputGroup
                         label="Email"
                         className="col-span-4"

@@ -35,7 +35,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const calendar = useCalendar({ activeMonth: new Date() });
     const appointments = useAppointments();
     const workspace = useWorkspace();
-    const { setModal, modal } = useAppointmentsUI();
+    const { setModal, modal, resetModal } = useAppointmentsUI();
     const router = useRouter();
 
     const [selectedDate, setSelectedDate] = React.useState<Date>(
@@ -69,6 +69,10 @@ export const AppointmentsContainer: NextPageExtended = () => {
         return [];
     }, [selectedDate, appointmentsQuery]);
 
+    const handleOnSuccess = () => {
+        appointmentsQuery.refetch().then(() => resetModal());
+    };
+
     ///////////////////////////////////
     return (
         <>
@@ -83,7 +87,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
             {modal.state && (
                 <AppointmentModal
                     selectedDate={dateUtils.transform(selectedDate).isoDateOnly}
-                    onSuccessCallback={() => appointmentsQuery.refetch()}
+                    onSuccessCallback={handleOnSuccess}
                 />
             )}
             <PageBody fullHeight>
@@ -109,14 +113,14 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                 {format(selectedDate, "PPP")}
                             </p>
                             <Button
-                                variant="outlined"
+                                variant="primary"
                                 onClick={() => setModal({ state: true })}
                             >
                                 <PlusIcon
                                     className="gray-600 -ml-0.5 mr-1 h-4 w-4"
                                     aria-hidden
                                 />
-                                Add
+                                Add New
                             </Button>
                         </div>
 
@@ -135,6 +139,9 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                                 <AppointmentCard
                                                     idx={idx}
                                                     appointment={i}
+                                                    onDelete={() =>
+                                                        appointmentsQuery.refetch()
+                                                    }
                                                 />
                                             </li>
                                         )

@@ -282,7 +282,7 @@ export const CreateContactForm = () => {
                         className="my-2 w-full justify-center"
                         onClick={addFields}
                     >
-                        Add Sub Contact
+                        Add Related Contact
                     </Button>
                 </div>
             </div>

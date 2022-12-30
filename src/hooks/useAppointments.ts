@@ -10,5 +10,7 @@ export const useAppointments = () => {
         getByDate: appointment.getByDate.useQuery,
         create: appointment.create.useMutation,
         update: appointment.update.useMutation,
+        deleteSoft: appointment.deleteSoft.useMutation,
+        deleteHard: appointment.deleteHard.useMutation,
     };
 };

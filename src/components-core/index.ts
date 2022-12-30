@@ -1,5 +1,4 @@
 export * from "./contacts";
-export * from "./projects";
 export * from "./settings";
 export * from "./ErrorBoundary";
 export * from "./";
@@ -8,7 +7,6 @@ export * from "./home";
 export * from "./tasks";
 export * from "./tag-detail";
 export * from "./tags";
-export * from "./projects-create";
 export * from "./appointments";
 export * from "./appointment-detail";
 export * from "./profiles";
