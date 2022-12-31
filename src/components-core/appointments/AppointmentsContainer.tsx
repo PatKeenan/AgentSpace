@@ -298,7 +298,9 @@ export const AppointmentsContainer: NextPageExtended = () => {
                             </div>
                         </div>
                         <div className=" h-2/3 w-full">
-                            <AppointmentsMap />
+                            <AppointmentsMap
+                                appointments={filteredAppointmentsByDate()}
+                            />
                         </div>
                     </div>
                 </div>

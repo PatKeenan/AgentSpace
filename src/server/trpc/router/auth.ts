@@ -5,3 +5,5 @@ export const authRouter = t.router({
         return ctx.session;
     }),
 });
+
+export type AuthRouter = typeof authRouter;

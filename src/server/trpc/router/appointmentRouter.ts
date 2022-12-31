@@ -1,4 +1,5 @@
 import { authedProcedure, t } from "../trpc";
+import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 import {
     appointmentSchema,
@@ -254,3 +255,6 @@ export const appointmentRouter = t.router({
             });
         }),
 });
+
+type AppointmentRouter = typeof appointmentRouter;
+export type AppointmentRouterOutput = inferRouterOutputs<AppointmentRouter>;
