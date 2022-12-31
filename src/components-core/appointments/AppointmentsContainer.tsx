@@ -20,17 +20,21 @@ import {
     isYesterday,
 } from "date-fns";
 
-import {
-    AppointmentCard,
-    AppointmentModal,
-    AppointmentsMap,
-} from "./appointments-components";
+import { AppointmentCard, AppointmentModal } from "./appointments-components";
 import { useAppointmentsUI } from "./useAppointmentsUI";
 
 import type { NextPageExtended } from "types/index";
 import { dateUtils } from "utils/dateUtils";
 import { isEmpty } from "./appointments-utils";
 import { trpc } from "utils/trpc";
+import dynamic from "next/dynamic";
+
+const AppointmentsMap = dynamic(
+    () => import("./appointments-components/AppointmentsMap"),
+    {
+        ssr: false,
+    }
+);
 
 export const AppointmentsContainer: NextPageExtended = () => {
     const calendar = useCalendar({ activeMonth: new Date() });
@@ -298,9 +302,11 @@ export const AppointmentsContainer: NextPageExtended = () => {
                             </div>
                         </div>
                         <div className=" h-2/3 w-full">
-                            <AppointmentsMap
-                                appointments={filteredAppointmentsByDate()}
-                            />
+                            <React.Suspense fallback={""}>
+                                <AppointmentsMap
+                                    appointments={filteredAppointmentsByDate()}
+                                />
+                            </React.Suspense>
                         </div>
                     </div>
                 </div>

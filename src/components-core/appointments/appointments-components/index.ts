@@ -4,5 +4,4 @@ export * from "./AppointmentsAll";
 export * from "./AppointmentModal";
 export * from "./AppointmentsPast";
 export * from "./AppointmentsUpcoming";
-export * from "./AppointmentsMap";
 export * from "./QuickAddContactForm";
