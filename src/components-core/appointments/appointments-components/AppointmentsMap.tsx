@@ -5,6 +5,7 @@ import * as React from "react";
 import type { LatLngBoundsLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { AppointmentStatus } from "@prisma/client";
+import { statusOptions } from "../appointments-utils";
 
 const iconColors: { [key in AppointmentStatus]: string } = {
     CONFIRMED: "hue-rotate-[250deg]",
@@ -84,10 +85,14 @@ export const AppointmentsMap = ({
         if (appointments && appointments.length > 0) {
             const { current: map } = mapRef;
             const center = getCenter();
-            map?.setView({ lat: center.lat, lng: center.lng }, 17, {
-                animate: false,
-                duration: 0,
-            });
+            map?.setView(
+                { lat: center.lat || 39.833851, lng: center.lng || -74.871826 },
+                center?.lat && center?.lng ? 17 : 6,
+                {
+                    animate: false,
+                    duration: 0,
+                }
+            );
             center?.bounds &&
                 map?.fitBounds(center.bounds as unknown as LatLngBoundsLiteral);
         } else {
@@ -98,6 +103,29 @@ export const AppointmentsMap = ({
         }
     }, [appointments, getCenter]);
 
+    function getSamePlaceFrequency() {
+        const samePlaceMap: { [key: string]: number[] } | undefined = {};
+        appointments?.map((i, index) => {
+            if (!i.address) return;
+            if (Object.keys(samePlaceMap).length == 0) {
+                return (samePlaceMap[i.address] = [index + 1]);
+            }
+            if (
+                i?.address &&
+                Object.keys(samePlaceMap).length > 0 &&
+                Object.keys(samePlaceMap).includes(i.address)
+            ) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                //@ts-ignore
+                return (samePlaceMap[i.address] = samePlaceMap[
+                    i.address
+                ].concat(index + 1));
+            }
+            return (samePlaceMap[i.address] = [index + 1]);
+        });
+        return samePlaceMap;
+    }
+    const frequencyMap = getSamePlaceFrequency();
     return (
         <MapContainer
             center={defaultCenter}
@@ -114,6 +142,7 @@ export const AppointmentsMap = ({
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {appointments?.map((i, index) => {
+                console.log(frequencyMap);
                 return (
                     i?.latitude &&
                     i?.longitude && (
@@ -128,8 +157,13 @@ export const AppointmentsMap = ({
                             <Popup>
                                 <p>
                                     Appointment{" "}
-                                    <span className="font-medium">
-                                        {index + 1}
+                                    <span>
+                                        {/*  {index + 1} */}
+                                        {i.address
+                                            ? frequencyMap[i.address]?.join(
+                                                  ", "
+                                              )
+                                            : index + 1}
                                     </span>
                                 </p>
                             </Popup>

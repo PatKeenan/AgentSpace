@@ -53,15 +53,12 @@ export const appointmentRouter = t.router({
             })
         )
         .query(async ({ ctx, input }) => {
-            const month = dateUtils.getMonth(new Date(input.date));
             return await ctx.prisma.appointment.findMany({
                 where: {
                     workspaceId: input.workspaceId,
                     deleted: false,
                     date: {
-                        gte: dateUtils.transform(addDays(month.firstDay, -1))
-                            .isoDateOnly,
-                        lte: dateUtils.transform(month.lastDay).isoDateOnly,
+                        startsWith: input.date.slice(0, 7), // <- year and month YYYY-MM
                     },
                 },
                 include: {
@@ -83,7 +80,8 @@ export const appointmentRouter = t.router({
                         },
                     },
                 },
-                orderBy: [{ startTime: "asc" }, { createdAt: "asc" }],
+
+                orderBy: [{ startTime: "asc" }, { createdAt: "desc" }],
             });
         }),
     getByDate: authedProcedure

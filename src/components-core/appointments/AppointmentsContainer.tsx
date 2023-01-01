@@ -73,9 +73,11 @@ export const AppointmentsContainer: NextPageExtended = () => {
                 dateUtils.transform(selectedDate).isoDateOnly
             );
         });
-
-        if (data) {
-            return data;
+        const sorted = data?.sort((a) =>
+            typeof a.startTime == undefined ? 1 : -1
+        );
+        if (sorted) {
+            return sorted;
         }
         return [];
     }, [selectedDate, appointmentsQuery]);
@@ -113,16 +115,21 @@ export const AppointmentsContainer: NextPageExtended = () => {
                 <div className="mt-3 h-full overflow-hidden lg:grid lg:grid-cols-12 lg:gap-x-8">
                     <div className="flex h-full flex-1 flex-col overflow-hidden pr-2 lg:col-span-6">
                         <div className="flex items-center justify-between border-b border-b-gray-200 pt-2 pb-4">
-                            <p className="text-lg font-normal">
-                                {isToday(selectedDate)
-                                    ? "Today "
-                                    : isTomorrow(selectedDate)
-                                    ? "Tomorrow "
-                                    : isYesterday(selectedDate)
-                                    ? "Yesterday "
-                                    : `${format(selectedDate, "EEEE")}, `}
-                                {format(selectedDate, "PPP")}
-                            </p>
+                            <div className="flex items-center space-x-4">
+                                <p className="text-lg font-normal">
+                                    {isToday(selectedDate)
+                                        ? "Today "
+                                        : isTomorrow(selectedDate)
+                                        ? "Tomorrow "
+                                        : isYesterday(selectedDate)
+                                        ? "Yesterday "
+                                        : `${format(selectedDate, "EEEE")}, `}
+                                    {format(selectedDate, "PPP")}
+                                </p>
+                                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 p-3 text-xs">
+                                    {filteredAppointmentsByDate()?.length}
+                                </div>
+                            </div>
                             <Button
                                 variant="primary"
                                 onClick={() => setModal({ state: true })}
