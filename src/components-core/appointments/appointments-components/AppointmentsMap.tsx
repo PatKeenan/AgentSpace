@@ -5,7 +5,6 @@ import * as React from "react";
 import type { LatLngBoundsLiteral } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { AppointmentStatus } from "@prisma/client";
-import { statusOptions } from "../appointments-utils";
 
 const iconColors: { [key in AppointmentStatus]: string } = {
     CONFIRMED: "hue-rotate-[250deg]",
@@ -142,7 +141,6 @@ export const AppointmentsMap = ({
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {appointments?.map((i, index) => {
-                console.log(frequencyMap);
                 return (
                     i?.latitude &&
                     i?.longitude && (

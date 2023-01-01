@@ -1,33 +1,18 @@
-import {
-    ChevronLeftIcon,
-    ChevronRightIcon,
-    PlusIcon,
-} from "@heroicons/react/20/solid";
-import { SectionHeading, Breadcrumb, PageBody } from "components-layout";
-import { useWorkspace, useCalendar, useAppointments } from "hooks";
-import { Loading, NoData, Button, Calendar } from "components-common";
-import { TruckIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/router";
-import * as React from "react";
-import clsx from "clsx";
-import {
-    isToday,
-    isThisMonth,
-    isSameDay,
-    isSameMonth,
-    format,
-    isTomorrow,
-    isYesterday,
-} from "date-fns";
-
 import { AppointmentCard, AppointmentModal } from "./appointments-components";
+import { SectionHeading, Breadcrumb, PageBody } from "components-layout";
+import { Loading, NoData, Button, Calendar } from "components-common";
+import { isToday, format, isTomorrow, isYesterday } from "date-fns";
+import { TruckIcon } from "@heroicons/react/24/outline";
 import { useAppointmentsUI } from "./useAppointmentsUI";
-
+import { useWorkspace, useAppointments } from "hooks";
+import { PlusIcon, PlusSmallIcon } from "@heroicons/react/20/solid";
 import type { NextPageExtended } from "types/index";
-import { dateUtils } from "utils/dateUtils";
 import { isEmpty } from "./appointments-utils";
-import { trpc } from "utils/trpc";
+import { dateUtils } from "utils/dateUtils";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
+import { trpc } from "utils/trpc";
+import * as React from "react";
 
 const AppointmentsMap = dynamic(
     () => import("./appointments-components/AppointmentsMap"),
@@ -91,32 +76,37 @@ export const AppointmentsContainer: NextPageExtended = () => {
     ///////////////////////////////////
     return (
         <>
-            <Breadcrumb
-                items={[
-                    {
-                        title: "Appointments",
-                        href: `/workspace/${router.query.workspaceId}/appointments`,
-                    },
-                ]}
-            />
             {modal.state && (
                 <AppointmentModal
                     selectedDate={dateUtils.transform(selectedDate).isoDateOnly}
                     onSuccessCallback={handleOnSuccess}
                 />
             )}
-            <PageBody fullHeight noMaxWidth extraClassName="max-w-7xl">
-                <SectionHeading>
-                    <SectionHeading.TitleContainer>
-                        <SectionHeading.Title>
-                            Appointments{" "}
-                        </SectionHeading.Title>
-                    </SectionHeading.TitleContainer>
-                </SectionHeading>
+            <div className="hidden lg:block">
+                <Breadcrumb
+                    items={[
+                        {
+                            title: "Appointments",
+                            href: `/workspace/${router.query.workspaceId}/appointments`,
+                        },
+                    ]}
+                />
+            </div>
 
-                <div className="mt-3 lg:grid lg:h-full lg:grid-cols-12 lg:gap-x-8 lg:overflow-hidden">
-                    <div className="flex h-full flex-1 flex-col overflow-hidden pr-2 lg:col-span-6">
-                        <div className="flex items-center justify-between border-b border-b-gray-200 pt-2 pb-4">
+            <PageBody fullHeight noMaxWidth extraClassName="max-w-7xl">
+                <div className="hidden lg:block">
+                    <SectionHeading>
+                        <SectionHeading.TitleContainer>
+                            <SectionHeading.Title>
+                                Appointments{" "}
+                            </SectionHeading.Title>
+                        </SectionHeading.TitleContainer>
+                    </SectionHeading>
+                </div>
+                <div className="flex h-full flex-col lg:mt-3 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:overflow-hidden">
+                    {/* Left Side */}
+                    <div className="order-2 flex h-full flex-1 flex-col overflow-hidden pr-2 lg:order-1 lg:col-span-6">
+                        <div className="hidden items-center justify-between border-b border-b-gray-200 pt-2 pb-4 lg:flex">
                             <div className="flex items-center space-x-4">
                                 <p className="text-lg font-normal">
                                     {isToday(selectedDate)
@@ -178,17 +168,32 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     </div>
 
                     {/* Right Side */}
-                    <div className="flex flex-col lg:col-span-6">
-                        <div className="mb-4 w-full">
+                    <div className="order-1 flex flex-shrink-0 flex-col lg:order-2 lg:col-span-6">
+                        <div className="mb-1 w-full border-b border-gray-200 lg:mb-4 lg:border-b-0">
                             <Calendar
                                 activeMonth={activeMonth}
                                 onChangeMonth={setActiveMonth}
                                 selectedDate={selectedDate}
                                 onSelectDay={setSelectedDate}
                                 statusIndicatorsArr={statusIndicators}
+                                mobileActionButton={
+                                    <div>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() =>
+                                                setModal({ state: true })
+                                            }
+                                        >
+                                            <span className="sr-only">
+                                                Add Appointment
+                                            </span>
+                                            <PlusIcon className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                }
                             />
                         </div>
-                        <div className="h-2/3 w-full">
+                        <div className="h-[200px] w-full md:h-[300px] lg:h-2/3">
                             <React.Suspense fallback={""}>
                                 <AppointmentsMap
                                     appointments={filteredAppointmentsByDate()}

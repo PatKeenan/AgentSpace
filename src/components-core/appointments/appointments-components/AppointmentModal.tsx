@@ -246,28 +246,29 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                 />
             ) : (
                 <form onSubmit={onSubmit}>
-                    <ModalTitle>
+                    <ModalTitle className="text-center lg:text-left">
                         {modal?.defaultData ? "Edit" : "Add"} Appointment
                     </ModalTitle>
 
                     {/* Date only in edit mode */}
-                    {modal?.defaultData ? (
-                        <div className="col-span-8">
-                            <InputGroup
-                                type="date"
-                                label="Date"
-                                name="date"
-                                value={formatDate(state.date, "YYY-MM-DD")}
-                                onChange={(e) =>
-                                    setState({ date: e.target.value })
-                                }
-                                direction="column"
-                            />
-                        </div>
-                    ) : null}
+
+                    <div className="col-span-8">
+                        <InputGroup
+                            type="date"
+                            label="Date"
+                            name="date"
+                            value={formatDate(
+                                state.date || new Date(),
+                                "YYY-MM-DD"
+                            )}
+                            onChange={(e) => setState({ date: e.target.value })}
+                            direction="column"
+                        />
+                    </div>
+
                     {/* --- Address --- */}
-                    <div className="grid w-full grid-cols-8 gap-2">
-                        <div className="z-[99] col-span-6 mt-2">
+                    <div className="grid w-full grid-cols-8 lg:gap-2">
+                        <div className="z-[99] col-span-8 mt-2 lg:col-span-6">
                             <Autocomplete
                                 required
                                 label="Address"
@@ -310,7 +311,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                                 addOption={handleAddAddressOption}
                             />
                         </div>
-                        <div className="col-span-2 ">
+                        <div className="col-span-8 lg:col-span-2">
                             <InputGroup
                                 name="building"
                                 label="Building/Apt"
@@ -331,7 +332,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                             value={state.contacts}
                             onChange={(i) => handleSelectContacts(i)}
                             multiple
-                            className="relative mt-4"
+                            className="relative mt-2 sm:pt-5 md:mt-0"
                         >
                             {({ open }) => (
                                 <>
@@ -498,9 +499,9 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                         </Combobox>
                     </div>
 
-                    {/* Time */}
-                    <div className="grid w-full grid-cols-6 gap-4">
-                        <div className="col-span-2">
+                    {/* Time & Status*/}
+                    <div className="mt-4 mb-4 grid w-full grid-cols-6 gap-4 lg:mt-0 lg:mb-0">
+                        <div className="col-span-3 lg:col-span-2">
                             <InputGroup
                                 type="time"
                                 label="Start Time"
@@ -512,7 +513,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                                 direction="column"
                             />
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-3 lg:col-span-2">
                             <InputGroup
                                 type="time"
                                 label="End Time"
@@ -524,7 +525,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                                 direction="column"
                             />
                         </div>
-                        <div className="col-span-2 pt-2">
+                        <div className="col-span-6 lg:col-span-2 lg:pt-2">
                             <Select
                                 label="Status"
                                 name="status"
