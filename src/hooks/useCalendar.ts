@@ -11,13 +11,16 @@ export const useCalendar = (initialState?: { activeMonth?: Date }) => {
 
     const handleChangeMonth = (
         action: "increment" | "decrement",
-        step?: number
+        step?: number,
+        callback?: (newMonth: Date) => void
     ) => {
         if (action == "increment") {
             setActiveMonth((prev) => addMonths(prev, step ?? 1));
+            callback && callback(addMonths(activeMonth, step ?? 1));
         }
         if (action == "decrement") {
             setActiveMonth((prev) => addMonths(prev, step ?? -1));
+            callback && callback(addMonths(activeMonth, step ?? -1));
         }
     };
 

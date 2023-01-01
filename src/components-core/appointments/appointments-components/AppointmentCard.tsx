@@ -197,15 +197,23 @@ export const AppointmentCard = (props: {
                 />
             )}
 
-            <div className="mt-2 grid w-full grid-cols-4 items-start">
+            <div className="mt-2 grid w-full grid-cols-4 items-start ">
                 <dt className="col-span-1 text-sm font-medium text-gray-700">
                     Contacts
                 </dt>
-                <ul className={clsx("col-span-3 flex flex-wrap")}>
+                <ul
+                    className={clsx(
+                        expanded ? "overflow-auto" : "overflow-hidden",
+                        "col-span-3 flex flex-wrap"
+                    )}
+                >
                     {appointment.contacts.map((contactOnAppointment) => (
                         <li
                             key={contactOnAppointment.id}
-                            className={"mr-2 mt-2"}
+                            className={clsx(
+                                !expanded && "truncate",
+                                "mr-2 mt-2"
+                            )}
                         >
                             <Link
                                 href={`/workspace/${appointment.workspaceId}/contacts/${contactOnAppointment.contact.id}`}

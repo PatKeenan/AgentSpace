@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { SectionHeading, Breadcrumb, PageBody } from "components-layout";
 import { useWorkspace, useCalendar, useAppointments } from "hooks";
-import { Loading, NoData, Button } from "components-common";
+import { Loading, NoData, Button, Calendar } from "components-common";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -37,7 +37,6 @@ const AppointmentsMap = dynamic(
 );
 
 export const AppointmentsContainer: NextPageExtended = () => {
-    const calendar = useCalendar({ activeMonth: new Date() });
     const appointments = useAppointments();
     const workspace = useWorkspace();
     const { setModal, modal, resetModal } = useAppointmentsUI();
@@ -47,16 +46,19 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const [selectedDate, setSelectedDate] = React.useState<Date>(
         () => new Date()
     );
+    const [activeMonth, setActiveMonth] = React.useState<Date>(
+        () => new Date()
+    );
     const invalidate = () =>
         utils.appointment.getByMonth.invalidate({
-            date: String(calendar.activeMonth),
+            date: String(activeMonth),
             workspaceId: workspace.id as string,
         });
 
     const appointmentsQuery = appointments.getByMonth(
         {
             workspaceId: workspace.id as string,
-            date: String(calendar.activeMonth),
+            date: String(activeMonth),
         },
         { refetchOnWindowFocus: false }
     );
@@ -112,7 +114,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     </SectionHeading.TitleContainer>
                 </SectionHeading>
 
-                <div className="mt-3 h-full overflow-hidden lg:grid lg:grid-cols-12 lg:gap-x-8">
+                <div className="mt-3 lg:grid lg:h-full lg:grid-cols-12 lg:gap-x-8 lg:overflow-hidden">
                     <div className="flex h-full flex-1 flex-col overflow-hidden pr-2 lg:col-span-6">
                         <div className="flex items-center justify-between border-b border-b-gray-200 pt-2 pb-4">
                             <div className="flex items-center space-x-4">
@@ -152,7 +154,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                         (i, idx) => (
                                             <li
                                                 key={i.id}
-                                                className="relative mx-2"
+                                                className="relative lg:mx-2"
                                             >
                                                 <AppointmentCard
                                                     idx={idx}
@@ -178,137 +180,15 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     {/* Right Side */}
                     <div className="flex flex-col lg:col-span-6">
                         <div className="mb-4 w-full">
-                            <div className="text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-7">
-                                <div className="flex items-center p-2 text-gray-900">
-                                    <button
-                                        type="button"
-                                        className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-                                        onClick={() =>
-                                            calendar.handleChangeMonth(
-                                                "decrement"
-                                            )
-                                        }
-                                    >
-                                        <span className="sr-only">
-                                            Previous month
-                                        </span>
-                                        <ChevronLeftIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-                                    <div className="flex-auto font-semibold">
-                                        {calendar.monthName}
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-                                        onClick={() =>
-                                            calendar.handleChangeMonth(
-                                                "increment"
-                                            )
-                                        }
-                                    >
-                                        <span className="sr-only">
-                                            Next month
-                                        </span>
-                                        <ChevronRightIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-                                </div>
-                                <div className="mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500">
-                                    {["M", "T", "W", "T", "F", "S", "S"].map(
-                                        (i, idx) => (
-                                            <div key={idx}>{i}</div>
-                                        )
-                                    )}
-                                </div>
-                                <div className="isolate mt-2 grid grid-cols-7 gap-px bg-gray-200 text-sm shadow ring-1 ring-gray-200">
-                                    {[
-                                        ...Array.from(
-                                            Array(
-                                                calendar.firstDayOffset !== 0
-                                                    ? calendar.firstDayOffset -
-                                                          1
-                                                    : 0
-                                            ).keys()
-                                        ),
-                                    ].map((i) => (
-                                        <div className="h-7 w-7" key={i}></div>
-                                    ))}
-
-                                    {calendar.allDates.map((day, dayIdx) => {
-                                        const isTodayBoolean = isToday(day);
-                                        const isCurrentMonthBoolean =
-                                            isSameMonth(
-                                                day,
-                                                calendar.activeMonth
-                                            );
-                                        const isSelected = selectedDate
-                                            ? isSameDay(day, selectedDate)
-                                            : false;
-
-                                        const hasAppointmentsOnDate =
-                                            statusIndicators?.includes(
-                                                dateUtils.transform(day)
-                                                    .isoDateOnly
-                                            );
-                                        return (
-                                            <button
-                                                key={dayIdx}
-                                                type="button"
-                                                className={clsx(
-                                                    "py-1.5 hover:bg-gray-100 focus:z-10",
-                                                    isCurrentMonthBoolean
-                                                        ? "bg-white"
-                                                        : "bg-gray-50",
-                                                    (isSelected ||
-                                                        isToday(day)) &&
-                                                        "font-semibold",
-                                                    isSelected && "text-white",
-                                                    !isSelected &&
-                                                        isThisMonth(day) &&
-                                                        !isTodayBoolean &&
-                                                        "text-gray-900",
-                                                    !isSelected &&
-                                                        !isCurrentMonthBoolean &&
-                                                        !isTodayBoolean &&
-                                                        "text-gray-400",
-                                                    isTodayBoolean &&
-                                                        !isSelected &&
-                                                        "text-indigo-600"
-                                                )}
-                                                onClick={() =>
-                                                    setSelectedDate(day)
-                                                }
-                                            >
-                                                <time
-                                                    dateTime={day.toDateString()}
-                                                    className={clsx(
-                                                        "relative mx-auto flex h-7 w-7 items-center justify-center rounded-full",
-                                                        isSelected &&
-                                                            isTodayBoolean &&
-                                                            "bg-indigo-600",
-                                                        isSelected &&
-                                                            !isTodayBoolean &&
-                                                            "bg-gray-900"
-                                                    )}
-                                                >
-                                                    {String(day.getDate())}
-                                                    {!isSelected &&
-                                                        hasAppointmentsOnDate && (
-                                                            <div className="absolute bottom-0 h-[4px] w-[4px] rounded-full bg-green-600" />
-                                                        )}
-                                                </time>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
+                            <Calendar
+                                activeMonth={activeMonth}
+                                onChangeMonth={setActiveMonth}
+                                selectedDate={selectedDate}
+                                onSelectDay={setSelectedDate}
+                                statusIndicatorsArr={statusIndicators}
+                            />
                         </div>
-                        <div className=" h-2/3 w-full">
+                        <div className="h-2/3 w-full">
                             <React.Suspense fallback={""}>
                                 <AppointmentsMap
                                     appointments={filteredAppointmentsByDate()}
