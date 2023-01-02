@@ -254,6 +254,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
 
                     <div className="col-span-8">
                         <InputGroup
+                            autoFocus={false}
                             type="date"
                             label="Date"
                             name="date"
@@ -311,7 +312,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                                 addOption={handleAddAddressOption}
                             />
                         </div>
-                        <div className="col-span-8 lg:col-span-2">
+                        <div className="col-span-8 mt-2 lg:col-span-2 lg:mt-0">
                             <InputGroup
                                 name="building"
                                 label="Building/Apt"
