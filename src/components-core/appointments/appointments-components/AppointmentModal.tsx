@@ -559,9 +559,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                             Cancel
                         </Button>
                         <Button variant="primary" type="submit">
-                            {modal.defaultData
-                                ? "Update Appointment"
-                                : "Save Appointment"}
+                            {modal.defaultData ? "Save Changes" : "Save"}
                         </Button>
                     </div>
                 </form>

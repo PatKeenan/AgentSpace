@@ -137,15 +137,18 @@ export const AppointmentCard = (props: {
         <GridCard>
             <div className="relative mb-4 -mt-2 grid grid-cols-3 items-center gap-2 border-b py-2">
                 <h4 className="col-span-1 flex-shrink-0 font-bold tracking-wide text-gray-600">
-                    Appointment {idx + 1}
+                    <span className="md:hidden">Apt {idx + 1}</span>
+                    <span className="hidden md:block">
+                        Appointment {idx + 1}
+                    </span>
                 </h4>
-                <div className="col-span-2 grid grid-cols-4 items-center">
-                    <div className="relative col-span-3">
+                <div className="col-span-2 flex items-center">
+                    <div className="relative flex-grow">
                         <div
                             aria-hidden="true"
                             className={clsx(
                                 getStatusColor(),
-                                "absolute -right-4 top-[40%] h-2 w-2 rounded-full bg-green-500"
+                                "absolute top-[40%] -left-4 z-10 h-2 w-2 rounded-full"
                             )}
                         />
 
@@ -158,7 +161,7 @@ export const AppointmentCard = (props: {
                             containerClass="sm:pt-0 sm:mt-0"
                         />
                     </div>
-                    <div className="col-span-1 flex">
+                    <div className="flex w-10 flex-shrink-0">
                         <ToggleMenu
                             items={[
                                 {
@@ -243,13 +246,15 @@ export const AppointmentCard = (props: {
                 value={appointment?.note}
                 expand={expanded}
             />
-            <Button
-                variant="outlined"
-                className="mt-4 w-full justify-center text-xs"
-                onClick={() => setExpanded(!expanded)}
-            >
-                {expanded ? "Collapse" : "Expand"}
-            </Button>
+            <div className="mt-2 flex w-full justify-center">
+                <Button
+                    variant="text"
+                    className="mx-auto text-xs focus:outline-none focus:ring-0"
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    {expanded ? "Show Less" : "Show More"}
+                </Button>
+            </div>
         </GridCard>
     );
 };

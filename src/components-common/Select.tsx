@@ -152,16 +152,24 @@ export function Select<
                 )}
             </Listbox>
             {/* Mobile */}
-            <div className="sm:hidden">
-                <label htmlFor={`${name}-select`} className="sr-only">
-                    Select a an option for {label}
-                </label>
+            <div className={clsx("w-full sm:hidden", containerClass)}>
+                {label && (
+                    <label
+                        htmlFor={`${name}-select`}
+                        className={clsx(
+                            direction == "row" && "pt-2",
+                            "block text-sm font-medium text-gray-700"
+                        )}
+                    >
+                        {label}
+                    </label>
+                )}
                 {options && (
                     <select
                         id={`${name}-select`}
                         name={name}
                         className={clsx(
-                            "mt-4 block w-full  truncate rounded-md border-gray-300 py-2 pl-3 pr-10 text-base capitalize focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
+                            "mt-1 block w-full  truncate rounded-md border-gray-300 pl-3 pr-10 text-base capitalize focus:border-purple-500 focus:outline-none focus:ring-purple-500 sm:text-sm"
                         )}
                         value={getMobileSelectValue()}
                         onChange={handleMobileSelect}
