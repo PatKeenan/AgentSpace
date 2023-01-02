@@ -28,15 +28,15 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const router = useRouter();
     const utils = trpc.useContext();
 
-    /*  const [selectedDate, setSelectedDate] = React.useState<Date>(
+    const [selectedDate, setSelectedDate] = React.useState<Date>(
         () => new Date()
-    ); */
-    const { selectedDate, setSelectedDate, activeMonth, setActiveMonth } =
-        useSelectedDate(new Date());
+    );
+    /*  const { selectedDate, setSelectedDate, activeMonth, setActiveMonth } =
+        useSelectedDate(new Date()); */
 
-    /*  const [activeMonth, setActiveMonth] = React.useState<Date>(
+    const [activeMonth, setActiveMonth] = React.useState<Date>(
         () => new Date()
-    ); */
+    );
     const invalidate = () =>
         utils.appointment.getByMonth.invalidate({
             date: String(activeMonth),

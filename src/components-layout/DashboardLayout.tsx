@@ -25,12 +25,6 @@ import { Loading } from "components-common/Loading";
 import { GatedWorkspace } from "./GatedWorkspace";
 import { useWorkspace } from "hooks/useWorkspace";
 
-const teams = [
-    { name: "Engineering", href: "#", bgColorClass: "bg-indigo-500" },
-    { name: "Human Resources", href: "#", bgColorClass: "bg-green-500" },
-    { name: "Customer Success", href: "#", bgColorClass: "bg-yellow-500" },
-];
-
 type DashboardLayoutProps = {
     children: React.ReactNode | React.ReactNode[];
 };
@@ -154,6 +148,11 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         );
                                                     return (
                                                         <NextLink
+                                                            onClick={() =>
+                                                                setSidebarOpen(
+                                                                    false
+                                                                )
+                                                            }
                                                             href={item.href}
                                                             key={item.name}
                                                             className={clsx(
@@ -181,39 +180,6 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                         </NextLink>
                                                     );
                                                 })}
-                                            </div>
-                                            <div className="mt-8">
-                                                <NextLink
-                                                    href={`/workspace/${workspace.id}/tags`}
-                                                    className="px-3 text-sm font-medium text-gray-500"
-                                                    id="mobile-teams-headline"
-                                                >
-                                                    Tags
-                                                </NextLink>
-                                                <div
-                                                    className="mt-1 space-y-1"
-                                                    role="group"
-                                                    aria-labelledby="mobile-teams-headline"
-                                                >
-                                                    {teams.map((team) => (
-                                                        <NextLink
-                                                            key={team.name}
-                                                            href={team.href}
-                                                            className="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                                                        >
-                                                            <span
-                                                                className={clsx(
-                                                                    team.bgColorClass,
-                                                                    "mr-4 h-2.5 w-2.5 rounded-full"
-                                                                )}
-                                                                aria-hidden="true"
-                                                            />
-                                                            <span className="truncate">
-                                                                {team.name}
-                                                            </span>
-                                                        </NextLink>
-                                                    ))}
-                                                </div>
                                             </div>
                                         </nav>
                                     </div>
@@ -442,40 +408,6 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         {item.name}
                                     </NextLink>
                                 ))}
-                            </div>
-                            <div className="mt-8">
-                                {/* Secondary navigation */}
-                                <NextLink
-                                    href={`/workspace/${workspace.id}/tags`}
-                                    className="px-3 text-sm font-medium text-gray-500"
-                                    id="desktop-teams-headline"
-                                >
-                                    Tags
-                                </NextLink>
-                                <div
-                                    className="mt-1 space-y-1"
-                                    role="group"
-                                    aria-labelledby="desktop-teams-headline"
-                                >
-                                    {teams.map((team) => (
-                                        <NextLink
-                                            key={team.name}
-                                            href={team.href}
-                                            className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                                        >
-                                            <span
-                                                className={clsx(
-                                                    team.bgColorClass,
-                                                    "mr-4 h-2.5 w-2.5 rounded-full"
-                                                )}
-                                                aria-hidden="true"
-                                            />
-                                            <span className="truncate">
-                                                {team.name}
-                                            </span>
-                                        </NextLink>
-                                    ))}
-                                </div>
                             </div>
                         </nav>
                     </div>
