@@ -24,6 +24,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
             className,
             required,
             startIcon,
+            autoFocus = false,
             type = "text",
             ...rest
         } = props;
@@ -64,6 +65,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
                         type={type}
                         id={`${name}-input`}
                         autoComplete="off"
+                        autoFocus={autoFocus}
                         onBlur={() => setTouched(true)}
                         aria-invalid={typeof displayErrorMessage == "string"}
                         aria-describedby={`error-${name}`}

@@ -126,7 +126,7 @@ export const Calendar = (props: CalendarProps) => {
                     return (
                         <li
                             key={dayIdx}
-                            className={"mx-3 py-2"}
+                            className={"mx-3 flex flex-col py-2"}
                             ref={refsArr[dayIdx]}
                         >
                             <span className="mb-2 text-xs font-bold text-gray-400">
