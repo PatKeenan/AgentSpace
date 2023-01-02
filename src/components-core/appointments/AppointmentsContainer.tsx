@@ -7,7 +7,7 @@ import { useAppointmentsUI } from "./useAppointmentsUI";
 import { useWorkspace, useAppointments } from "hooks";
 import { PlusIcon, PlusSmallIcon } from "@heroicons/react/20/solid";
 import type { NextPageExtended } from "types/index";
-import { isEmpty } from "./appointments-utils";
+import { isEmpty, useSelectedDate } from "./appointments-utils";
 import { dateUtils } from "utils/dateUtils";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -28,12 +28,15 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const router = useRouter();
     const utils = trpc.useContext();
 
-    const [selectedDate, setSelectedDate] = React.useState<Date>(
+    /*  const [selectedDate, setSelectedDate] = React.useState<Date>(
         () => new Date()
-    );
-    const [activeMonth, setActiveMonth] = React.useState<Date>(
+    ); */
+    const { selectedDate, setSelectedDate, activeMonth, setActiveMonth } =
+        useSelectedDate(new Date());
+
+    /*  const [activeMonth, setActiveMonth] = React.useState<Date>(
         () => new Date()
-    );
+    ); */
     const invalidate = () =>
         utils.appointment.getByMonth.invalidate({
             date: String(activeMonth),
@@ -60,9 +63,18 @@ export const AppointmentsContainer: NextPageExtended = () => {
                 dateUtils.transform(selectedDate).isoDateOnly
             );
         });
-        const sorted = data?.sort((a) =>
-            typeof a.startTime == undefined ? 1 : -1
-        );
+        const hasStartTimes: typeof data = [];
+        const noStartTimes: typeof data = [];
+
+        data?.map((i) => {
+            if (i.startTime) {
+                return hasStartTimes.push(i);
+            }
+            return noStartTimes.push(i);
+        });
+
+        const sorted = hasStartTimes.concat(noStartTimes);
+
         if (sorted) {
             return sorted;
         }
@@ -103,9 +115,9 @@ export const AppointmentsContainer: NextPageExtended = () => {
                         </SectionHeading.TitleContainer>
                     </SectionHeading>
                 </div>
-                <div className="flex h-full flex-col lg:mt-3 lg:grid lg:grid-cols-12 lg:gap-x-8 lg:overflow-hidden">
+                <div className="flex flex-col lg:mt-3 lg:grid lg:h-full lg:grid-cols-12 lg:gap-x-8 lg:overflow-hidden">
                     {/* Left Side */}
-                    <div className="order-2 flex h-full flex-1 flex-col overflow-hidden pr-2 lg:order-1 lg:col-span-6">
+                    <div className="order-2 flex h-full flex-1 flex-col overflow-hidden pr-2 pl-2 lg:order-1 lg:col-span-6 lg:pl-0">
                         <div className="hidden items-center justify-between border-b border-b-gray-200 pt-2 pb-4 lg:flex">
                             <div className="flex items-center space-x-4">
                                 <p className="text-lg font-normal">
@@ -116,7 +128,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                         : isYesterday(selectedDate)
                                         ? "Yesterday "
                                         : `${format(selectedDate, "EEEE")}, `}
-                                    {format(selectedDate, "PPP")}
+                                    {format(selectedDate, "PP")}
                                 </p>
                                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 p-3 text-xs">
                                     {filteredAppointmentsByDate()?.length}
@@ -127,10 +139,10 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                 onClick={() => setModal({ state: true })}
                             >
                                 <PlusIcon
-                                    className="gray-600 -ml-0.5 mr-1 h-4 w-4"
+                                    className="gray-600 h-4 w-4 xl:-ml-0.5 xl:mr-1"
                                     aria-hidden
                                 />
-                                Add New
+                                <span className="hidden xl:block">Add New</span>
                             </Button>
                         </div>
 
@@ -191,6 +203,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                         </Button>
                                     </div>
                                 }
+                                headerClasses="px-4 lg:px-0"
                             />
                         </div>
                         <div className="h-[200px] w-full md:h-[300px] lg:h-2/3">

@@ -137,8 +137,8 @@ export const AppointmentCard = (props: {
         <GridCard>
             <div className="relative mb-4 -mt-2 grid grid-cols-3 items-center gap-2 border-b py-2">
                 <h4 className="col-span-1 flex-shrink-0 font-bold tracking-wide text-gray-600">
-                    <span className="md:hidden">Apt {idx + 1}</span>
-                    <span className="hidden md:block">
+                    <span className="xl:hidden">Appt. {idx + 1}</span>
+                    <span className="hidden xl:block">
                         Appointment {idx + 1}
                     </span>
                 </h4>
@@ -148,7 +148,7 @@ export const AppointmentCard = (props: {
                             aria-hidden="true"
                             className={clsx(
                                 getStatusColor(),
-                                "absolute top-[40%] -left-4 z-10 h-2 w-2 rounded-full"
+                                "absolute top-[40%] -left-4 h-2 w-2 rounded-full"
                             )}
                         />
 

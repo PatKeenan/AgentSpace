@@ -1,4 +1,4 @@
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import create from "zustand";
 import { AppointmentFormType } from "./appointments-components";
 

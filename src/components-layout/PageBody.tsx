@@ -37,8 +37,8 @@ export const PageBody = (props: {
             <div
                 className={clsx(
                     fullHeight &&
-                        "h-full flex-1 flex-col overflow-auto lg:flex",
-                    "mx-2 pt-0 pb-16 lg:mx-8 lg:pt-8",
+                        "flex-1 flex-col overflow-auto lg:flex lg:h-full",
+                    "pt-0 pb-4  lg:mx-8 lg:pt-8",
                     extraClassName
                 )}
                 {...rest}

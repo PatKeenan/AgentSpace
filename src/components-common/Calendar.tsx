@@ -13,6 +13,8 @@ type CalendarProps = {
     onSelectDay: (selectedDate: Date) => void;
     onChangeMonth?: (newMonth: Date) => void;
     mobileActionButton?: React.ReactNode;
+    headerClasses?: string;
+    datesClasses?: string;
 };
 
 export const Calendar = (props: CalendarProps) => {
@@ -23,6 +25,8 @@ export const Calendar = (props: CalendarProps) => {
         onChangeMonth,
         activeMonth,
         mobileActionButton,
+        headerClasses,
+        datesClasses,
     } = props;
 
     const calendar = useCalendar({
@@ -52,10 +56,13 @@ export const Calendar = (props: CalendarProps) => {
     }
 
     const refsArr = generateRefs();
-    const activeIDX = dates().indexOf(selectedDate || new Date());
-
-    React.useEffect(() => {
+    const activeDate = dates().find((i) =>
+        isSameDay(i, selectedDate || new Date())
+    );
+    const activeIDX = activeDate ? dates().indexOf(activeDate) : -1;
+    React.useLayoutEffect(() => {
         if (activeIDX && refsArr && refsArr.length > 0) {
+            console.log({ activeIDX });
             refsArr[activeIDX]?.current?.scrollIntoView({
                 block: "center",
             });
@@ -63,9 +70,18 @@ export const Calendar = (props: CalendarProps) => {
     }, []);
 
     return (
-        <div className="text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-7">
+        <div
+            className={
+                "text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-7"
+            }
+        >
             {/* Mobile */}
-            <div className="flex items-center justify-between bg-gray-100 p-2 text-gray-900 lg:hidden">
+            <div
+                className={clsx(
+                    headerClasses,
+                    "flex items-center justify-between bg-gray-100 p-2 text-gray-900 lg:hidden"
+                )}
+            >
                 <div className="ml-1 flex flex-col text-left">
                     <h4 className="font-medium md:hidden">
                         {calendar.monthName.slice(0, 3)}{" "}
@@ -108,7 +124,12 @@ export const Calendar = (props: CalendarProps) => {
                     {mobileActionButton && mobileActionButton}
                 </div>
             </div>
-            <ul className="flex overflow-auto px-2 lg:hidden">
+            <ul
+                className={clsx(
+                    "flex overflow-auto bg-white px-2 lg:hidden",
+                    datesClasses
+                )}
+            >
                 {dates().map((day, dayIdx) => {
                     const isTodayBoolean = isToday(day);
                     const isCurrentMonthBoolean = isSameMonth(
@@ -126,7 +147,7 @@ export const Calendar = (props: CalendarProps) => {
                     return (
                         <li
                             key={dayIdx}
-                            className={"mx-3 flex flex-col py-2"}
+                            className="z-0 mx-3 flex flex-col py-2"
                             ref={refsArr[dayIdx]}
                         >
                             <span className="mb-2 text-xs font-bold text-gray-400">
