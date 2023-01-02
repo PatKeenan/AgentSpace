@@ -110,8 +110,10 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
 
     return (
         <div>
-            <ModalTitle>{title}</ModalTitle>
-            <div className="grid w-full grid-cols-8">
+            <ModalTitle className="text-center lg:text-left">
+                {title}
+            </ModalTitle>
+            <div className="mt-2 grid w-full grid-cols-8">
                 <div className="col-span-8">
                     <InputGroup
                         label="Display Name"
@@ -130,7 +132,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                 </div>
 
                 <div className="col-span-8 mt-6 grid grid-cols-2 gap-x-4">
-                    <h4 className="col-span-2 text-sm font-medium leading-6">
+                    <h4 className="col-span-2 mb-4 text-center text-sm font-medium leading-6 lg:text-left">
                         Primary Contact Information
                     </h4>
                     <InputGroup
@@ -156,18 +158,18 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                         }
                     />
                 </div>
-                <div className="col-span-8 mb-2 grid grid-cols-2 gap-x-4">
+                <div className="col-span-8 mb-2 mt-2 block lg:grid lg:grid-cols-2 lg:gap-y-0 lg:gap-x-4">
                     <InputGroup
+                        containerClass="sm:pt-0"
                         label="Email"
-                        className="col-span-4"
                         direction="column"
                         {...register("email")}
                         errorMessage={errors?.email && errors.email.message}
                     />
 
                     <InputGroup
+                        containerClass="mt-2 sm:pt-0"
                         label="Phone Number"
-                        className="col-span-4"
                         direction="column"
                         {...register("phoneNumber")}
                         errorMessage={
@@ -177,7 +179,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                 </div>
 
                 {attachProfile ? (
-                    <div className="col-span-8 grid grid-cols-8 ">
+                    <div className="col-span-8 mt-4 grid grid-cols-8">
                         <div className="col-span-8 mb-10 grid grid-cols-12">
                             <div className="col-span-11">
                                 <Select
@@ -224,10 +226,10 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                     className="flex items-center space-x-2"
                 >
                     <ArrowLeftIcon className="h-4" />
-                    <span>Cancel and Return</span>
+                    <span>Cancel</span>
                 </Button>
                 <Button variant="primary" onClick={handleOnSave}>
-                    Save and Continue
+                    Continue
                 </Button>
             </div>
         </div>
