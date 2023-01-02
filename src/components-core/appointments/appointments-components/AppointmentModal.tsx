@@ -245,7 +245,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                     }
                 />
             ) : (
-                <form onSubmit={onSubmit}>
+                <form onSubmit={onSubmit} tabIndex={0}>
                     <ModalTitle className="text-center lg:text-left">
                         {modal?.defaultData ? "Edit" : "Add"} Appointment
                     </ModalTitle>

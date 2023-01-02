@@ -178,7 +178,7 @@ export function Select<
                             <option
                                 key={option.id}
                                 value={option[displayField]}
-                                className={clsx("block truncate capitalize")}
+                                className={"block truncate capitalize"}
                             >
                                 {option[displayField]}
                             </option>

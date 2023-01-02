@@ -28,7 +28,7 @@ export const PageBody = (props: {
     ) : (
         <div
             className={clsx(
-                fullHeight && "lg:h-[calc(100vh-3.5rem)]",
+                fullHeight && "h-full lg:h-[calc(100vh-3.5rem)]",
                 noMaxWidth ? "w-full" : "max-w-6xl ",
                 "relative mx-auto",
                 extraClassName

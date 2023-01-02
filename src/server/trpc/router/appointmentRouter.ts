@@ -121,6 +121,7 @@ export const appointmentRouter = t.router({
                         },
                     },
                 },
+                orderBy: [{ startTime: "asc" }, { createdAt: "desc" }],
             });
         }),
     getAppointment: authedProcedure
