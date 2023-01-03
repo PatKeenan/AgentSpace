@@ -10,10 +10,13 @@ import {
     UserGroupIcon,
     TruckIcon,
     ViewColumnsIcon,
+    QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import {
+    ArrowLeftOnRectangleIcon,
     ChevronUpDownIcon,
+    Cog6ToothIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 
@@ -70,11 +73,22 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
         },
     ];
 
+    const subNavigation = [
+        { name: "Settings", href: "/settings", icon: Cog6ToothIcon },
+        { name: "Help", href: "/help", icon: QuestionMarkCircleIcon },
+        {
+            name: "Logout",
+            href: "/api/auth/signout",
+            icon: ArrowLeftOnRectangleIcon,
+        },
+    ];
+
     return status == "loading" ? (
         <Loading />
     ) : (
         <GatedWorkspace>
             <div className="min-h-full">
+                {/* Mobile Menu */}
                 <Transition.Root show={sidebarOpen} as={React.Fragment}>
                     <Dialog
                         as="div"
@@ -93,7 +107,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-75" />
                         </Transition.Child>
 
-                        <div className="fixed inset-0 z-40 flex">
+                        <div className="fixed inset-0 z-40 flex ">
                             <Transition.Child
                                 as={React.Fragment}
                                 enter="transition ease-in-out duration-300 transform"
@@ -138,8 +152,8 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             alt="Your Company"
                                         />
                                     </div>
-                                    <div className="mt-5 h-0 flex-1 overflow-y-auto">
-                                        <nav className="px-2">
+                                    <div className="mt-5 flex h-full flex-1 flex-grow flex-col overflow-y-auto">
+                                        <nav className="flex-shrink-0 px-2">
                                             <div className="space-y-1">
                                                 {navigation.map((item) => {
                                                     const isActive =
@@ -182,18 +196,58 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                 })}
                                             </div>
                                         </nav>
+                                        <div className="flex flex-grow" />
+                                        <nav className="flex flex-shrink-0 border-t-2 border-t-gray-300/50 px-3 pb-6 pt-4">
+                                            <ul className="flex w-full flex-col">
+                                                {subNavigation.map(
+                                                    (navItem, index) => (
+                                                        <NextLink
+                                                            href={navItem.href}
+                                                            key={index}
+                                                            className={clsx(
+                                                                router.pathname.startsWith(
+                                                                    `${navItem.name.toLowerCase()}`
+                                                                )
+                                                                    ? "bg-gray-200 text-gray-900"
+                                                                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                                                                "text-md group flex items-center rounded-md px-2 py-2 "
+                                                            )}
+                                                            aria-current={
+                                                                router.pathname.startsWith(
+                                                                    `/${navItem.name.toLowerCase()}`
+                                                                )
+                                                                    ? "page"
+                                                                    : undefined
+                                                            }
+                                                        >
+                                                            <navItem.icon
+                                                                className={clsx(
+                                                                    router.pathname.startsWith(
+                                                                        `/workspace/[workspaceId]/${navItem.name.toLowerCase()}`
+                                                                    )
+                                                                        ? "text-gray-600"
+                                                                        : "text-gray-400 group-hover:text-gray-500",
+                                                                    "mr-3 h-4 w-4 flex-shrink-0"
+                                                                )}
+                                                                aria-hidden="true"
+                                                            />
+                                                            {navItem.name}
+                                                        </NextLink>
+                                                    )
+                                                )}
+                                            </ul>
+                                        </nav>
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>
                             <div
                                 className="w-14 flex-shrink-0"
                                 aria-hidden="true"
-                            >
-                                {/* Dummy element to force sidebar to shrink to fit close icon */}
-                            </div>
+                            ></div>
                         </div>
                     </Dialog>
                 </Transition.Root>
+                {/* End Menu */}
 
                 {/* Static sidebar for desktop */}
                 <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100 lg:pt-5 lg:pb-4">
@@ -205,148 +259,9 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         />
                     </div>
                     {/* Sidebar component, swap this element with another sidebar if you like */}
-                    <div className="mt-6 flex h-0 flex-1 flex-col overflow-y-auto">
+                    <div className="mt-6 flex h-0 flex-1 flex-grow flex-col overflow-y-auto">
                         {/* User account dropdown */}
-                        <Menu
-                            as="div"
-                            className="relative mt-1 inline-block px-3 text-left"
-                        >
-                            <div>
-                                <Menu.Button className="group w-full rounded-md bg-gray-100 px-3.5 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-100">
-                                    <span className="flex w-full items-center justify-between">
-                                        <span className="flex min-w-0 items-center justify-between space-x-3">
-                                            <Image
-                                                height={"40px"}
-                                                width={"40px"}
-                                                className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                                                src={
-                                                    session.user?.image ??
-                                                    "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                }
-                                                alt=""
-                                            />
-                                            <span className="flex min-w-0 flex-1 flex-col">
-                                                <span className="truncate text-sm font-medium text-gray-900">
-                                                    {session.user?.name}
-                                                </span>
-                                            </span>
-                                        </span>
-                                        <ChevronUpDownIcon
-                                            className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </Menu.Button>
-                            </div>
-                            <Transition
-                                as={React.Fragment}
-                                enter="transition ease-out duration-100"
-                                enterFrom="transform opacity-0 scale-95"
-                                enterTo="transform opacity-100 scale-100"
-                                leave="transition ease-in duration-75"
-                                leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95"
-                            >
-                                <Menu.Items className="absolute right-0 left-0 z-10 mx-3 mt-1 origin-top divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                    <div className="py-1">
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <NextLink
-                                                    href="#"
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    View profile
-                                                </NextLink>
-                                            )}
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <NextLink
-                                                    href="/settings"
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Settings
-                                                </NextLink>
-                                            )}
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <NextLink
-                                                    href={"/notifications"}
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Notifications
-                                                </NextLink>
-                                            )}
-                                        </Menu.Item>
-                                    </div>
-                                    <div className="py-1">
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <NextLink
-                                                    href="#"
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Get desktop app
-                                                </NextLink>
-                                            )}
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <NextLink
-                                                    href="#"
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Support
-                                                </NextLink>
-                                            )}
-                                        </Menu.Item>
-                                    </div>
-                                    <div className="py-1">
-                                        <Menu.Item>
-                                            {({ active }) => (
-                                                <NextLink
-                                                    href="/api/auth/signout"
-                                                    className={clsx(
-                                                        active
-                                                            ? "bg-gray-100 text-gray-900"
-                                                            : "text-gray-700",
-                                                        "block px-4 py-2 text-sm"
-                                                    )}
-                                                >
-                                                    Logout
-                                                </NextLink>
-                                            )}
-                                        </Menu.Item>
-                                    </div>
-                                </Menu.Items>
-                            </Transition>
-                        </Menu>
+
                         {/* Sidebar Search */}
                         <div className="mt-5 px-3">
                             <label htmlFor="search" className="sr-only">
@@ -410,6 +325,45 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                 ))}
                             </div>
                         </nav>
+                        <div className="flex flex-grow" />
+                        <nav className="flex flex-shrink-0 border-t-2 border-t-gray-300/50 px-3 pb-6 pt-4">
+                            <ul className="flex w-full flex-col">
+                                {subNavigation.map((navItem, index) => (
+                                    <NextLink
+                                        href={navItem.href}
+                                        key={index}
+                                        className={clsx(
+                                            router.pathname.startsWith(
+                                                `${navItem.name.toLowerCase()}`
+                                            )
+                                                ? "bg-gray-200 text-gray-900"
+                                                : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                                            "text-md group flex items-center rounded-md px-2 py-2 "
+                                        )}
+                                        aria-current={
+                                            router.pathname.startsWith(
+                                                `/${navItem.name.toLowerCase()}`
+                                            )
+                                                ? "page"
+                                                : undefined
+                                        }
+                                    >
+                                        <navItem.icon
+                                            className={clsx(
+                                                router.pathname.startsWith(
+                                                    `/workspace/[workspaceId]/${navItem.name.toLowerCase()}`
+                                                )
+                                                    ? "text-gray-600"
+                                                    : "text-gray-400 group-hover:text-gray-500",
+                                                "mr-3 h-4 w-4 flex-shrink-0 text-sm"
+                                            )}
+                                            aria-hidden="true"
+                                        />
+                                        {navItem.name}
+                                    </NextLink>
+                                ))}
+                            </ul>
+                        </nav>
                     </div>
                 </div>
                 {/* Main column */}
@@ -456,121 +410,6 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         />
                                     </div>
                                 </form>
-                            </div>
-                            <div className="flex items-center">
-                                {/* Profile dropdown */}
-                                <Menu as="div" className="relative ml-3">
-                                    <div>
-                                        <Menu.Button className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                                            <span className="sr-only">
-                                                Open user menu
-                                            </span>
-                                            <Image
-                                                height="32px"
-                                                width="32px"
-                                                className="h-8 w-8 rounded-full"
-                                                src={
-                                                    session.user?.image ??
-                                                    "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                }
-                                                alt=""
-                                            />
-                                        </Menu.Button>
-                                    </div>
-                                    <Transition
-                                        as={React.Fragment}
-                                        enter="transition ease-out duration-100"
-                                        enterFrom="transform opacity-0 scale-95"
-                                        enterTo="transform opacity-100 scale-100"
-                                        leave="transition ease-in duration-75"
-                                        leaveFrom="transform opacity-100 scale-100"
-                                        leaveTo="transform opacity-0 scale-95"
-                                    >
-                                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                            <div className="py-1">
-                                                <Menu.Item>
-                                                    {({ active }) => (
-                                                        <NextLink
-                                                            href="#"
-                                                            className={clsx(
-                                                                active
-                                                                    ? "bg-gray-100 text-gray-900"
-                                                                    : "text-gray-700",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            View profile
-                                                        </NextLink>
-                                                    )}
-                                                </Menu.Item>
-                                                <Menu.Item>
-                                                    {({ active }) => (
-                                                        <NextLink
-                                                            href="/settings"
-                                                            className={clsx(
-                                                                active
-                                                                    ? "bg-gray-100 text-gray-900"
-                                                                    : "text-gray-700",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            Settings
-                                                        </NextLink>
-                                                    )}
-                                                </Menu.Item>
-                                                <Menu.Item>
-                                                    {({ active }) => (
-                                                        <NextLink
-                                                            href="#"
-                                                            className={clsx(
-                                                                active
-                                                                    ? "bg-gray-100 text-gray-900"
-                                                                    : "text-gray-700",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            Notifications
-                                                        </NextLink>
-                                                    )}
-                                                </Menu.Item>
-                                            </div>
-                                            <div className="py-1">
-                                                <Menu.Item>
-                                                    {({ active }) => (
-                                                        <NextLink
-                                                            href="#"
-                                                            className={clsx(
-                                                                active
-                                                                    ? "bg-gray-100 text-gray-900"
-                                                                    : "text-gray-700",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            Support
-                                                        </NextLink>
-                                                    )}
-                                                </Menu.Item>
-                                            </div>
-                                            <div className="py-1">
-                                                <Menu.Item>
-                                                    {({ active }) => (
-                                                        <NextLink
-                                                            href="/api/auth/signout"
-                                                            className={clsx(
-                                                                active
-                                                                    ? "bg-gray-100 text-gray-900"
-                                                                    : "text-gray-700",
-                                                                "block px-4 py-2 text-sm"
-                                                            )}
-                                                        >
-                                                            Logout
-                                                        </NextLink>
-                                                    )}
-                                                </Menu.Item>
-                                            </div>
-                                        </Menu.Items>
-                                    </Transition>
-                                </Menu>
                             </div>
                         </div>
                     </div>
