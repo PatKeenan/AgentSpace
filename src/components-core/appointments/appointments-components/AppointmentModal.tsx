@@ -33,8 +33,6 @@ export type AppointmentFormType = AppointmentSchema & {
 };
 
 type AppointmentModalProps = {
-    selectedDate: string;
-    onSuccessCallback: () => void;
     appointment?: AppointmentSchema;
 };
 
@@ -67,11 +65,18 @@ const appointmentReducer = (
 });
 
 export const AppointmentModal = (props: AppointmentModalProps) => {
-    const { selectedDate, onSuccessCallback } = props;
-    const { resetModal, modal } = useAppointmentsUI();
+    const { resetModal, modal, activeTab } = useAppointmentsUI();
     const [state, setState] = React.useReducer(
         appointmentReducer,
-        modal?.defaultData ?? { ...initialFormState, date: selectedDate }
+        modal?.defaultData ?? {
+            ...initialFormState,
+            date:
+                activeTab == "View All"
+                    ? new Date().toISOString()
+                    : modal?.selectedDate
+                    ? modal.selectedDate?.toISOString()
+                    : new Date().toISOString(),
+        }
     );
 
     const [addContactFormOpen, setAddContactFormOpen] = React.useState(false);
@@ -86,6 +91,13 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
     const addressInput = useDebounceState("");
 
     const sharedQueryOptions = { refetchOnWindowFocus: false };
+    const utils = trpc.useContext();
+
+    const invalidate = (date: string, workspaceId: string) =>
+        utils.appointment.getByMonth.invalidate({
+            date: date,
+            workspaceId: workspaceId,
+        });
 
     const addressQuery = trpc.addressSearch.search.useQuery(
         { query: addressInput.debounced },
@@ -158,10 +170,10 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
     };
 
     const { mutate: createAppointmentMutation } = create({
-        onSuccess: () => onSuccessCallback(),
+        onSuccess: (data) => invalidate(data.date, data.workspaceId),
     });
     const { mutate: updateAppointmentMutation } = update({
-        onSuccess: () => onSuccessCallback(),
+        onSuccess: (data) => invalidate(data.date, data.workspaceId),
     });
 
     const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -541,6 +553,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                                     })
                                 }
                                 className="max-h-[140px] capitalize"
+                                containerClass="sm:pt-5"
                                 options={statusOptions}
                             />
                         </div>

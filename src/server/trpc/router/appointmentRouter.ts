@@ -7,7 +7,6 @@ import {
     idSchema,
 } from "server/schemas";
 import { dateUtils } from "utils/dateUtils";
-import { addDays } from "date-fns";
 
 export const appointmentRouter = t.router({
     getAll: authedProcedure
@@ -22,6 +21,27 @@ export const appointmentRouter = t.router({
                     workspaceId: input.workspaceId,
                     deleted: false,
                 },
+                include: {
+                    contacts: {
+                        select: {
+                            id: true,
+                            contact: {
+                                select: {
+                                    id: true,
+                                    displayName: true,
+                                },
+                            },
+                            profile: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                },
+                            },
+                        },
+                    },
+                },
+
+                orderBy: { createdAt: "desc" },
             });
         }),
     getAllForContact: authedProcedure
@@ -33,7 +53,27 @@ export const appointmentRouter = t.router({
                     deleted: false,
                 },
                 include: {
-                    appointment: true,
+                    appointment: {
+                        include: {
+                            contacts: {
+                                select: {
+                                    id: true,
+                                    contact: {
+                                        select: {
+                                            id: true,
+                                            displayName: true,
+                                        },
+                                    },
+                                    profile: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
                 },
                 orderBy: {
                     appointment: {

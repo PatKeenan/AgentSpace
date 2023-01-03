@@ -49,9 +49,9 @@ export function Select<
                 name={name}
                 as={"div"}
                 className={clsx(
+                    containerClass,
                     direction == "row" ? "sm:gap-4" : "gap-0",
-                    "hidden sm:grid sm:grid-cols-3 sm:items-start sm:pt-5",
-                    containerClass
+                    "hidden sm:grid sm:grid-cols-3 sm:items-start"
                 )}
             >
                 {({ open }) => (

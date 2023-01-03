@@ -1,107 +1,70 @@
 import { GridCard } from "components-core/contactDetail/contact-detail-components/GridCard";
 import { ToggleMenu } from "components-common/ToggleMenu";
-import { useAppointmentsUI } from "../useAppointmentsUI";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { formatTime } from "utils/formatTime";
 import * as React from "react";
-
 import type { Appointment, AppointmentStatus } from "@prisma/client";
 import clsx from "clsx";
-import { AppointmentFormType } from "./AppointmentModal";
-import { useAppointments } from "hooks/useAppointments";
 import { Button } from "components-common/Button";
 import { Select } from "components-common/Select";
-import { statusOptions } from "../appointments-utils";
+
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
+import {
+    type AppointmentStatusOption,
+    appointmentStatusOptions,
+} from "utils/appointmentStatusOptions";
 
-export const AppointmentCard = (props: {
-    idx: number;
-    appointment: Appointment & {
-        contacts: {
-            contact: {
-                id: string;
-                displayName: string;
-            };
-            id: string;
-            profile: {
-                id: string;
-                name: string;
-            } | null;
-        }[];
+type ContactOnAppointment = {
+    contact: {
+        id: string;
+        displayName: string;
     };
-    invalidate?: () => void;
-}) => {
-    const { idx, appointment, invalidate } = props;
+    id: string;
+    profile: {
+        id: string;
+        name: string;
+    } | null;
+};
+
+type AppointmentCardProps = {
+    appointment: Appointment & { contacts: ContactOnAppointment[] };
+    idx: number;
+    onEdit?: () => void;
+    onStatusChange?: (status: AppointmentStatusOption) => void;
+    onDelete?: () => void;
+};
+
+export const AppointmentCard = (props: AppointmentCardProps) => {
+    const { idx, appointment, onEdit, onDelete, onStatusChange } = props;
 
     const [expanded, setExpanded] = React.useState(false);
 
     const [status, setStatus] = React.useState<
-        typeof statusOptions[number] | undefined
-    >(() => statusOptions.find((i) => i.value == String(appointment?.status)));
+        AppointmentStatusOption | undefined
+    >(() =>
+        appointmentStatusOptions.find(
+            (i) => i.value == String(appointment?.status)
+        )
+    );
 
     React.useEffect(() => {
-        const status = statusOptions.find(
+        const status = appointmentStatusOptions.find(
             (i) => i.value == appointment?.status
         );
         setStatus(status);
     }, [appointment.status]);
 
-    const { setModal } = useAppointmentsUI();
-    const { deleteHard, quickUpdate } = useAppointments();
-
-    const defaultModalData: AppointmentFormType & {
-        id: string;
-    } = {
-        id: appointment.id,
-        address: appointment.address,
-        address_2: appointment?.address_2 || undefined,
-        status: appointment.status,
-        note: appointment?.note || undefined,
-        latitude: appointment?.latitude || undefined,
-        longitude: appointment?.longitude || undefined,
-        date: appointment.date,
-        startTime: appointment?.startTime || undefined,
-        endTime: appointment?.endTime || undefined,
-        contacts: appointment.contacts.map(({ id, contact, profile }) => ({
-            contactOnAppointmentId: id,
-            contactId: contact.id,
-            displayName: contact.displayName,
-            profileName: profile?.name,
-            selectedProfileId: profile?.id,
-        })),
-    };
-
     const handleEdit = () => {
-        setModal({
-            state: true,
-            defaultData: defaultModalData,
-        });
+        onEdit && onEdit();
     };
-
-    const { mutate } = deleteHard();
-    const { mutate: update } = quickUpdate();
 
     const handleDelete = () => {
-        mutate(
-            { appointmentId: appointment.id },
-            { onSuccess: invalidate ? () => invalidate() : undefined }
-        );
+        onDelete && onDelete();
     };
 
-    const handleChangeStatus = (i: typeof statusOptions[number]) => {
-        update(
-            {
-                id: appointment.id,
-                status: i.value as AppointmentStatus,
-            },
-            {
-                onSuccess: () => {
-                    invalidate && invalidate();
-                    setStatus(i);
-                },
-            }
-        );
+    const handleChangeStatus = (i: AppointmentStatusOption) => {
+        onStatusChange && onStatusChange(i);
     };
 
     const timeDisplay = () => {
@@ -153,12 +116,12 @@ export const AppointmentCard = (props: {
                         />
 
                         <Select
-                            options={statusOptions}
+                            options={appointmentStatusOptions}
                             selected={status}
                             setSelected={handleChangeStatus}
                             displayField="display"
-                            className="max-h-[150px] pt-0"
-                            containerClass="pt-0 sm:mt-0"
+                            className="max-h-[150px]"
+                            containerClass="sm:pt-0 sm:mt-0"
                         />
                     </div>
                     <div className="flex w-10 flex-shrink-0">

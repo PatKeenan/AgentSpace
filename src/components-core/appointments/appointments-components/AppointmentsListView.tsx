@@ -1,25 +1,21 @@
-import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { Button, ButtonLink } from "components-common/Button";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { Button } from "components-common/Button";
 import { Tag } from "components-common/Tag";
 import { useAppointments } from "hooks/useAppointments";
-import { useRouter } from "next/router";
+import { useWorkspace } from "hooks/useWorkspace";
 import { appointmentStatusOptions } from "utils/appointmentStatusOptions";
 
 const ContactDetailAppointments = () => {
-    const router = useRouter();
-    const contactId = router.query.contactId;
-    const { getAllForContact } = useAppointments();
+    const { getAll } = useAppointments();
+    const { id } = useWorkspace();
 
-    const { data: appointments } = getAllForContact(
-        { contactId: contactId as string, take: 20 },
-        { enabled: typeof contactId == "string" }
-    );
+    const { data: appointments } = getAll({ workspaceId: id as string });
 
     return (
         <div>
-            <div className="flex">
+            <div className="mt-4 flex ">
                 {/* Search */}
-                <div className="mb-4 flex w-full max-w-md space-x-2">
+                <div className="mb-4 mr-auto flex w-full max-w-md space-x-2">
                     <div className="w-full">
                         <label htmlFor="mobile-search" className="sr-only">
                             Search
@@ -44,12 +40,6 @@ const ContactDetailAppointments = () => {
                         Search
                     </Button>
                 </div>
-                <div className="ml-auto">
-                    <ButtonLink variant="primary" href="">
-                        <PlusIcon className="-ml-1.5 mr-2 h-4 w-4" />
-                        Add New
-                    </ButtonLink>
-                </div>
             </div>
             {appointments && appointments.length > 0 ? (
                 <>
@@ -64,7 +54,7 @@ const ContactDetailAppointments = () => {
                                     <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
                                         <p className="font-medium">Address</p>
                                         <p className="text-gray-700">
-                                            {i.appointment.address}
+                                            {i.address}
                                         </p>
                                     </div>
 
@@ -73,9 +63,7 @@ const ContactDetailAppointments = () => {
                                         <p className="capitalize text-gray-700">
                                             {appointmentStatusOptions
                                                 .find(
-                                                    (a) =>
-                                                        a.value ==
-                                                        i.appointment.status
+                                                    (a) => a.value == i.status
                                                 )
                                                 ?.value.toLocaleLowerCase() ||
                                                 "No Status"}
@@ -90,24 +78,22 @@ const ContactDetailAppointments = () => {
                                     <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
                                         <p className="font-medium">Contacts</p>
                                         <ul className="flex items-center">
-                                            {i.appointment.contacts.map(
-                                                (contact) => (
-                                                    <li
-                                                        key={contact.id}
-                                                        className="mr-2"
-                                                    >
-                                                        <Tag>
-                                                            {
-                                                                contact.contact
-                                                                    .displayName
-                                                            }
-                                                            {contact.profile
-                                                                ?.name &&
-                                                                ` - ${contact.profile?.name}`}
-                                                        </Tag>
-                                                    </li>
-                                                )
-                                            )}
+                                            {i.contacts.map((contact) => (
+                                                <li
+                                                    key={contact.id}
+                                                    className="mr-2"
+                                                >
+                                                    <Tag>
+                                                        {
+                                                            contact.contact
+                                                                .displayName
+                                                        }
+                                                        {contact.profile
+                                                            ?.name &&
+                                                            ` - ${contact.profile?.name}`}
+                                                    </Tag>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </div>
