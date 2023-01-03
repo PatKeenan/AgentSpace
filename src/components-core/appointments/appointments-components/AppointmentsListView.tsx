@@ -1,8 +1,13 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { Button } from "components-common/Button";
+import {
+    ChevronRightIcon,
+    MagnifyingGlassIcon,
+} from "@heroicons/react/20/solid";
+import { Button, ButtonLink } from "components-common/Button";
+import { NextLink } from "components-common/NextLink";
 import { Tag } from "components-common/Tag";
 import { useAppointments } from "hooks/useAppointments";
 import { useWorkspace } from "hooks/useWorkspace";
+import Link from "next/link";
 import { appointmentStatusOptions } from "utils/appointmentStatusOptions";
 
 const ContactDetailAppointments = () => {
@@ -12,8 +17,8 @@ const ContactDetailAppointments = () => {
     const { data: appointments } = getAll({ workspaceId: id as string });
 
     return (
-        <div>
-            <div className="mt-4 flex ">
+        <div className="px-2">
+            <div className="mt-4 flex">
                 {/* Search */}
                 <div className="mb-4 mr-auto flex w-full max-w-md space-x-2">
                     <div className="w-full">
@@ -43,60 +48,76 @@ const ContactDetailAppointments = () => {
             </div>
             {appointments && appointments.length > 0 ? (
                 <>
-                    <ul className="space-y-4 pb-2">
-                        {appointments.map((i, idx) => (
-                            <li
-                                key={i.id}
-                                className="border border-gray-200 bg-white p-4 text-gray-800 shadow-md"
-                            >
-                                {/*  <h4>{i.appointment.address} </h4> */}
-                                <div className="mt-2 flex  flex-col space-y-2">
-                                    <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
-                                        <p className="font-medium">Address</p>
-                                        <p className="text-gray-700">
-                                            {i.address}
-                                        </p>
-                                    </div>
+                    <ul className=" divide-y pb-2">
+                        {appointments.map((i) => (
+                            <li key={i.id}>
+                                <NextLink
+                                    href=""
+                                    className=" flex flex-1 items-center bg-white p-4 text-gray-800 hover:bg-gray-50"
+                                >
+                                    <div className="mt-2 flex  w-full flex-col space-y-2">
+                                        <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
+                                            <p className="font-medium">
+                                                Address
+                                            </p>
+                                            <p className="text-gray-700">
+                                                {i.address}
+                                            </p>
+                                        </div>
 
-                                    <div className="block space-y-1 lg:grid lg:max-w-sm lg:grid-cols-2 lg:items-center lg:space-x-1">
-                                        <p className="font-medium">Status</p>
-                                        <p className="capitalize text-gray-700">
-                                            {appointmentStatusOptions
-                                                .find(
-                                                    (a) => a.value == i.status
-                                                )
-                                                ?.value.toLocaleLowerCase() ||
-                                                "No Status"}
-                                        </p>
+                                        <div className="block space-y-1 lg:grid lg:max-w-sm lg:grid-cols-2 lg:items-center lg:space-x-1">
+                                            <p className="font-medium">
+                                                Status
+                                            </p>
+                                            <p className="capitalize text-gray-700">
+                                                {appointmentStatusOptions
+                                                    .find(
+                                                        (a) =>
+                                                            a.value == i.status
+                                                    )
+                                                    ?.value.toLocaleLowerCase() ||
+                                                    "No Status"}
+                                            </p>
+                                        </div>
+                                        <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
+                                            <p className="font-medium">
+                                                Created
+                                            </p>
+                                            <p className="text-gray-700">
+                                                {i.createdAt.toDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
+                                            <p className="font-medium">
+                                                Contacts
+                                            </p>
+                                            <ul className="flex items-center">
+                                                {i.contacts.map((contact) => (
+                                                    <li
+                                                        key={contact.id}
+                                                        className="mr-2"
+                                                    >
+                                                        <Tag>
+                                                            {
+                                                                contact.contact
+                                                                    .displayName
+                                                            }
+                                                            {contact.profile
+                                                                ?.name &&
+                                                                ` - ${contact.profile?.name}`}
+                                                        </Tag>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
-                                        <p className="font-medium">Created</p>
-                                        <p className="text-gray-700">
-                                            {i.createdAt.toDateString()}
-                                        </p>
+                                    <div>
+                                        <span className="sr-only">
+                                            View Appointment
+                                        </span>
+                                        <ChevronRightIcon className="h-6 w-6 text-gray-600 hover:text-gray-700" />
                                     </div>
-                                    <div className="block space-y-1 lg:flex lg:items-center lg:space-x-1">
-                                        <p className="font-medium">Contacts</p>
-                                        <ul className="flex items-center">
-                                            {i.contacts.map((contact) => (
-                                                <li
-                                                    key={contact.id}
-                                                    className="mr-2"
-                                                >
-                                                    <Tag>
-                                                        {
-                                                            contact.contact
-                                                                .displayName
-                                                        }
-                                                        {contact.profile
-                                                            ?.name &&
-                                                            ` - ${contact.profile?.name}`}
-                                                    </Tag>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
+                                </NextLink>
                             </li>
                             /*  <AppointmentCard
                             appointment={i.appointment}
