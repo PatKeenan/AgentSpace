@@ -93,7 +93,10 @@ export const AppointmentsMap = ({
                 }
             );
             center?.bounds &&
-                map?.fitBounds(center.bounds as unknown as LatLngBoundsLiteral);
+                map?.fitBounds(
+                    center.bounds as unknown as LatLngBoundsLiteral,
+                    { animate: false }
+                );
         } else {
             map?.setView({ lat: 39.833851, lng: -74.871826 }, 6, {
                 animate: false,

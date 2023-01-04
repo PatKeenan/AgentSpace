@@ -64,7 +64,6 @@ const appointmentReducer = (
 export const AppointmentModal = (props: {
     invalidate: (date: Date) => void;
 }) => {
-    const { invalidate } = props;
     const { resetModal, modal, activeTab } = useAppointmentsUI();
     const [state, setState] = React.useReducer(
         appointmentReducer,
@@ -163,17 +162,22 @@ export const AppointmentModal = (props: {
     };
 
     const { mutate: createAppointmentMutation } = create({
-        onSuccess: (data) => {
+        onSuccess: (data) =>
             utils.appointment.getByDate
-                .refetch({
+                .invalidate({
                     date: state.date,
                     workspaceId: data.workspaceId,
                 })
-                .then(() => resetModal());
-        },
+                .then(() => resetModal()),
     });
     const { mutate: updateAppointmentMutation } = update({
-        onSuccess: (data) => invalidate(new Date(data.date)),
+        onSuccess: (data) =>
+            utils.appointment.getByDate
+                .invalidate({
+                    date: state.date,
+                    workspaceId: data.workspaceId,
+                })
+                .then(() => resetModal()),
     });
 
     const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {

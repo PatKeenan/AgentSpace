@@ -6,7 +6,6 @@ import {
     contactOnAppointmentSchema,
     idSchema,
 } from "server/schemas";
-import { dateUtils } from "utils/dateUtils";
 
 export const appointmentRouter = t.router({
     getAll: authedProcedure
