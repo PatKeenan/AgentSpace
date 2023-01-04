@@ -7,6 +7,8 @@ import type { NextPageExtended } from "types/index";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import * as React from "react";
+import { trpc } from "utils/trpc";
+import { useWorkspace } from "hooks/useWorkspace";
 
 const AppointmentsMapView = dynamic(
     () => import("./appointments-components/AppointmentsMapView"),
@@ -24,15 +26,23 @@ const AppointmentsListView = dynamic(
 export const AppointmentsContainer: NextPageExtended = () => {
     const { setModal, modal, activeTab, setActiveTab } = useAppointmentsUI();
     const router = useRouter();
-
+    const { id } = useWorkspace();
     const handleTabClick = (tabName: string) => {
         setActiveTab(tabName as typeof activeTab);
     };
 
+    const utils = trpc.useContext();
+
+    const invalidate = (date: Date) =>
+        utils.appointment.getByDate.invalidate({
+            date: String(date),
+            workspaceId: id as string,
+        });
+
     ///////////////////////////////////
     return (
         <>
-            {modal.state && <AppointmentModal />}
+            {modal.state && <AppointmentModal invalidate={invalidate} />}
             <div className="hidden lg:block">
                 <Breadcrumb
                     items={[

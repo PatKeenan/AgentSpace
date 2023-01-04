@@ -13,9 +13,10 @@ export const formatDate = (
         D: day,
         "MM/DD": month + "/" + day,
         "MM/DD/YYYY": month + "/" + day + "/" + year,
-        "YYY-MM-DD": `${year}-${month <= 9 ? "0" + month : month}-${
+        "YYYY-MM-DD": `${year}-${month <= 9 ? "0" + month : month}-${
             day <= 9 ? "0" + day : day
         }`,
+        "YYYY-MM": `${year}-${month <= 9 ? "0" + month : month}`,
     };
     return dateFormats[format ?? "MM/DD/YYYY"] as string;
 };

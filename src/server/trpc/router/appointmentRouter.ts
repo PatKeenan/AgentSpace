@@ -83,13 +83,11 @@ export const appointmentRouter = t.router({
                 take: input.take,
             });
         }),
-    getByMonth: authedProcedure
+    getIndicators: authedProcedure
         .input(
             z.object({
                 workspaceId: z.string(),
-                date: z
-                    .string()
-                    .transform((i) => dateUtils.transform(i).isoDateOnly),
+                date: z.string(),
             })
         )
         .query(async ({ ctx, input }) => {
@@ -98,7 +96,28 @@ export const appointmentRouter = t.router({
                     workspaceId: input.workspaceId,
                     deleted: false,
                     date: {
-                        startsWith: input.date.slice(0, 7), // <- year and month YYYY-MM
+                        startsWith: input.date,
+                    },
+                },
+                select: {
+                    date: true,
+                },
+            });
+        }),
+    getByDate: authedProcedure
+        .input(
+            z.object({
+                workspaceId: z.string(),
+                date: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            return await ctx.prisma.appointment.findMany({
+                where: {
+                    workspaceId: input.workspaceId,
+                    deleted: false,
+                    date: {
+                        startsWith: input.date.slice(0, 10), // <- year and month YYYY-MM-DD
                     },
                 },
                 include: {
@@ -121,46 +140,6 @@ export const appointmentRouter = t.router({
                     },
                 },
 
-                orderBy: [{ startTime: "asc" }, { createdAt: "desc" }],
-            });
-        }),
-    getByDate: authedProcedure
-        .input(
-            z.object({
-                workspaceId: z.string(),
-                date: z
-                    .string()
-                    .transform((i) => dateUtils.transform(i).isoDateOnly),
-            })
-        )
-        .query(async ({ ctx, input }) => {
-            return await ctx.prisma.appointment.findMany({
-                where: {
-                    workspaceId: input.workspaceId,
-                    deleted: false,
-                    date: {
-                        equals: input.date,
-                    },
-                },
-                include: {
-                    contacts: {
-                        select: {
-                            id: true,
-                            contact: {
-                                select: {
-                                    id: true,
-                                    displayName: true,
-                                },
-                            },
-                            profile: {
-                                select: {
-                                    id: true,
-                                    name: true,
-                                },
-                            },
-                        },
-                    },
-                },
                 orderBy: [{ startTime: "asc" }, { createdAt: "desc" }],
             });
         }),

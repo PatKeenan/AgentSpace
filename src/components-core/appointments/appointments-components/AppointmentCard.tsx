@@ -14,6 +14,8 @@ import { Select } from "components-common/Select";
 import { statusOptions } from "../appointments-utils";
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
+import { format } from "date-fns";
+import { formatDate } from "utils/formatDate";
 
 export const AppointmentCard = (props: {
     idx: number;
@@ -186,7 +188,11 @@ export const AppointmentCard = (props: {
                     </div>
                 </div>
             </div>
-            <DetailsRow title="Time" value={timeDisplay()} expand={expanded} />
+            <DetailsRow
+                title="Date"
+                value={formatDate(appointment.date, "MM/DD/YYYY")}
+            />
+            <DetailsRow title="Time" value={timeDisplay()} />
             <DetailsRow
                 title="Address"
                 value={appointment?.address}

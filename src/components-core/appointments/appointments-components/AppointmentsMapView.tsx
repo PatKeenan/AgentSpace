@@ -6,10 +6,10 @@ import { useWorkspace, useAppointments } from "hooks";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { isEmpty } from "../appointments-utils";
 import { dateUtils } from "utils/dateUtils";
-import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { trpc } from "utils/trpc";
 import * as React from "react";
+import { formatDate } from "utils/formatDate";
 
 const AppointmentsMap = dynamic(() => import("./AppointmentsMap"), {
     ssr: false,
@@ -30,36 +30,39 @@ const AppointmentsMapView = () => {
         () => new Date()
     );
 
-    const invalidate = () =>
-        utils.appointment.getByMonth.invalidate({
-            date: String(activeMonth),
+    const invalidate = (date?: Date) =>
+        utils.appointment.getByDate.invalidate({
+            date: dateUtils.transform(date || selectedDate).isoDateOnly,
             workspaceId: workspace.id as string,
         });
 
-    const appointmentsQuery = appointments.getByMonth(
+    const appointmentsQuery = appointments.getByDate(
         {
             workspaceId: workspace.id as string,
-            date: String(activeMonth),
+            date: dateUtils.transform(selectedDate).isoDateOnly,
         },
-        { refetchOnWindowFocus: false }
+        {
+            refetchOnWindowFocus: false,
+            enabled: typeof workspace.id !== undefined,
+        }
     );
 
-    const statusIndicators = React.useMemo(
-        () => appointmentsQuery.data?.flatMap((i) => i.date),
-        [appointmentsQuery.data]
+    const statusIndicatorQuery = appointments.getIndicators(
+        {
+            workspaceId: workspace.id as string,
+            date: formatDate(activeMonth, "YYYY-MM"),
+        },
+        {
+            refetchOnWindowFocus: false,
+            enabled: typeof workspace.id !== undefined,
+        }
     );
 
-    const filteredAppointmentsByDate = React.useCallback(() => {
-        const data = appointmentsQuery.data?.filter((i) => {
-            return (
-                dateUtils.transform(new Date(i.date)).isoDateOnly ==
-                dateUtils.transform(selectedDate).isoDateOnly
-            );
-        });
-        const hasStartTimes: typeof data = [];
-        const noStartTimes: typeof data = [];
+    const sortedByTime = React.useCallback(() => {
+        const hasStartTimes: typeof appointmentsQuery.data = [];
+        const noStartTimes: typeof appointmentsQuery.data = [];
 
-        data?.map((i) => {
+        appointmentsQuery.data?.map((i) => {
             if (i.startTime) {
                 return hasStartTimes.push(i);
             }
@@ -72,10 +75,12 @@ const AppointmentsMapView = () => {
             return sorted;
         }
         return [];
-    }, [selectedDate, appointmentsQuery]);
+    }, [appointmentsQuery]);
 
     React.useEffect(() => {
-        setModal({ selectedDate });
+        setModal({
+            selectedDate: dateUtils.transform(selectedDate).isoDateOnly,
+        });
     }, [selectedDate, setModal, modal.state]);
 
     return (
@@ -87,8 +92,8 @@ const AppointmentsMapView = () => {
                         {appointmentsQuery.isLoading &&
                         !appointmentsQuery.data ? (
                             <Loading />
-                        ) : !isEmpty(filteredAppointmentsByDate()) ? (
-                            filteredAppointmentsByDate().map((i, idx) => (
+                        ) : !isEmpty(sortedByTime()) ? (
+                            sortedByTime().map((i, idx) => (
                                 <li key={i.id} className="relative lg:mx-2">
                                     <AppointmentCard
                                         idx={idx}
@@ -118,13 +123,21 @@ const AppointmentsMapView = () => {
                         onChangeMonth={setActiveMonth}
                         selectedDate={selectedDate}
                         onSelectDay={setSelectedDate}
-                        statusIndicatorsArr={statusIndicators}
+                        statusIndicatorsArr={statusIndicatorQuery.data?.flatMap(
+                            (i) => i.date
+                        )}
                         mobileActionButton={
                             <div>
                                 <Button
                                     variant="primary"
                                     onClick={() =>
-                                        setModal({ state: true, selectedDate })
+                                        setModal({
+                                            state: true,
+                                            selectedDate:
+                                                dateUtils.transform(
+                                                    selectedDate
+                                                ).isoDateOnly,
+                                        })
                                     }
                                 >
                                     <span className="sr-only">
@@ -139,9 +152,7 @@ const AppointmentsMapView = () => {
                 </div>
                 <div className="h-[200px] w-full md:h-[300px] lg:h-2/3">
                     <React.Suspense fallback={""}>
-                        <AppointmentsMap
-                            appointments={filteredAppointmentsByDate()}
-                        />
+                        <AppointmentsMap appointments={sortedByTime()} />
                     </React.Suspense>
                 </div>
             </div>

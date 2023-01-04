@@ -6,9 +6,8 @@ export type AppointmentsUiType = {
     activeTab: typeof appointmentTabOptions[number];
     setActiveTab: (newTab: typeof appointmentTabOptions[number]) => void;
     modal: {
-        selectedDate?: Date;
+        selectedDate?: string;
         state: boolean;
-
         defaultData?:
             | (AppointmentFormType & { id: string })
             | undefined
@@ -16,7 +15,7 @@ export type AppointmentsUiType = {
     };
     setModal: (opts: {
         state?: boolean;
-        selectedDate?: Date | undefined;
+        selectedDate?: string | undefined;
         defaultData?: (AppointmentFormType & { id: string }) | undefined;
     }) => void;
     resetModal: () => void;

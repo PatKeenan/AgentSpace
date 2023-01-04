@@ -27,13 +27,10 @@ import {
     ContactOnAppointmentSchemaExtended,
 } from "server/schemas";
 import { formatDate } from "utils/formatDate";
+import { dateUtils } from "utils/dateUtils";
 
 export type AppointmentFormType = AppointmentSchema & {
     contacts?: ContactOnAppointmentSchemaExtended[];
-};
-
-type AppointmentModalProps = {
-    appointment?: AppointmentSchema;
 };
 
 // Used for the select component when choosing an appointment status
@@ -64,18 +61,19 @@ const appointmentReducer = (
     ...newState,
 });
 
-export const AppointmentModal = (props: AppointmentModalProps) => {
-    const { resetModal, modal, activeTab, setModal } = useAppointmentsUI();
+export const AppointmentModal = (props: {
+    invalidate: (date: Date) => void;
+}) => {
+    const { invalidate } = props;
+    const { resetModal, modal, activeTab } = useAppointmentsUI();
     const [state, setState] = React.useReducer(
         appointmentReducer,
         modal?.defaultData ?? {
             ...initialFormState,
             date:
-                activeTab == "View All"
-                    ? new Date().toISOString()
-                    : modal?.selectedDate
-                    ? modal.selectedDate?.toISOString()
-                    : new Date().toISOString(),
+                activeTab !== "View All" && modal.selectedDate
+                    ? modal.selectedDate
+                    : dateUtils.transform(new Date()).isoDateOnly,
         }
     );
 
@@ -93,11 +91,6 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
     const sharedQueryOptions = { refetchOnWindowFocus: false };
 
     const utils = trpc.useContext();
-    /*  const invalidate = (date: string, workspaceId: string) =>
-        utils.appointment.getByMonth.invalidate({
-            date: date,
-            workspaceId: workspaceId,
-        }); */
 
     const addressQuery = trpc.addressSearch.search.useQuery(
         { query: addressInput.debounced },
@@ -168,23 +161,19 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
         // Accounts for the animation that runs before closing. This prevents a flash of the form resetting
         setTimeout(() => setState(initialFormState), 200);
     };
-    const invalidate = (date: string, workspaceId: string) =>
-        utils.appointment.getByMonth.refetch({
-            date: date,
-            workspaceId: workspaceId,
-        });
 
     const { mutate: createAppointmentMutation } = create({
-        onSuccess: (data) =>
-            invalidate(String(new Date(data.date)), data.workspaceId).then(() =>
-                resetModal()
-            ),
+        onSuccess: (data) => {
+            utils.appointment.getByDate
+                .refetch({
+                    date: state.date,
+                    workspaceId: data.workspaceId,
+                })
+                .then(() => resetModal());
+        },
     });
     const { mutate: updateAppointmentMutation } = update({
-        onSuccess: (data) =>
-            invalidate(String(new Date(data.date)), data.workspaceId).then(() =>
-                resetModal()
-            ),
+        onSuccess: (data) => invalidate(new Date(data.date)),
     });
 
     const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
@@ -283,7 +272,7 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
                             name="date"
                             value={formatDate(
                                 state.date || new Date(),
-                                "YYY-MM-DD"
+                                "YYYY-MM-DD"
                             )}
                             onChange={(e) => setState({ date: e.target.value })}
                             direction="column"
