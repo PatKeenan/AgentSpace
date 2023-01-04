@@ -62,7 +62,6 @@ export const Calendar = (props: CalendarProps) => {
     const activeIDX = activeDate ? dates().indexOf(activeDate) : -1;
     React.useLayoutEffect(() => {
         if (activeIDX && refsArr && refsArr.length > 0) {
-            console.log({ activeIDX });
             refsArr[activeIDX]?.current?.scrollIntoView({
                 block: "center",
             });
