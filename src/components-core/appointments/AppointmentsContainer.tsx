@@ -1,6 +1,6 @@
 import { AppointmentModal } from "./appointments-components";
 import { SectionHeading, Breadcrumb, PageBody } from "components-layout";
-import { Button, Tabs } from "components-common";
+import { Button, SubRouter, Tabs } from "components-common";
 import { useAppointmentsUI } from "./useAppointmentsUI";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import type { NextPageExtended } from "types/index";
@@ -24,11 +24,6 @@ const AppointmentsListView = dynamic(
 export const AppointmentsContainer: NextPageExtended = () => {
     const { setModal, modal, activeTab, setActiveTab } = useAppointmentsUI();
     const router = useRouter();
-
-    const appointmentTabs: { [key in typeof activeTab]: JSX.Element } = {
-        "View By Day": <AppointmentsMapView />,
-        "View All": <AppointmentsListView />,
-    };
 
     const handleTabClick = (tabName: string) => {
         setActiveTab(tabName as typeof activeTab);
@@ -89,7 +84,14 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     />
                 </div>
                 <React.Suspense fallback={<p>Loading..</p>}>
-                    {appointmentTabs[activeTab]}
+                    <SubRouter
+                        component={<AppointmentsListView />}
+                        active={activeTab == "View All"}
+                    />
+                    <SubRouter
+                        component={<AppointmentsMapView />}
+                        active={activeTab == "View By Day"}
+                    />
                 </React.Suspense>
             </PageBody>
         </>

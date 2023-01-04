@@ -65,7 +65,7 @@ const appointmentReducer = (
 });
 
 export const AppointmentModal = (props: AppointmentModalProps) => {
-    const { resetModal, modal, activeTab } = useAppointmentsUI();
+    const { resetModal, modal, activeTab, setModal } = useAppointmentsUI();
     const [state, setState] = React.useReducer(
         appointmentReducer,
         modal?.defaultData ?? {
@@ -91,13 +91,13 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
     const addressInput = useDebounceState("");
 
     const sharedQueryOptions = { refetchOnWindowFocus: false };
-    const utils = trpc.useContext();
 
-    const invalidate = (date: string, workspaceId: string) =>
+    const utils = trpc.useContext();
+    /*  const invalidate = (date: string, workspaceId: string) =>
         utils.appointment.getByMonth.invalidate({
             date: date,
             workspaceId: workspaceId,
-        });
+        }); */
 
     const addressQuery = trpc.addressSearch.search.useQuery(
         { query: addressInput.debounced },
@@ -168,12 +168,23 @@ export const AppointmentModal = (props: AppointmentModalProps) => {
         // Accounts for the animation that runs before closing. This prevents a flash of the form resetting
         setTimeout(() => setState(initialFormState), 200);
     };
+    const invalidate = (date: string, workspaceId: string) =>
+        utils.appointment.getByMonth.refetch({
+            date: date,
+            workspaceId: workspaceId,
+        });
 
     const { mutate: createAppointmentMutation } = create({
-        onSuccess: (data) => invalidate(data.date, data.workspaceId),
+        onSuccess: (data) =>
+            invalidate(String(new Date(data.date)), data.workspaceId).then(() =>
+                resetModal()
+            ),
     });
     const { mutate: updateAppointmentMutation } = update({
-        onSuccess: (data) => invalidate(data.date, data.workspaceId),
+        onSuccess: (data) =>
+            invalidate(String(new Date(data.date)), data.workspaceId).then(() =>
+                resetModal()
+            ),
     });
 
     const onSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {

@@ -178,7 +178,8 @@ export const Calendar = (props: CalendarProps) => {
                 </button>
                 <div className="flex-auto font-semibold">
                     <span className="hidden md:block">
-                        {calendar.monthName}
+                        {calendar.monthName}{" "}
+                        {calendar.activeMonth.getFullYear()}
                     </span>
                     <span className="block md:hidden">
                         {calendar.monthName.slice(0, 3)}
