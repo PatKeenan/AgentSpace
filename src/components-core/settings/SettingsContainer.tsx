@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 import type { NextPageExtended } from "types/index";
+import { SubRouter } from "components-common/SubRouter";
 
 const SettingsGeneral = dynamic(
     () => import("./settings-components/SettingsGeneral"),
@@ -48,26 +49,21 @@ const SettingsWorkspaces = dynamic(
 export const SettingsContainer: NextPageExtended = () => {
     const { activeTab, setActiveTab } = useSettingsUI();
 
-    const activeSettingsView: { [key in typeof activeTab]: JSX.Element } = {
-        General: <SettingsGeneral />,
-        Billing: <SettingsBilling />,
-        Notifications: <SettingsNotifications />,
-        Password: <SettingsPassword />,
-        Plan: <SettingsPlan />,
-        Workspaces: <SettingsWorkspaces />,
-    };
-
     const settingsTabs: { title: typeof activeTab; count?: string }[] = [
-        { title: "General" },
-        { title: "Password" },
+        /*         { title: "General" },
+                { title: "Password" },
         { title: "Notifications" },
         { title: "Billing" },
-        { title: "Plan" },
+        { title: "Plan" }, */
         { title: "Workspaces" },
     ];
 
     const handleTabClick = (tabName: string) => {
         setActiveTab(tabName as typeof activeTab);
+    };
+
+    const isActive = (tab: typeof activeTab) => {
+        return activeTab == tab;
     };
 
     return (
@@ -89,7 +85,26 @@ export const SettingsContainer: NextPageExtended = () => {
 
                     <div className="mt-10 divide-y divide-gray-200">
                         <Suspense fallback={"Loading..."}>
-                            {activeSettingsView[activeTab]}
+                            <SubRouter
+                                component={<SettingsWorkspaces />}
+                                active={isActive("Workspaces")}
+                            />
+                            <SubRouter
+                                component={<SettingsGeneral />}
+                                active={isActive("General")}
+                            />
+                            <SubRouter
+                                component={<SettingsPassword />}
+                                active={isActive("Password")}
+                            />
+                            <SubRouter
+                                component={<SettingsNotifications />}
+                                active={isActive("Notifications")}
+                            />
+                            <SubRouter
+                                component={<SettingsNotifications />}
+                                active={isActive("Plan")}
+                            />
                         </Suspense>
                     </div>
                 </div>

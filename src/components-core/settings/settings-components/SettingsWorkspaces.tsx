@@ -86,10 +86,10 @@ const SettingsWorkspaces = () => {
                     </li>
                 ))}
             </ul>
-
-            <h3 className="ml-2 mt-8 font-bold text-gray-700">
-                Shared with me
-            </h3>
+            <div className="ml-2 mt-8 flex items-baseline">
+                <h3 className="mr-4 font-bold text-gray-700">Shared with me</h3>
+                <span className="text-sm text-gray-700">Coming Soon...</span>
+            </div>
         </div>
     );
 };

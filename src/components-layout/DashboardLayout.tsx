@@ -1,4 +1,4 @@
-import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import { NextLink } from "components-common/NextLink";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -15,14 +15,13 @@ import {
 
 import {
     ArrowLeftOnRectangleIcon,
-    ChevronUpDownIcon,
     Cog6ToothIcon,
     MagnifyingGlassIcon,
 } from "@heroicons/react/20/solid";
 
 import * as React from "react";
 import clsx from "clsx";
-import Image from "next/image";
+
 import { Loading } from "components-common/Loading";
 
 import { GatedWorkspace } from "./GatedWorkspace";
@@ -33,7 +32,7 @@ type DashboardLayoutProps = {
 };
 
 export const DashboardLayout = (props: DashboardLayoutProps) => {
-    const { status, data: session } = useSession({
+    const { status } = useSession({
         required: true,
         onUnauthenticated: () => signIn(),
     });

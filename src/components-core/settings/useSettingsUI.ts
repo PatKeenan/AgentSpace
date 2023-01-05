@@ -20,7 +20,7 @@ type SettingsUIState = {
 export const useSettingsUI = create<SettingsUIState>()(
     persist(
         devtools((set) => ({
-            activeTab: "General",
+            activeTab: "Workspaces",
             setActiveTab: (tab) => set(() => ({ activeTab: tab })),
         })),
         {

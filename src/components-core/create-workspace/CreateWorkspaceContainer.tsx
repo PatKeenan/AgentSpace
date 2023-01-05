@@ -13,6 +13,9 @@ import clsx from "clsx";
 import type { UserOnWorkspace } from "@prisma/client";
 
 export const CreateWorkspaceContainer = () => {
+    const [defaultWorkspaceId, setDefaultWorkspaceId] =
+        React.useState<string>();
+
     const { status } = useSession({
         required: true,
         onUnauthenticated() {
@@ -27,7 +30,12 @@ export const CreateWorkspaceContainer = () => {
     const { mutate: createWorkspace, isLoading: loadingCreation } =
         workspace.create({
             onSuccess(data) {
-                router.push(`/workspace/${data.id}`);
+                setDefaultWorkspace(
+                    { workspaceId: data.id },
+                    {
+                        onSuccess: () => router.push(`/workspace/${data.id}`),
+                    }
+                );
             },
         });
 
@@ -64,6 +72,8 @@ export const CreateWorkspaceContainer = () => {
     const onSubmit = handleSubmit(async (data) => {
         createWorkspace(data);
     });
+
+    const { mutate: setDefaultWorkspace } = user.setDefaultWorkspace();
 
     return status == "loading" || loadingWorkspaces ? (
         <Loading />
