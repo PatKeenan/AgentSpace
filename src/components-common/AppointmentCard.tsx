@@ -18,7 +18,7 @@ import {
 type ContactOnAppointment = {
     contact: {
         id: string;
-        displayName: string;
+        name: string;
     };
     id: string;
     profile: {
@@ -188,10 +188,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
                                 <a>
                                     <Tag>
                                         <span className="hover:cursor-pointer hover:underline">
-                                            {
-                                                contactOnAppointment.contact
-                                                    .displayName
-                                            }{" "}
+                                            {contactOnAppointment.contact.name}{" "}
                                             {contactOnAppointment?.profile
                                                 ? `- ${contactOnAppointment.profile.name}`
                                                 : null}
