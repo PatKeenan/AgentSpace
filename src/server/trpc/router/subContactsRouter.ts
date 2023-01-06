@@ -1,32 +1,32 @@
-import { contactMetaSchema } from "server/schemas";
+import { subContactSchema } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 
-export const contactMetaRouter = t.router({
+export const subContactRouter = t.router({
     getAllForContact: authedProcedure
         .input(z.object({ contactId: z.string() }))
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.contactMeta.findMany({
+            return await ctx.prisma.subContact.findMany({
                 where: {
                     contactId: input.contactId,
                     deleted: false,
                 },
-                orderBy: [{ isPrimaryContact: "desc" }, { createdAt: "asc" }],
+                orderBy: [{ createdAt: "asc" }],
             });
         }),
     create: authedProcedure
-        .input(contactMetaSchema().create)
+        .input(subContactSchema().create)
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.contactMeta.create({
+            return await ctx.prisma.subContact.create({
                 data: {
                     ...input,
                 },
             });
         }),
     update: authedProcedure
-        .input(contactMetaSchema().update)
+        .input(subContactSchema().update)
         .mutation(async ({ ctx, input }) => {
-            return await ctx.prisma.contactMeta.update({
+            return await ctx.prisma.subContact.update({
                 where: {
                     id: input.id,
                 },
@@ -43,7 +43,7 @@ export const contactMetaRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            return ctx.prisma.contactMeta.update({
+            return ctx.prisma.subContact.update({
                 where: {
                     id: input.id,
                 },

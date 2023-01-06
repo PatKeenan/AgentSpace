@@ -10,7 +10,7 @@ import { useContacts } from "hooks/useContacts";
 import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
-import type { Contact, ContactMeta } from "@prisma/client";
+import type { Contact, SubContact } from "@prisma/client";
 import { PlusIcon } from "@heroicons/react/20/solid";
 
 export const ContactsContainer: NextPageExtended = () => {
@@ -63,7 +63,7 @@ export const ContactsContainer: NextPageExtended = () => {
     const handleSelectContact = (
         e: React.ChangeEvent<HTMLInputElement>,
         selectedContact: Contact & {
-            contactMeta: ContactMeta[];
+            subContacts: SubContact[];
             _count: { appointmentsMeta: number };
         }
     ) => {
@@ -234,9 +234,9 @@ export const ContactsContainer: NextPageExtended = () => {
                                                 {contactsQuery.data?.map(
                                                     (contact) => {
                                                         const meta = contact
-                                                            .contactMeta.length
+                                                            .subContacts.length
                                                             ? contact
-                                                                  .contactMeta[0]
+                                                                  .subContacts[0]
                                                             : undefined;
                                                         return (
                                                             <tr
@@ -295,7 +295,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                         className="hover:text-purple-600"
                                                                     >
                                                                         {
-                                                                            contact.displayName
+                                                                            contact.name
                                                                         }
                                                                     </NextLink>
                                                                 </td>
@@ -324,7 +324,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                         <span className="sr-only">
                                                                             ,{" "}
                                                                             {
-                                                                                contact.displayName
+                                                                                contact.name
                                                                             }
                                                                         </span>
                                                                     </a>

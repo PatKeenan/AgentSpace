@@ -27,7 +27,7 @@ export const appointmentRouter = t.router({
                             contact: {
                                 select: {
                                     id: true,
-                                    displayName: true,
+                                    name: true,
                                 },
                             },
                             profile: {
@@ -60,7 +60,7 @@ export const appointmentRouter = t.router({
                                     contact: {
                                         select: {
                                             id: true,
-                                            displayName: true,
+                                            name: true,
                                         },
                                     },
                                     profile: {
@@ -126,7 +126,7 @@ export const appointmentRouter = t.router({
                             contact: {
                                 select: {
                                     id: true,
-                                    displayName: true,
+                                    name: true,
                                 },
                             },
                             profile: {

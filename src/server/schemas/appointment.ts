@@ -9,7 +9,7 @@ export const contactOnAppointmentSchema = z.object({
 export const contactOnAppointmentSchemaExtended =
     contactOnAppointmentSchema.extend({
         profileName: z.string().optional(),
-        displayName: z.string().optional(),
+        name: z.string().optional(),
         contactOnAppointmentId: z.string().optional(),
     });
 

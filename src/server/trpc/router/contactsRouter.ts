@@ -1,5 +1,5 @@
 import {
-    contactMetaSchema,
+    subContactSchema,
     contactSchema,
     idSchema,
     profileSchema,
@@ -21,9 +21,8 @@ export const contactsRouter = t.router({
                     deleted: false,
                 },
                 include: {
-                    contactMeta: {
+                    subContacts: {
                         where: {
-                            isPrimaryContact: true,
                             deleted: false,
                         },
                     },
@@ -50,13 +49,13 @@ export const contactsRouter = t.router({
                         {
                             OR: [
                                 {
-                                    displayName: {
+                                    name: {
                                         contains: input.query,
                                         mode: "insensitive",
                                     },
                                 },
                                 {
-                                    contactMeta: {
+                                    subContacts: {
                                         some: {
                                             firstName: {
                                                 contains: input.query,
@@ -83,14 +82,14 @@ export const contactsRouter = t.router({
     getOne: authedProcedure
         .input(contactSchema().baseBooleans.partial().merge(idSchema))
         .query(async ({ ctx, input }) => {
-            const { id, displayName = false, notes = false } = input;
+            const { id, name = false, notes = false } = input;
             return await ctx.prisma.contact.findFirst({
                 where: {
                     id: id,
                     deleted: false,
                 },
                 select: {
-                    displayName,
+                    name,
                     notes,
                 },
             });
@@ -99,7 +98,7 @@ export const contactsRouter = t.router({
         .input(
             contactSchema().create.extend({
                 contactMeta: z.array(
-                    contactMetaSchema().create.omit({ contactId: true })
+                    subContactSchema().create.omit({ contactId: true })
                 ),
                 workspaceId: z.string(),
             })
@@ -116,24 +115,14 @@ export const contactsRouter = t.router({
                     createdAt: now,
                 };
             });
-            const metaData: (typeof contactMeta[number] & {
-                isPrimaryContact?: boolean;
-            })[] = newContactData;
-
-            if (
-                metaData &&
-                metaData.length >= 1 &&
-                typeof metaData[0] !== "undefined"
-            ) {
-                metaData[0].isPrimaryContact = true;
-            }
+            const metaData: typeof contactMeta[number][] = newContactData;
 
             return await ctx.prisma.contact.create({
                 data: {
                     ...contactData,
                     workspaceId: input.workspaceId,
                     createdById: ctx.session.user.id,
-                    contactMeta: {
+                    subContacts: {
                         createMany: {
                             data: [...metaData],
                         },
@@ -144,7 +133,7 @@ export const contactsRouter = t.router({
     createContactAndProfile: authedProcedure
         .input(
             contactSchema().create.extend({
-                contactMeta: contactMetaSchema().create.omit({
+                subContact: subContactSchema().create.omit({
                     contactId: true,
                 }),
                 profile: profileSchema()
@@ -154,7 +143,7 @@ export const contactsRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const { contactMeta, profile, ...contactData } = input;
+            const { subContact, profile, ...contactData } = input;
 
             return await ctx.prisma.contact.create({
                 data: {
@@ -171,10 +160,9 @@ export const contactsRouter = t.router({
                               }
                             : undefined,
                     },
-                    contactMeta: {
+                    subContacts: {
                         create: {
-                            ...contactMeta,
-                            isPrimaryContact: true,
+                            ...subContact,
                         },
                     },
                 },
@@ -217,7 +205,7 @@ export const contactsRouter = t.router({
                     id: true,
                 },
             });
-            await ctx.prisma.contactMeta.updateMany({
+            await ctx.prisma.subContact.updateMany({
                 where: {
                     contactId: input.contactId,
                 },
@@ -247,7 +235,7 @@ export const contactsRouter = t.router({
                     deletedAt: currentDate,
                 },
             });
-            return await ctx.prisma.contactMeta.updateMany({
+            return await ctx.prisma.subContact.updateMany({
                 where: {
                     contactId: {
                         in: input.ids,

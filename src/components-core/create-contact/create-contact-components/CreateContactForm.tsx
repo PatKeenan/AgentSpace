@@ -8,7 +8,7 @@ import { Button, ButtonLink } from "components-common/Button";
 import { useForm } from "react-hook-form";
 import * as React from "react";
 import * as z from "zod";
-import { contactMetaSchema, contactSchema } from "server/schemas";
+import { subContactSchema, contactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
@@ -29,7 +29,7 @@ const initialState = {
 /* const contactSchema = Schemas.contact(); */
 
 const createContactFormSchema = contactSchema().create.extend({
-    fields: z.array(contactMetaSchema().create.omit({ contactId: true })),
+    fields: z.array(subContactSchema().create.omit({ contactId: true })),
 });
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
@@ -113,7 +113,7 @@ export const CreateContactForm = () => {
                                                 displayed publicly so be careful
                                                 what you share."
                     titleContainer={
-                        errors["displayName"] ? (
+                        errors["name"] ? (
                             <ExclamationCircleIcon
                                 className="h-5 w-5 text-red-500"
                                 aria-hidden="true"
@@ -124,12 +124,11 @@ export const CreateContactForm = () => {
                     <div className="space-y-6 sm:space-y-5">
                         <ContactFormInput
                             required
-                            label="Display Name"
+                            label="Name"
                             className="max-w-xs"
-                            {...register("displayName")}
+                            {...register("name")}
                             errorMessage={
-                                errors["displayName"] &&
-                                errors["displayName"].message
+                                errors["name"] && errors["name"].message
                             }
                         />
 
@@ -189,11 +188,7 @@ export const CreateContactForm = () => {
                     <Accordion
                         defaultOpen={true}
                         key={idx}
-                        label={
-                            idx == 0
-                                ? "Primary Contact Information"
-                                : ` Additional Contact ${idx}`
-                        }
+                        label={`Additional Contact ${idx + 1}`}
                         className="py-6"
                         description={
                             idx == 0

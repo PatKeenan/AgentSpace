@@ -111,8 +111,8 @@ const AppointmentListView = () => {
                                         contacts={i.contacts
                                             .flatMap((p) =>
                                                 p.profile
-                                                    ? `${p.contact.displayName} - ${p.profile.name}`
-                                                    : `${p.contact.displayName}`
+                                                    ? `${p.contact.name} - ${p.profile.name}`
+                                                    : `${p.contact.name}`
                                             )
                                             .join(", ")}
                                     />
@@ -129,8 +129,8 @@ const AppointmentListView = () => {
                                                             {i.contacts
                                                                 .flatMap((p) =>
                                                                     p.profile
-                                                                        ? `${p.contact.displayName} - ${p.profile.name}`
-                                                                        : `${p.contact.displayName}`
+                                                                        ? `${p.contact.name} - ${p.profile.name}`
+                                                                        : `${p.contact.name}`
                                                                 )
                                                                 .join(", ")}
                                                         </span>

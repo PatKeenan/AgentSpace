@@ -12,7 +12,7 @@ export const ContactDetailOverviewTitle = () => {
     const id = router.query.contactId;
 
     const { data: contact } = getOne(
-        { id: router.query.contactId as string, displayName: true },
+        { id: router.query.contactId as string, name: true },
         {
             enabled: exists(id),
         }
@@ -21,12 +21,12 @@ export const ContactDetailOverviewTitle = () => {
     const { setModal } = useContactDetailUi();
 
     const handleClickEdit = () => {
-        if (contact?.displayName) {
+        if (contact?.name) {
             setModal({
                 state: true,
                 form: "contact",
                 defaultData: {
-                    displayName: contact.displayName,
+                    name: contact.name,
                     notes: contact?.notes || undefined,
                 },
             });
@@ -37,7 +37,7 @@ export const ContactDetailOverviewTitle = () => {
         <SectionHeading>
             <SectionHeading.TitleContainer>
                 <SectionHeading.Title>
-                    {contact?.displayName ?? "Contact Details"}
+                    {contact?.name ?? "Contact Details"}
                 </SectionHeading.Title>
             </SectionHeading.TitleContainer>
             <SectionHeading.Actions>

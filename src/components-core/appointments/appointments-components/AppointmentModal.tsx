@@ -238,7 +238,7 @@ export const AppointmentModal = (props: {
                                       ...state.contacts,
                                       {
                                           contactId: data.id,
-                                          displayName: data.displayName,
+                                          name: data.name,
                                           profileName:
                                               data.profiles[0]?.name ||
                                               undefined,
@@ -249,7 +249,7 @@ export const AppointmentModal = (props: {
                                 : [
                                       {
                                           contactId: data.id,
-                                          displayName: data.displayName,
+                                          name: data.name,
                                           profileName:
                                               data.profiles[0]?.name ||
                                               undefined,
@@ -411,11 +411,10 @@ export const AppointmentModal = (props: {
                                                                     value={{
                                                                         contactId:
                                                                             contactOption.id,
-                                                                        displayName:
-                                                                            contactOption.displayName,
+                                                                        name: contactOption.name,
                                                                     }}
                                                                     display={
-                                                                        contactOption.displayName
+                                                                        contactOption.name
                                                                     }
                                                                     key={
                                                                         contactOption.id
@@ -430,14 +429,13 @@ export const AppointmentModal = (props: {
                                                                             value={{
                                                                                 contactId:
                                                                                     contactOption.id,
-                                                                                displayName:
-                                                                                    contactOption.displayName,
+                                                                                name: contactOption.name,
                                                                                 selectedProfileId:
                                                                                     profile.id,
                                                                                 profileName:
                                                                                     profile.name,
                                                                             }}
-                                                                            display={`${contactOption.displayName} - ${profile.name}`}
+                                                                            display={`${contactOption.name} - ${profile.name}`}
                                                                             key={
                                                                                 profile.id
                                                                             }
@@ -495,7 +493,7 @@ export const AppointmentModal = (props: {
                                                             }
                                                         >
                                                             <span>
-                                                                {i.displayName}
+                                                                {i.name}
                                                             </span>
 
                                                             {i.selectedProfileId && (

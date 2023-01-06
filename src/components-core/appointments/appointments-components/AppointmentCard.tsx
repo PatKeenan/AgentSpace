@@ -23,7 +23,7 @@ export const AppointmentCard = (props: {
         contacts: {
             contact: {
                 id: string;
-                displayName: string;
+                name: string;
             };
             id: string;
             profile: {
@@ -68,7 +68,7 @@ export const AppointmentCard = (props: {
         contacts: appointment.contacts.map(({ id, contact, profile }) => ({
             contactOnAppointmentId: id,
             contactId: contact.id,
-            displayName: contact.displayName,
+            name: contact.name,
             profileName: profile?.name,
             selectedProfileId: profile?.id,
         })),
@@ -231,10 +231,7 @@ export const AppointmentCard = (props: {
                                 <a>
                                     <Tag>
                                         <span className="hover:cursor-pointer hover:underline">
-                                            {
-                                                contactOnAppointment.contact
-                                                    .displayName
-                                            }{" "}
+                                            {contactOnAppointment.contact.name}{" "}
                                             {contactOnAppointment?.profile
                                                 ? `- ${contactOnAppointment.profile.name}`
                                                 : null}

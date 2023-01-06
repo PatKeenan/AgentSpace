@@ -15,14 +15,11 @@ export const idSchema = z.object({
 
 export const contactSchema = () => {
     const base = z.object({
-        displayName: z
-            .string()
-            .trim()
-            .min(2, errMsg("Display Name", "greater", 2)),
+        name: z.string().trim().min(2, errMsg("Display Name", "greater", 2)),
         notes: z.string().trim().optional().or(z.literal("")),
     });
     const baseBooleans = z.object({
-        displayName: z.boolean(),
+        name: z.boolean(),
         notes: z.boolean(),
     });
 
@@ -48,7 +45,7 @@ export type ContactSchema = {
  *
  */
 
-export const contactMetaSchema = () => {
+export const subContactSchema = () => {
     const base = z
         .object({
             firstName: z
@@ -66,14 +63,14 @@ export const contactMetaSchema = () => {
 
     return { base, create, update: base };
 };
-const baeContactMeta = contactMetaSchema().base;
-const createContactMeta = contactMetaSchema().create;
-const updateContactMeta = contactMetaSchema().update;
+const baeSubContact = subContactSchema().base;
+const createSubContact = subContactSchema().create;
+const updateSubContact = subContactSchema().update;
 
-export type ContactMetaSchema = {
-    base: z.infer<typeof baeContactMeta>;
-    create: z.infer<typeof createContactMeta>;
-    update: z.infer<typeof updateContactMeta>;
+export type SubContactSchema = {
+    base: z.infer<typeof baeSubContact>;
+    create: z.infer<typeof createSubContact>;
+    update: z.infer<typeof updateSubContact>;
 };
 
 /* ------   Utilities   ------ */

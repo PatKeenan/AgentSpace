@@ -1,4 +1,4 @@
-import { ContactMetaSchema, ContactSchema } from "server/schemas";
+import { SubContactSchema, ContactSchema } from "server/schemas";
 import { devtools } from "zustand/middleware";
 import create from "zustand";
 import { ContactOnAppointment, Profile } from "@prisma/client";
@@ -14,18 +14,18 @@ export type ContactDetailUiType = {
     modal: {
         title?: string;
         state?: boolean;
-        form?: "contact" | "contactMeta" | "profile";
+        form?: "contact" | "subContact" | "profile";
         defaultData?:
-            | ContactMetaSchema["update"]
+            | SubContactSchema["update"]
             | ContactSchema["base"]
             | DefaultProfileDataType;
     };
     setModal: (opts: {
         title?: string;
         state?: boolean;
-        form?: "contact" | "contactMeta" | "profile";
+        form?: "contact" | "subContact" | "profile";
         defaultData?:
-            | ContactMetaSchema["update"]
+            | SubContactSchema["update"]
             | ContactSchema["base"]
             | (Profile & {
                   appointments: ContactOnAppointment[];

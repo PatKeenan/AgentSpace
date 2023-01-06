@@ -3,30 +3,31 @@ import { Button } from "components-common/Button";
 import { InputGroup } from "components-common/InputGroup";
 import { Modal } from "components-common/Modal";
 import { ContactFormTextArea } from "components-core/create-contact/create-contact-components";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
     DefaultProfileDataType,
     useContactDetailUi,
 } from "../useContactDetailUi";
 import * as React from "react";
 import {
-    contactMetaSchema,
+    subContactSchema,
     contactSchema,
     profileSchema,
     ProfileSchema,
 } from "server/schemas";
 
-import type { ContactMetaSchema, ContactSchema } from "server/schemas";
+import type { SubContactSchema, ContactSchema } from "server/schemas";
 
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
-import { useContactMeta } from "hooks/useContactMeta";
+import { useSubContacts } from "hooks/useSubContacts";
 import { useProfile } from "hooks/useProfile";
 import { Textarea } from "components-common/Textarea";
 import { Select } from "components-common/Select";
 import { PROFILE_TYPES } from "@prisma/client";
 import { ModalTitle } from "components-common/ModalTitle";
+import { SubRouter } from "components-common/SubRouter";
 
 export const ContactDetailOverviewModal = () => {
     const { modal, resetModal } = useContactDetailUi();
@@ -36,9 +37,18 @@ export const ContactDetailOverviewModal = () => {
             onClose={resetModal}
             showInnerContainer={modal.form !== undefined}
         >
-            {modal?.form == "contact" && <EditContactForm />}
-            {modal?.form == "contactMeta" && <ContactMetaForm />}
-            {modal?.form == "profile" && <AddProfileForm />}
+            <SubRouter
+                component={<EditContactForm />}
+                active={modal?.form == "contact"}
+            />
+            <SubRouter
+                component={<SubContactForm />}
+                active={modal?.form == "subContact"}
+            />
+            <SubRouter
+                component={<AddProfileForm />}
+                active={modal?.form == "profile"}
+            />
         </Modal>
     );
 };
@@ -77,7 +87,7 @@ const EditContactForm = () => {
             <ModalTitle>Edit General Info</ModalTitle>
             <InputGroup
                 label="Display Name"
-                {...register("displayName")}
+                {...register("name")}
                 direction="row"
             />
             <ContactFormTextArea label="Notes" {...register("notes")} />
@@ -94,41 +104,45 @@ const EditContactForm = () => {
     );
 };
 
-const ContactMetaForm = () => {
+const SubContactForm = () => {
     const router = useRouter();
     const { modal, resetModal } = useContactDetailUi();
     const [defaultFormState] = React.useState<
-        ContactMetaSchema["update"] | ContactMetaSchema["create"] | undefined
+        SubContactSchema["update"] | SubContactSchema["create"] | undefined
     >(
-        modal.form == "contactMeta"
+        modal.form == "subContact"
             ? (modal.defaultData as
-                  | ContactMetaSchema["create"]
-                  | ContactMetaSchema["update"])
+                  | SubContactSchema["create"]
+                  | SubContactSchema["update"])
             : undefined
     );
 
-    const { updateMeta, utils, createMeta } = useContactMeta();
+    const {
+        update: updateSubContact,
+        utils,
+        create: createSubContact,
+    } = useSubContacts();
 
     const { id } = useWorkspace();
 
-    const { mutate: updateMetaMutation } = updateMeta();
-    const { mutate: createMetaMutation } = createMeta();
+    const { mutate: updateSubContactMutation } = updateSubContact();
+    const { mutate: createSubContactMutation } = createSubContact();
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ContactMetaSchema["update"] | ContactMetaSchema["create"]>({
+    } = useForm<SubContactSchema["update"] | SubContactSchema["create"]>({
         resolver: zodResolver(
             defaultFormState
-                ? contactMetaSchema().update
-                : contactMetaSchema().create.omit({ contactId: true })
+                ? subContactSchema().update
+                : subContactSchema().create.omit({ contactId: true })
         ),
         defaultValues: defaultFormState,
     });
 
     const onSubmit = handleSubmit(async (data) => {
         if (defaultFormState && "id" in defaultFormState) {
-            updateMetaMutation(
+            updateSubContactMutation(
                 {
                     ...data,
                     contactId: defaultFormState.contactId,
@@ -147,7 +161,7 @@ const ContactMetaForm = () => {
         }
 
         if (!defaultFormState && router.query.contactId && id) {
-            createMetaMutation(
+            createSubContactMutation(
                 { ...data, contactId: router.query.contactId as string },
                 {
                     onSuccess: (data) =>

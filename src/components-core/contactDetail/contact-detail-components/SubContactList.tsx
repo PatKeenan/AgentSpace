@@ -2,23 +2,23 @@ import { useContactDetailUi } from "../useContactDetailUi";
 import { ToggleMenu } from "components-common/ToggleMenu";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/20/solid";
-import { useContactMeta } from "hooks/useContactMeta";
+import { useSubContacts } from "hooks/useSubContacts";
 import { GridSectionTitle } from "./GridSectionTitle";
 import { Button } from "components-common/Button";
 
 import { DetailsRow } from "./DetailsRow";
 import { GridCard } from "./GridCard";
 
-import type { ContactMeta } from "@prisma/client";
+import type { SubContact } from "@prisma/client";
 
-export const ContactMetaList = ({ contactId }: { contactId: string }) => {
-    const { getAllForContact, softDeleteMeta } = useContactMeta();
+export const SubContactList = ({ contactId }: { contactId: string }) => {
+    const { getAllForContact, softDeleteMeta } = useSubContacts();
     const { setModal } = useContactDetailUi();
 
-    const { data: contactMetas, refetch } = getAllForContact({ contactId });
+    const { data: subContacts, refetch } = getAllForContact({ contactId });
     const { mutate: deleteMetaMutation } = softDeleteMeta();
 
-    const handleClick = (contactMeta: ContactMeta) => {
+    const handleClick = (contactMeta: SubContact) => {
         setModal({ state: true });
         const { lastName, firstName, email, phoneNumber, contactId, id } =
             contactMeta;
@@ -32,7 +32,7 @@ export const ContactMetaList = ({ contactId }: { contactId: string }) => {
                 contactId,
                 id,
             },
-            form: "contactMeta",
+            form: "subContact",
         });
     };
 
@@ -54,10 +54,10 @@ export const ContactMetaList = ({ contactId }: { contactId: string }) => {
                     <GridSectionTitle
                         title="Contacts"
                         titleIcon={
-                            contactMetas ? (
+                            subContacts ? (
                                 <div className="flex h-5 w-5 justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600">
                                     <span className="my-auto">
-                                        {contactMetas.length}
+                                        {subContacts.length}
                                     </span>
                                 </div>
                             ) : null
@@ -69,7 +69,7 @@ export const ContactMetaList = ({ contactId }: { contactId: string }) => {
                                 onClick={() =>
                                     setModal({
                                         state: true,
-                                        form: "contactMeta",
+                                        form: "subContact",
                                     })
                                 }
                             >
@@ -81,58 +81,37 @@ export const ContactMetaList = ({ contactId }: { contactId: string }) => {
 
                     <div className="mt-4 py-5 sm:p-0">
                         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {contactMetas?.map((i, idx) => (
+                            {subContacts?.map((i, idx) => (
                                 <GridCard key={i.id}>
                                     <div className="mb-4 grid grid-cols-2 gap-2">
                                         <div className="inline-flex space-x-2">
                                             <h4 className="flex-shrink-0 font-medium">
-                                                {i.isPrimaryContact
-                                                    ? "Primary Contact"
-                                                    : `Contact
-                                                                    ${idx + 1}`}
+                                                {`Contact ${idx + 1}`}
                                             </h4>
                                         </div>
                                         <ToggleMenu
-                                            items={
-                                                i.isPrimaryContact
-                                                    ? [
-                                                          {
-                                                              text: "Edit",
-                                                              onClick: () =>
-                                                                  handleClick(
-                                                                      i
-                                                                  ),
-                                                          },
-                                                      ]
-                                                    : [
-                                                          {
-                                                              text: "Edit",
-                                                              onClick: () =>
-                                                                  handleClick(
-                                                                      i
-                                                                  ),
-                                                          },
-                                                          {
-                                                              text: (
-                                                                  <div className="flex items-center text-sm text-red-600">
-                                                                      <TrashIcon
-                                                                          className="mr-2 h-4 w-4"
-                                                                          aria-hidden="true"
-                                                                      />
-                                                                      <span>
-                                                                          Delete
-                                                                      </span>
-                                                                  </div>
-                                                              ),
-                                                              extraClasses:
-                                                                  "border-t border-gray-200",
-                                                              onClick: () =>
-                                                                  handleDeleteMeta(
-                                                                      i.id
-                                                                  ),
-                                                          },
-                                                      ]
-                                            }
+                                            items={[
+                                                {
+                                                    text: "Edit",
+                                                    onClick: () =>
+                                                        handleClick(i),
+                                                },
+                                                {
+                                                    text: (
+                                                        <div className="flex items-center text-sm text-red-600">
+                                                            <TrashIcon
+                                                                className="mr-2 h-4 w-4"
+                                                                aria-hidden="true"
+                                                            />
+                                                            <span>Delete</span>
+                                                        </div>
+                                                    ),
+                                                    extraClasses:
+                                                        "border-t border-gray-200",
+                                                    onClick: () =>
+                                                        handleDeleteMeta(i.id),
+                                                },
+                                            ]}
                                         />
                                     </div>
                                     <dl className="space-y-1 ">

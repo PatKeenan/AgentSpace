@@ -99,7 +99,7 @@ const ContactDetailAppointments = () => {
                                                         <Tag>
                                                             {
                                                                 contact.contact
-                                                                    .displayName
+                                                                    .name
                                                             }
                                                             {contact.profile
                                                                 ?.name &&

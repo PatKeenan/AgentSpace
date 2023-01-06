@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Profile, PROFILE_TYPES } from "@prisma/client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { contactMetaSchema, contactSchema } from "server/schemas";
-import type { ContactMetaSchema, ContactSchema } from "server/schemas";
+import { subContactSchema, contactSchema } from "server/schemas";
+import type { SubContactSchema, ContactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 
 const profileOptions = Object.keys(PROFILE_TYPES).map((i, index) => ({
@@ -54,15 +54,15 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         formState: { errors },
     } = useForm<
         Omit<ContactSchema["create"], "id"> &
-            Omit<ContactMetaSchema["create"], "contactId">
+            Omit<SubContactSchema["create"], "contactId">
     >({
         resolver: zodResolver(
-            contactMetaSchema()
+            subContactSchema()
                 .create.omit({ contactId: true })
                 .merge(contactSchema().create)
         ),
         defaultValues: {
-            displayName: defaultName,
+            name: defaultName,
             firstName: defaultName?.split(" ")[0],
         },
     });
@@ -71,8 +71,8 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         createContactAndProfileMutation(
             {
                 workspaceId,
-                displayName: data.displayName,
-                contactMeta: {
+                name: data.name,
+                subContact: {
                     firstName: data.firstName,
                     lastName: data?.lastName,
                     email: data?.email,
@@ -119,15 +119,13 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                         label="Display Name"
                         direction="column"
                         required
-                        {...register("displayName", {
+                        {...register("name", {
                             value: defaultName,
                             onChange(event) {
                                 setDisplayName(event.target.value);
                             },
                         })}
-                        errorMessage={
-                            errors?.displayName && errors.displayName.message
-                        }
+                        errorMessage={errors?.name && errors.name.message}
                     />
                 </div>
 
