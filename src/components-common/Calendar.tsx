@@ -150,7 +150,7 @@ export const Calendar = (props: CalendarProps) => {
                             ref={refsArr[dayIdx]}
                         >
                             <span className="mb-2 text-xs font-bold text-gray-400">
-                                {format(day, "EEEEE")}
+                                {format(day, "iii")}
                             </span>
                             <DateButton
                                 key={dayIdx}
@@ -195,17 +195,21 @@ export const Calendar = (props: CalendarProps) => {
             </div>
             <div className="hidden lg:block">
                 <div className="mt-6 grid grid-cols-7 text-xs leading-6 text-gray-500">
-                    {["M", "T", "W", "T", "F", "S", "S"].map((i, idx) => (
-                        <div key={idx}>{i}</div>
-                    ))}
+                    {["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"].map(
+                        (i, idx) => (
+                            <div key={idx}>{i}</div>
+                        )
+                    )}
                 </div>
                 <div className="isolate mt-2 grid grid-cols-7 gap-px bg-gray-200 text-sm shadow ring-1 ring-gray-200">
                     {[
                         ...Array.from(
                             Array(
-                                calendar.firstDayOffset !== 0
-                                    ? calendar.firstDayOffset - 1
-                                    : 0
+                                calendar.firstDayOffset == 0
+                                    ? 0
+                                    : calendar.firstDayOffset !== 0
+                                    ? calendar.firstDayOffset
+                                    : 1
                             ).keys()
                         ),
                     ].map((i) => (
