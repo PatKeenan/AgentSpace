@@ -11,6 +11,7 @@ import dynamic from "next/dynamic";
 import * as React from "react";
 
 import type { NextPageExtended } from "types/index";
+import { ContactDetailTabs, useContactDetailUi } from "./useContactDetailUi";
 
 const ContactDetailOverview = dynamic(
     () => import("./contact-detail-components/ContactDetailOverview"),
@@ -25,17 +26,8 @@ const ContactDetailProfiles = dynamic(
     { suspense: true }
 );
 
-type ContactDetailTabs = "Overview" | "Appointments" | "Profiles";
-
-const tabs: { title: ContactDetailTabs }[] = [
-    { title: "Overview" },
-    { title: "Appointments" },
-    { title: "Profiles" },
-];
-
 export const ContactDetailContainer: NextPageExtended = () => {
-    const [activeTabTitle, setActiveTabTitle] =
-        React.useState<ContactDetailTabs>("Overview");
+    const { activeTab, setActiveTab } = useContactDetailUi();
     const router = useRouter();
 
     const workspace = useWorkspace();
@@ -49,6 +41,10 @@ export const ContactDetailContainer: NextPageExtended = () => {
             enabled: exists(id),
         }
     );
+
+    const handleTabClick = (tab: string) => {
+        setActiveTab(tab as ContactDetailTabs);
+    };
 
     return (
         <>
@@ -98,25 +94,28 @@ export const ContactDetailContainer: NextPageExtended = () => {
                 </SectionHeading>
                 <div className="mb-6">
                     <Tabs
+                        activeTab={activeTab}
                         id="contact-detail-tabs"
-                        onTabClick={(tab) =>
-                            setActiveTabTitle(tab as ContactDetailTabs)
-                        }
-                        tabs={tabs}
+                        onTabClick={handleTabClick}
+                        tabs={[
+                            { title: "Overview" },
+                            { title: "Appointments" },
+                            { title: "Profiles" },
+                        ]}
                     />
                 </div>
                 <React.Suspense fallback={"Loading..."}>
                     <SubRouter
                         component={<ContactDetailOverview />}
-                        active={activeTabTitle == "Overview"}
+                        active={activeTab == "Overview"}
                     />
                     <SubRouter
                         component={<ContactDetailAppointments />}
-                        active={activeTabTitle == "Appointments"}
+                        active={activeTab == "Appointments"}
                     />
                     <SubRouter
                         component={<ContactDetailProfiles />}
-                        active={activeTabTitle == "Profiles"}
+                        active={activeTab == "Profiles"}
                     />
                 </React.Suspense>
             </PageBody>

@@ -1,6 +1,5 @@
 import format from "date-fns/format";
 import { useAppointments } from "hooks/useAppointments";
-import { useContactDetailUi } from "../useContactDetailUi";
 
 import { SidebarList } from "./SidebarList";
 
@@ -15,13 +14,11 @@ export const ContactAppointmentList = ({
         { enabled: typeof contactId == "string" }
     );
 
-    const { setActiveTab } = useContactDetailUi();
-
     return (
         <SidebarList
-            title="Upcoming Appointments"
+            title="Profiles"
             data={appointments}
-            onClick={() => setActiveTab("Appointments")}
+            onClick={() => alert("HI")}
             renderItem={(i) => {
                 const rawDate = new Date(i.appointment.date);
                 const formattedDate = format(

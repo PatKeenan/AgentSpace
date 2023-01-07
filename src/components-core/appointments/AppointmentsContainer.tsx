@@ -27,6 +27,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
     const { setModal, modal, activeTab, setActiveTab } = useAppointmentsUI();
     const router = useRouter();
     const { id } = useWorkspace();
+
     const handleTabClick = (tabName: string) => {
         setActiveTab(tabName as typeof activeTab);
     };

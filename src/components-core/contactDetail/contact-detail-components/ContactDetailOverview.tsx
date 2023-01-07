@@ -3,10 +3,9 @@ import React from "react";
 import { SubContactList } from "./SubContactList";
 import { ContactAppointmentList } from "./ContactAppointmentList";
 import { ContactProfilesList } from "./ContactProfilesList";
-import { PaperClipIcon, PencilIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/20/solid";
 import { GridSectionTitle } from "./GridSectionTitle";
 import { useContacts } from "hooks/useContacts";
-import { useSubContacts } from "hooks/useSubContacts";
 import { Button } from "components-common/Button";
 import { useContactDetailUi } from "../useContactDetailUi";
 
