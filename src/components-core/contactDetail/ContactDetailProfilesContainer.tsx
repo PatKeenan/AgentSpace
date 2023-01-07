@@ -1,5 +1,4 @@
 import { NextPageExtended } from "types/index";
-import { ContactDetailLayout } from "./ContactDetailLayout";
 import { PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Button, ToggleMenu } from "components-common";
 import { useProfile } from "hooks/useProfile";
@@ -11,6 +10,7 @@ import {
     GridSectionTitle,
 } from "./contact-detail-components";
 import clsx from "clsx";
+import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
 
 export const ContactDetailProfilesContainer: NextPageExtended = () => {
     const { getManyForContact, update } = useProfile();
@@ -150,3 +150,4 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
 };
 
 ContactDetailProfilesContainer.layout = "dashboard";
+ContactDetailProfilesContainer.subLayout = "contact";

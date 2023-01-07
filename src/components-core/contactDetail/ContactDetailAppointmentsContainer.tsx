@@ -1,12 +1,12 @@
 import React from "react";
 import { NextPageExtended } from "types/index";
-import { ContactDetailLayout } from "./ContactDetailLayout";
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { Button, ButtonLink } from "components-common/Button";
 import { Tag } from "components-common/Tag";
 import { useAppointments } from "hooks/useAppointments";
 import { useRouter } from "next/router";
 import { appointmentStatusOptions } from "utils/appointmentStatusOptions";
+import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
 
 export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
     const router = useRouter();
@@ -163,3 +163,4 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
 };
 
 ContactDetailAppointmentsContainer.layout = "dashboard";
+ContactDetailAppointmentsContainer.subLayout = "contact";

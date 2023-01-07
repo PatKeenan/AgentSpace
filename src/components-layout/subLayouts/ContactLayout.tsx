@@ -1,21 +1,16 @@
 import React from "react";
-import { Tabs, Button } from "components-common";
+import { Button, IconButton } from "components-common";
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { SectionHeading } from "components-layout/SectionHeading";
-import { ContactDetailModal } from "./contact-detail-components";
+import { ContactDetailModal } from "components-core/contactDetail";
+
 import { Breadcrumb, PageBody } from "components-layout";
 import { useContacts } from "hooks/useContacts";
 import { useRouter } from "next/router";
 import { exists } from "utils/helpers";
 import { useWorkspace } from "hooks";
 
-export const ContactDetailLayout = ({
-    children,
-    activeTab,
-}: {
-    children: React.ReactNode;
-    activeTab: "Overview" | "Profiles" | "Appointments";
-}) => {
+export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const id = router.query.contactId;
 
@@ -29,21 +24,6 @@ export const ContactDetailLayout = ({
             enabled: exists(id),
         }
     );
-
-    const tabs: { title: typeof activeTab; href: string }[] = [
-        {
-            title: "Overview",
-            href: `/workspace/${workspace.id}/contacts/${id}`,
-        },
-        {
-            title: "Appointments",
-            href: `/workspace/${workspace.id}/contacts/${id}/appointments`,
-        },
-        {
-            title: "Profiles",
-            href: `/workspace/${workspace.id}/contacts/${id}/profiles`,
-        },
-    ];
 
     return (
         <>
@@ -64,17 +44,7 @@ export const ContactDetailLayout = ({
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title
-                            icon={
-                                <button className="group mt-auto mb-1 flex h-full items-center rounded-sm px-2 text-sm font-medium focus:outline-none  focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                    <PencilIcon
-                                        aria-hidden={true}
-                                        className="-mr-1 ml-1 h-4 w-4 flex-shrink-0 text-gray-400 "
-                                    />
-                                    <span className="ml-2 text-gray-600 group-hover:text-gray-700">
-                                        Edit
-                                    </span>
-                                </button>
-                            }
+                            icon={<IconButton title="Edit" icon={PencilIcon} />}
                         >
                             {contact?.name ?? "Contact Details"}
                         </SectionHeading.Title>
@@ -91,13 +61,6 @@ export const ContactDetailLayout = ({
                         </div>
                     </SectionHeading.Actions>
                 </SectionHeading>
-                <div className="mb-6">
-                    <Tabs
-                        activeTab={activeTab}
-                        id="contact-detail-tabs"
-                        tabs={tabs}
-                    />
-                </div>
                 {children}
             </PageBody>
         </>

@@ -19,7 +19,7 @@ export type ContactDetailUiType = {
         form?: "contact" | "subContact" | "profile";
         defaultData?:
             | SubContactSchema["update"]
-            | ContactSchema["base"]
+            | Omit<ContactSchema["base"], "name">
             | DefaultProfileDataType;
     };
     setModal: (opts: {
@@ -28,7 +28,7 @@ export type ContactDetailUiType = {
         form?: "contact" | "subContact" | "profile";
         defaultData?:
             | SubContactSchema["update"]
-            | ContactSchema["base"]
+            | Omit<ContactSchema["base"], "name">
             | (Profile & {
                   appointments: ContactOnAppointment[];
                   _count: {

@@ -202,9 +202,10 @@ export const ContactsContainer: NextPageExtended = () => {
 
                                                     {[
                                                         "Contact",
-                                                        "Primary Email",
-                                                        "Primary Phone",
+                                                        "Email",
+                                                        "Phone",
                                                         "Appointments",
+                                                        "Profiles",
                                                     ].map((i, index) => (
                                                         <th
                                                             key={index}
@@ -301,34 +302,32 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                 </td>
 
                                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                                    {meta?.email ||
+                                                                    {contact?.email ||
                                                                         "---"}
                                                                 </td>
                                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                                    {meta?.phoneNumber ||
+                                                                    {contact?.phoneNumber ||
                                                                         "---"}
                                                                 </td>
-                                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                                <td className="group whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                                     {contact
                                                                         ._count
-                                                                        .appointmentsMeta ||
-                                                                        "---"}
+                                                                        .appointmentsMeta ? (
+                                                                        <NextLink
+                                                                            href={`/workspace/${contact.workspaceId}/contacts/${contact.id}/appointments`}
+                                                                            className="group-hover:text-purple-600 group-hover:underline"
+                                                                        >
+                                                                            {contact
+                                                                                ._count
+                                                                                .appointmentsMeta ||
+                                                                                "---"}
+                                                                        </NextLink>
+                                                                    ) : (
+                                                                        "---"
+                                                                    )}
                                                                 </td>
 
-                                                                <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                                    <a
-                                                                        href="#"
-                                                                        className="text-indigo-600 hover:text-indigo-900"
-                                                                    >
-                                                                        Edit
-                                                                        <span className="sr-only">
-                                                                            ,{" "}
-                                                                            {
-                                                                                contact.name
-                                                                            }
-                                                                        </span>
-                                                                    </a>
-                                                                </td>
+                                                                <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"></td>
                                                             </tr>
                                                         );
                                                     }

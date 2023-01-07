@@ -1,14 +1,16 @@
 import { Button } from "components-common/Button";
+import { NextLink } from "components-common/NextLink";
 import { GridCard } from "./GridCard";
 import { GridSectionTitle } from "./GridSectionTitle";
 
 type SidebarListProps<T> = {
     title: string;
     data: T[] | undefined;
-    onClick: () => void;
+    onClick?: () => void;
     renderItem: (i: T) => React.ReactNode;
     buttonTitle?: string;
     noDataMessage?: string;
+    href?: string;
 };
 
 export function SidebarList<T extends { id: string }>(
@@ -21,7 +23,9 @@ export function SidebarList<T extends { id: string }>(
         data,
         renderItem,
         noDataMessage,
+        href,
     } = props;
+
     return (
         <GridCard>
             <GridSectionTitle title={title} />
@@ -43,13 +47,22 @@ export function SidebarList<T extends { id: string }>(
                 <p className="py-2 text-sm">{noDataMessage ?? `No ${title}`}</p>
             )}
 
-            <Button
-                variant="outlined"
-                className="mt-3 w-full justify-center"
-                onClick={onClick}
-            >
-                {buttonTitle}
-            </Button>
+            {href ? (
+                <NextLink
+                    href={href}
+                    className="mt-3 inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                >
+                    {buttonTitle}
+                </NextLink>
+            ) : (
+                <Button
+                    variant="outlined"
+                    className="mt-3 w-full justify-center"
+                    onClick={onClick}
+                >
+                    {buttonTitle}
+                </Button>
+            )}
         </GridCard>
     );
 }

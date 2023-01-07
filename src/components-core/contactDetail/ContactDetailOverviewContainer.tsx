@@ -1,15 +1,17 @@
 import React from "react";
 import { NextPageExtended } from "types/index";
-import { ContactDetailLayout } from "./ContactDetailLayout";
+
 import { useRouter } from "next/router";
 import { SubContactList } from "./contact-detail-components/SubContactList";
 import { ContactAppointmentList } from "./contact-detail-components/ContactAppointmentList";
 import { ContactProfilesList } from "./contact-detail-components/ContactProfilesList";
-import { PencilIcon } from "@heroicons/react/20/solid";
+import { EnvelopeIcon, PencilIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import { GridSectionTitle } from "./contact-detail-components/GridSectionTitle";
 import { useContacts } from "hooks/useContacts";
-import { Button } from "components-common/Button";
+import { Button, IconButton } from "components-common/Button";
 import { useContactDetailUi } from "./useContactDetailUi";
+import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
+import { ContactSchema } from "server/schemas";
 
 export const ContactDetailOverviewContainer: NextPageExtended = () => {
     const router = useRouter();
@@ -21,6 +23,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
         { id: id as string },
         { enabled: typeof id !== undefined }
     );
+
     return (
         <ContactDetailLayout activeTab="Overview">
             <div>
@@ -41,6 +44,19 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                                 setModal({
                                                     state: true,
                                                     form: "contact",
+                                                    defaultData: {
+                                                        firstName:
+                                                            contactQuery?.firstName,
+                                                        lastName:
+                                                            contactQuery?.lastName,
+                                                        phoneNumber:
+                                                            contactQuery?.phoneNumber,
+                                                        email: contactQuery?.email,
+                                                        notes: contactQuery?.notes,
+                                                    } as Omit<
+                                                        ContactSchema["base"],
+                                                        "name"
+                                                    >,
                                                 })
                                             }
                                         >
@@ -74,24 +90,36 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                         </span>
                                     </dd>
                                 </div>
-                                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+                                <div className="items-center py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
                                         Email
                                     </dt>
-                                    <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                    <dd className="mt-1 flex items-center text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="flex-grow">
                                             {contactQuery?.email || "--"}
                                         </span>
+                                        {contactQuery?.email && (
+                                            <IconButton
+                                                title="Email"
+                                                icon={EnvelopeIcon}
+                                            />
+                                        )}
                                     </dd>
                                 </div>
-                                <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+                                <div className="items-center py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
                                         Phone Number
                                     </dt>
-                                    <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                    <dd className="mt-1 flex items-center text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="flex-grow">
                                             {contactQuery?.phoneNumber || "--"}
                                         </span>
+                                        {contactQuery?.phoneNumber && (
+                                            <IconButton
+                                                title="Call"
+                                                icon={PhoneIcon}
+                                            />
+                                        )}
                                     </dd>
                                 </div>
 
@@ -109,7 +137,9 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                         </div>
                         <div className="grid grid-cols-1 gap-4 divide-y lg:col-span-2">
                             {router.query.contactId && (
-                                <SubContactList contactId={id as string} />
+                                <SubContactList
+                                    subContacts={contactQuery?.subContacts}
+                                />
                             )}
 
                             <ContactProfilesList className="mt-5 pt-5" />
@@ -133,3 +163,4 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
 };
 
 ContactDetailOverviewContainer.layout = "dashboard";
+ContactDetailOverviewContainer.subLayout = "contact";

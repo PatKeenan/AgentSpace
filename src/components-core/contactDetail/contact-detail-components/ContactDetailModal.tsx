@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "components-common/Button";
 import { InputGroup } from "components-common/InputGroup";
 import { Modal } from "components-common/Modal";
-import { ContactFormTextArea } from "components-core/create-contact/create-contact-components";
 import { useForm } from "react-hook-form";
 import {
     DefaultProfileDataType,
@@ -60,11 +59,15 @@ const EditContactForm = () => {
     const { update, utils } = useContacts();
     const { mutate: updateContact } = update();
 
-    const { register, handleSubmit } = useForm<ContactSchema["base"]>({
-        resolver: zodResolver(contactSchema().base),
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Omit<ContactSchema["base"], "name">>({
+        resolver: zodResolver(contactSchema().base.partial()),
         defaultValues:
             modal.form == "contact"
-                ? (modal.defaultData as ContactSchema["base"])
+                ? (modal.defaultData as Omit<ContactSchema["base"], "name">)
                 : undefined,
     });
 
@@ -74,23 +77,54 @@ const EditContactForm = () => {
                 { ...data, id: id as string },
                 {
                     onSuccess: (data) => {
-                        utils.getName.invalidate({ id: data.id });
+                        utils.getOne.invalidate({ id: data.id });
                         resetModal();
                     },
                 }
             );
         }
     });
-
     return (
         <form onSubmit={onSubmit}>
-            <ModalTitle>Edit General Info</ModalTitle>
+            <ModalTitle>Edit Primary Info</ModalTitle>
             <InputGroup
-                label="Display Name"
-                {...register("name")}
+                label="First Name"
+                {...register("firstName")}
+                direction="row"
+                errorMessage={
+                    errors && errors.firstName && errors.firstName.message
+                }
+            />
+
+            <InputGroup
+                label="Last Name"
+                {...register("lastName")}
+                direction="row"
+                errorMessage={
+                    errors && errors.lastName && errors.lastName.message
+                }
+            />
+
+            <InputGroup
+                label="Email"
+                {...register("email")}
+                direction="row"
+                errorMessage={errors && errors.email && errors.email.message}
+            />
+            <InputGroup
+                label="Phone Number"
+                {...register("phoneNumber")}
+                direction="row"
+                errorMessage={
+                    errors && errors.phoneNumber && errors.phoneNumber.message
+                }
+            />
+            <Textarea
+                id="contact-notes"
+                label="Notes"
+                {...register("notes")}
                 direction="row"
             />
-            <ContactFormTextArea label="Notes" {...register("notes")} />
 
             <div className="mt-6 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>

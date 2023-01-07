@@ -10,6 +10,7 @@ import type { Router } from "next/router";
 
 export type CustomComponentProps = {
     layout?: "auth" | "dashboard" | undefined;
+    subLayout?: "appointments" | "contact";
 };
 
 export type NextPageExtended = NextPage & CustomComponentProps;

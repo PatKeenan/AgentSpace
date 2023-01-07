@@ -82,22 +82,31 @@ export const contactsRouter = t.router({
                 id: input.id,
                 deleted: false,
             },
+
+            include: {
+                subContacts: {
+                    where: {
+                        deleted: false,
+                    },
+                    orderBy: [{ createdAt: "asc" }],
+                },
+            },
         });
     }),
     createContact: authedProcedure
         .input(
             contactSchema().create.extend({
-                contactMeta: z.array(
+                subContacts: z.array(
                     subContactSchema().create.omit({ contactId: true })
                 ),
                 workspaceId: z.string(),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const { contactMeta, ...contactData } = input;
+            const { subContacts, ...contactData } = input;
 
             // Add 1 millisecond for the createdAt in ContactMeta create many function, used for sorting
-            const newContactData = contactMeta.map((element, index) => {
+            const newContactData = subContacts.map((element, index) => {
                 const now = new Date();
                 now.setMilliseconds(now.getMilliseconds() + index);
                 return {
@@ -105,7 +114,7 @@ export const contactsRouter = t.router({
                     createdAt: now,
                 };
             });
-            const metaData: typeof contactMeta[number][] = newContactData;
+            const metaData: typeof subContacts[number][] = newContactData;
 
             return await ctx.prisma.contact.create({
                 data: {
@@ -154,7 +163,7 @@ export const contactsRouter = t.router({
             });
         }),
     update: authedProcedure
-        .input(contactSchema().base.merge(idSchema))
+        .input(contactSchema().base.partial().merge(idSchema))
         .mutation(async ({ ctx, input }) => {
             const { id, ...rest } = input;
             return await ctx.prisma.contact.update({

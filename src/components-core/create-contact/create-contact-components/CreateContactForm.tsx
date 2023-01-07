@@ -28,18 +28,20 @@ const initialState = {
     email: "",
     phoneNumber: "",
     notes: "",
-    fields: [],
+    subContactFields: [],
 };
 
 const createContactFormSchema = contactSchema().create.extend({
-    fields: z.array(subContactSchema().create.omit({ contactId: true })),
+    subContactFields: z.array(
+        subContactSchema().create.omit({ contactId: true })
+    ),
 });
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
 
 export const CreateContactForm = () => {
     const [subContactFields, setMetaFields] = React.useState<
-        CreateContactFormType["fields"]
+        CreateContactFormType["subContactFields"]
     >([]);
     const workspace = useWorkspace();
     const contacts = useContacts();
@@ -60,12 +62,12 @@ export const CreateContactForm = () => {
     });
 
     const handleSubmit = formSubmit(async (data) => {
-        const { fields, ...rest } = data;
+        const { subContactFields, ...rest } = data;
         createContact.mutate(
             {
                 ...rest,
                 workspaceId: workspace.id as string,
-                contactMeta: fields,
+                subContacts: subContactFields,
             },
             {
                 onSuccess: (data) =>
@@ -77,29 +79,32 @@ export const CreateContactForm = () => {
     });
 
     const addFields = () => {
-        const fields = getValues("fields");
-        const newFields = [...fields, { ...initialMeta }];
-        setValue("fields", newFields);
+        const subContactFields = getValues("subContactFields");
+        const newFields = [...subContactFields, { ...initialMeta }];
+        setValue("subContactFields", newFields);
         setMetaFields((prev) => [...prev, { ...initialMeta }]);
     };
 
     const removeField = (index: number) => {
-        const fields = [...getValues("fields")];
-        fields.splice(index, 1);
-        setValue("fields", fields);
-        if (errors && errors.fields) {
+        const subContactFields = [...getValues("subContactFields")];
+        subContactFields.splice(index, 1);
+        setValue("subContactFields", subContactFields);
+        if (errors && errors.subContactFields) {
             removeErrors(index);
         }
-        setMetaFields(fields);
+        setMetaFields(subContactFields);
     };
 
     const removeErrors = (index: number) => {
-        if (errors.fields && errors.fields.length) {
-            const oldFields = errors.fields as Partial<
-                CreateContactFormType["fields"]
+        if (errors.subContactFields && errors.subContactFields.length) {
+            const oldFields = errors.subContactFields as Partial<
+                CreateContactFormType["subContactFields"]
             >;
             oldFields.splice(index, 1);
-            setError("fields", oldFields as typeof errors.fields);
+            setError(
+                "subContactFields",
+                oldFields as typeof errors.subContactFields
+            );
         }
     };
 
@@ -134,7 +139,6 @@ export const CreateContactForm = () => {
                                 errors["name"] && errors["name"].message
                             }
                         />
-
                         <ContactFormInput
                             label="First Name"
                             className="max-w-xs "
@@ -147,7 +151,7 @@ export const CreateContactForm = () => {
                         <ContactFormInput
                             label="Last Name"
                             className="max-w-xs"
-                            {...register("firstName")}
+                            {...register("lastName")}
                             errorMessage={
                                 errors["lastName"] && errors["lastName"].message
                             }
@@ -238,7 +242,8 @@ export const CreateContactForm = () => {
                                 : ""
                         }
                         titleContainer={
-                            errors.fields && errors?.fields[idx] ? (
+                            errors.subContactFields &&
+                            errors?.subContactFields[idx] ? (
                                 <ExclamationCircleIcon
                                     className="h-5 w-5 text-red-500"
                                     aria-hidden="true"
@@ -262,53 +267,62 @@ export const CreateContactForm = () => {
                         <div className="">
                             <ContactFormInput
                                 label="First Name"
-                                {...register(`fields.${idx}.firstName`)}
+                                {...register(
+                                    `subContactFields.${idx}.firstName`
+                                )}
                                 className="max-w-xs"
                                 required
                                 errorMessage={
-                                    errors.fields &&
-                                    errors.fields[idx]?.firstName &&
-                                    errors.fields[idx]?.firstName?.message
+                                    errors.subContactFields &&
+                                    errors.subContactFields[idx]?.firstName &&
+                                    errors.subContactFields[idx]?.firstName
+                                        ?.message
                                 }
                             />
                             <ContactFormInput
                                 label="Last Name"
-                                {...register(`fields.${idx}.lastName`)}
+                                {...register(
+                                    `subContactFields.${idx}.lastName`
+                                )}
                                 className="max-w-xs"
                                 errorMessage={
-                                    errors.fields &&
-                                    errors.fields[idx]?.lastName &&
-                                    errors.fields[idx]?.lastName?.message
+                                    errors.subContactFields &&
+                                    errors.subContactFields[idx]?.lastName &&
+                                    errors.subContactFields[idx]?.lastName
+                                        ?.message
                                 }
                             />
                             <ContactFormInput
                                 label="Email"
-                                {...register(`fields.${idx}.email`, {
+                                {...register(`subContactFields.${idx}.email`, {
                                     required: false,
                                 })}
                                 type="email"
                                 className="max-w-lg"
                                 errorMessage={
-                                    errors.fields &&
-                                    errors.fields[idx]?.email &&
-                                    errors.fields[idx]?.email?.message
+                                    errors.subContactFields &&
+                                    errors.subContactFields[idx]?.email &&
+                                    errors.subContactFields[idx]?.email?.message
                                 }
                             />
                             <ContactFormInput
                                 label="Phone Number"
-                                {...register(`fields.${idx}.phoneNumber`)}
+                                {...register(
+                                    `subContactFields.${idx}.phoneNumber`
+                                )}
                                 type="tel"
                                 className="max-w-xs"
                                 errorMessage={
-                                    errors.fields &&
-                                    errors.fields[idx]?.phoneNumber &&
-                                    errors.fields[idx]?.phoneNumber?.message
+                                    errors.subContactFields &&
+                                    errors.subContactFields[idx]?.phoneNumber &&
+                                    errors.subContactFields[idx]?.phoneNumber
+                                        ?.message
                                 }
                             />
                             <ContactFormTextArea
                                 label="Notes"
                                 className="max-w-lg"
-                                {...register(`fields.${idx}.note`)}
+                                {...register(`subContactFields.${idx}.note`)}
                                 rows={3}
                             />
                         </div>

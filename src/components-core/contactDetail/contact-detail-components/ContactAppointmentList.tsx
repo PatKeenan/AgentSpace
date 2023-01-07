@@ -1,5 +1,6 @@
 import format from "date-fns/format";
 import { useAppointments } from "hooks/useAppointments";
+import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
 
 import { SidebarList } from "./SidebarList";
@@ -14,13 +15,12 @@ export const ContactAppointmentList = ({
         { contactId: contactId as string, take: 3 },
         { enabled: typeof contactId == "string" }
     );
-    const router = useRouter();
-
+    const workspace = useWorkspace();
     return (
         <SidebarList
             title="Upcoming Appointments"
             data={appointments}
-            onClick={() => router.push("/")}
+            href={`/workspace/${workspace.id}/contacts/${contactId}/appointments`}
             renderItem={(i) => {
                 const rawDate = new Date(i.appointment.date);
                 const formattedDate = format(

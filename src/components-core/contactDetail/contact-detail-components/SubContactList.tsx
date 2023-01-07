@@ -10,12 +10,17 @@ import { DetailsRow } from "./DetailsRow";
 import { GridCard } from "./GridCard";
 
 import type { SubContact } from "@prisma/client";
+import { trpc } from "utils/trpc";
 
-export const SubContactList = ({ contactId }: { contactId: string }) => {
-    const { getAllForContact, softDeleteMeta } = useSubContacts();
+export const SubContactList = ({
+    subContacts,
+}: {
+    subContacts: SubContact[] | undefined;
+}) => {
+    const { softDeleteMeta } = useSubContacts();
     const { setModal } = useContactDetailUi();
+    const utils = trpc.useContext();
 
-    const { data: subContacts, refetch } = getAllForContact({ contactId });
     const { mutate: deleteMetaMutation } = softDeleteMeta();
 
     const handleClick = (contactMeta: SubContact) => {
@@ -40,8 +45,8 @@ export const SubContactList = ({ contactId }: { contactId: string }) => {
         deleteMetaMutation(
             { id },
             {
-                onSuccess: () => {
-                    refetch();
+                onSuccess: (data) => {
+                    utils.contacts.getOne.invalidate({ id: data.contactId });
                 },
             }
         );

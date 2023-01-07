@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { ComponentType, ReactElement, SVGProps } from "react";
 import { NextLink } from "./NextLink";
 
 export const variantStyles = {
@@ -48,5 +49,42 @@ export const ButtonLink = (props: ButtonLinkProps) => {
             )}
             {...htmlProps}
         />
+    );
+};
+
+const iconSize = {
+    sm: "h-3 w-3",
+    md: "h-4 w-4",
+    lg: "h-5 w-5",
+};
+
+type IconButtonProps = {
+    icon: (
+        props: SVGProps<SVGSVGElement> & {
+            title?: string | undefined;
+            titleId?: string | undefined;
+        }
+    ) => JSX.Element;
+    title: string;
+    size?: keyof typeof iconSize;
+} & Omit<React.ComponentProps<"button">, "title">;
+export const IconButton = (props: IconButtonProps) => {
+    const { icon: Icon, size = "md", title, ...htmlProps } = props;
+
+    return (
+        <button
+            className="group flex items-center justify-center rounded-full p-2 text-sm hover:bg-gray-100"
+            title={title}
+            {...htmlProps}
+        >
+            <span className="sr-only">{title}</span>
+            <Icon
+                className={clsx(
+                    iconSize[size],
+                    "text-gray-300 group-hover:text-gray-400"
+                )}
+                aria-hidden="true"
+            />
+        </button>
     );
 };
