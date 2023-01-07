@@ -1,3 +1,4 @@
-export * from "./ContactDetailOverview";
-export * from "./ContactDetailAppointments";
 export * from "./ContactDetailModal";
+export * from "./GridSectionTitle";
+export * from "./GridCard";
+export * from "./DetailsRow";

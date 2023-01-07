@@ -1,4 +1,5 @@
-import { SubRouter, Tabs, Button } from "components-common";
+import React from "react";
+import { Tabs, Button } from "components-common";
 import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { SectionHeading } from "components-layout/SectionHeading";
 import { ContactDetailModal } from "./contact-detail-components";
@@ -7,33 +8,20 @@ import { useContacts } from "hooks/useContacts";
 import { useRouter } from "next/router";
 import { exists } from "utils/helpers";
 import { useWorkspace } from "hooks";
-import dynamic from "next/dynamic";
-import * as React from "react";
 
-import type { NextPageExtended } from "types/index";
-import { ContactDetailTabs, useContactDetailUi } from "./useContactDetailUi";
-
-const ContactDetailOverview = dynamic(
-    () => import("./contact-detail-components/ContactDetailOverview"),
-    { suspense: true }
-);
-const ContactDetailAppointments = dynamic(
-    () => import("./contact-detail-components/ContactDetailAppointments"),
-    { suspense: true }
-);
-const ContactDetailProfiles = dynamic(
-    () => import("./contact-detail-components/ContactDetailProfiles"),
-    { suspense: true }
-);
-
-export const ContactDetailContainer: NextPageExtended = () => {
-    const { activeTab, setActiveTab } = useContactDetailUi();
+export const ContactDetailLayout = ({
+    children,
+    activeTab,
+}: {
+    children: React.ReactNode;
+    activeTab: "Overview" | "Profiles" | "Appointments";
+}) => {
     const router = useRouter();
+    const id = router.query.contactId;
 
     const workspace = useWorkspace();
 
     const { getName } = useContacts();
-    const id = router.query.contactId;
 
     const { data: contact } = getName(
         { id: router.query.contactId as string },
@@ -42,9 +30,20 @@ export const ContactDetailContainer: NextPageExtended = () => {
         }
     );
 
-    const handleTabClick = (tab: string) => {
-        setActiveTab(tab as ContactDetailTabs);
-    };
+    const tabs: { title: typeof activeTab; href: string }[] = [
+        {
+            title: "Overview",
+            href: `/workspace/${workspace.id}/contacts/${id}`,
+        },
+        {
+            title: "Appointments",
+            href: `/workspace/${workspace.id}/contacts/${id}/appointments`,
+        },
+        {
+            title: "Profiles",
+            href: `/workspace/${workspace.id}/contacts/${id}/profiles`,
+        },
+    ];
 
     return (
         <>
@@ -96,30 +95,11 @@ export const ContactDetailContainer: NextPageExtended = () => {
                     <Tabs
                         activeTab={activeTab}
                         id="contact-detail-tabs"
-                        onTabClick={handleTabClick}
-                        tabs={[
-                            { title: "Overview" },
-                            { title: "Appointments" },
-                            { title: "Profiles" },
-                        ]}
+                        tabs={tabs}
                     />
                 </div>
-                <React.Suspense fallback={"Loading..."}>
-                    <SubRouter
-                        component={<ContactDetailOverview />}
-                        active={activeTab == "Overview"}
-                    />
-                    <SubRouter
-                        component={<ContactDetailAppointments />}
-                        active={activeTab == "Appointments"}
-                    />
-                    <SubRouter
-                        component={<ContactDetailProfiles />}
-                        active={activeTab == "Profiles"}
-                    />
-                </React.Suspense>
+                {children}
             </PageBody>
         </>
     );
 };
-ContactDetailContainer.layout = "dashboard";

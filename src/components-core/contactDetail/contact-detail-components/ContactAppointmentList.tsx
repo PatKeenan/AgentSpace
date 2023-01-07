@@ -1,6 +1,6 @@
 import format from "date-fns/format";
 import { useAppointments } from "hooks/useAppointments";
-import { useContactDetailUi } from "../useContactDetailUi";
+import { useRouter } from "next/router";
 
 import { SidebarList } from "./SidebarList";
 
@@ -14,14 +14,13 @@ export const ContactAppointmentList = ({
         { contactId: contactId as string, take: 3 },
         { enabled: typeof contactId == "string" }
     );
-
-    const { setActiveTab } = useContactDetailUi();
+    const router = useRouter();
 
     return (
         <SidebarList
             title="Upcoming Appointments"
             data={appointments}
-            onClick={() => setActiveTab("Appointments")}
+            onClick={() => router.push("/")}
             renderItem={(i) => {
                 const rawDate = new Date(i.appointment.date);
                 const formattedDate = format(

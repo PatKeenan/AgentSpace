@@ -1,9 +1,11 @@
 import React from "react";
 import clsx from "clsx";
+import { NextLink } from "./NextLink";
 
 type Tab = {
     title: string;
     count?: string;
+    href?: string;
 };
 
 type TabProps = {
@@ -60,32 +62,57 @@ export const Tabs = (props: TabProps) => {
                         className={clsx("mt-2 -mb-px flex space-x-8")}
                         aria-label="Tabs"
                     >
-                        {tabs.map((tab, idx) => (
-                            <button
-                                key={tab.title}
-                                className={clsx(
-                                    idx == active
-                                        ? "border-purple-500 text-purple-600"
-                                        : "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
-                                    "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-                                )}
-                                onClick={() => handleSetActive(idx)}
-                            >
-                                {tab.title}
-                                {tab.count ? (
-                                    <span
-                                        className={clsx(
-                                            idx == active
-                                                ? "bg-purple-100 text-purple-600"
-                                                : "bg-gray-100 text-gray-900",
-                                            "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
-                                        )}
-                                    >
-                                        {tab.count}
-                                    </span>
-                                ) : null}
-                            </button>
-                        ))}
+                        {tabs.map((tab, idx) => {
+                            const sharedContainerStyles = clsx(
+                                idx == active
+                                    ? "border-purple-500 text-purple-600"
+                                    : "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
+                                "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+                            );
+
+                            return tab.href ? (
+                                <NextLink
+                                    key={tab.title}
+                                    href={tab.href}
+                                    className={sharedContainerStyles}
+                                    onClick={() => handleSetActive(idx)}
+                                >
+                                    {tab.title}
+                                    {tab.count ? (
+                                        <span
+                                            className={clsx(
+                                                idx == active
+                                                    ? "bg-purple-100 text-purple-600"
+                                                    : "bg-gray-100 text-gray-900",
+                                                "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
+                                            )}
+                                        >
+                                            {tab.count}
+                                        </span>
+                                    ) : null}
+                                </NextLink>
+                            ) : (
+                                <button
+                                    key={tab.title}
+                                    className={sharedContainerStyles}
+                                    onClick={() => handleSetActive(idx)}
+                                >
+                                    {tab.title}
+                                    {tab.count ? (
+                                        <span
+                                            className={clsx(
+                                                idx == active
+                                                    ? "bg-purple-100 text-purple-600"
+                                                    : "bg-gray-100 text-gray-900",
+                                                "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
+                                            )}
+                                        >
+                                            {tab.count}
+                                        </span>
+                                    ) : null}
+                                </button>
+                            );
+                        })}
                     </nav>
                     {actions && (
                         <div className="mt-4 flex md:mt-0 md:ml-4">

@@ -13,8 +13,6 @@ export type DefaultProfileDataType = Profile & {
 };
 
 export type ContactDetailUiType = {
-    activeTab: ContactDetailTabs;
-    setActiveTab: (tab: ContactDetailTabs) => void;
     modal: {
         title?: string;
         state?: boolean;
@@ -43,8 +41,6 @@ export type ContactDetailUiType = {
 
 export const useContactDetailUi = create<ContactDetailUiType>()(
     devtools((set) => ({
-        activeTab: "Overview",
-        setActiveTab: (tab) => set(() => ({ activeTab: tab })),
         modal: { state: false },
         setModal: (opts) =>
             set((state) => ({
