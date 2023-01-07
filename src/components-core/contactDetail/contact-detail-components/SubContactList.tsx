@@ -52,7 +52,7 @@ export const SubContactList = ({ contactId }: { contactId: string }) => {
             <div className="space-y-6">
                 <div>
                     <GridSectionTitle
-                        title="Contacts"
+                        title="Secondary Contacts"
                         titleIcon={
                             subContacts ? (
                                 <div className="flex h-5 w-5 justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600">

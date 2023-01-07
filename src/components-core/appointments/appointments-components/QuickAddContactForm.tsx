@@ -16,7 +16,7 @@ const profileOptions = Object.keys(PROFILE_TYPES).map((i, index) => ({
 }));
 
 type QuickAddContactProps = {
-    setDisplayName: (input: string) => void;
+    setName: (input: string) => void;
     onSuccessCallback: (
         data: Contact & {
             profiles: Profile[];
@@ -39,7 +39,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         title = "Quick Add Contact",
         defaultName,
         workspaceId,
-        setDisplayName,
+        setName,
         onCancel,
         onSuccessCallback,
     } = props;
@@ -72,12 +72,10 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
             {
                 workspaceId,
                 name: data.name,
-                subContact: {
-                    firstName: data.firstName,
-                    lastName: data?.lastName,
-                    email: data?.email,
-                    phoneNumber: data?.phoneNumber,
-                },
+                firstName: data.firstName,
+                lastName: data?.lastName,
+                email: data?.email,
+                phoneNumber: data?.phoneNumber,
                 profile:
                     attachProfile && selectedProfile
                         ? {
@@ -116,13 +114,13 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
             <div className="mt-2 grid w-full grid-cols-8">
                 <div className="col-span-8">
                     <InputGroup
-                        label="Display Name"
+                        label="Contact Name"
                         direction="column"
                         required
                         {...register("name", {
                             value: defaultName,
                             onChange(event) {
-                                setDisplayName(event.target.value);
+                                setName(event.target.value);
                             },
                         })}
                         errorMessage={errors?.name && errors.name.message}

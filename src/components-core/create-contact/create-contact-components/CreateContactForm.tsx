@@ -18,15 +18,18 @@ const initialMeta = {
     lastName: "",
     email: "",
     phoneNumber: "",
+    note: "",
 };
 
 const initialState = {
-    "display-name": "",
+    name: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
     notes: "",
-    fields: [{ ...initialMeta }],
+    fields: [],
 };
-
-/* const contactSchema = Schemas.contact(); */
 
 const createContactFormSchema = contactSchema().create.extend({
     fields: z.array(subContactSchema().create.omit({ contactId: true })),
@@ -35,9 +38,9 @@ const createContactFormSchema = contactSchema().create.extend({
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
 
 export const CreateContactForm = () => {
-    const [metaFields, setMetaFields] = React.useState<
+    const [subContactFields, setMetaFields] = React.useState<
         CreateContactFormType["fields"]
-    >([{ ...initialMeta }]);
+    >([]);
     const workspace = useWorkspace();
     const contacts = useContacts();
     const router = useRouter();
@@ -121,11 +124,11 @@ export const CreateContactForm = () => {
                         ) : null
                     }
                 >
-                    <div className="space-y-6 sm:space-y-5">
+                    <div className="">
                         <ContactFormInput
                             required
-                            label="Name"
-                            className="max-w-xs"
+                            label="Full Name"
+                            className="max-w-lg"
                             {...register("name")}
                             errorMessage={
                                 errors["name"] && errors["name"].message
@@ -133,15 +136,50 @@ export const CreateContactForm = () => {
                         />
 
                         <ContactFormInput
+                            label="First Name"
+                            className="max-w-xs "
+                            {...register("firstName")}
+                            errorMessage={
+                                errors["firstName"] &&
+                                errors["firstName"].message
+                            }
+                        />
+                        <ContactFormInput
+                            label="Last Name"
+                            className="max-w-xs"
+                            {...register("firstName")}
+                            errorMessage={
+                                errors["lastName"] && errors["lastName"].message
+                            }
+                        />
+                        <ContactFormInput
+                            label="Email"
+                            {...register(`email`, {
+                                required: false,
+                            })}
+                            type="email"
+                            className="max-w-lg"
+                            errorMessage={
+                                errors["email"] && errors["email"].message
+                            }
+                        />
+                        <ContactFormInput
+                            label="Phone Number"
+                            {...register(`phoneNumber`)}
+                            type="tel"
+                            className="max-w-xs"
+                            errorMessage={
+                                errors["phoneNumber"] &&
+                                errors["phoneNumber"].message
+                            }
+                        />
+
+                        {/* <ContactFormInput
                             label="Tags"
                             name="tags"
                             className="max-w-xs"
-                        />
-                        <ContactFormInput
-                            label="Referred By"
-                            name="referredBy"
-                            className="max-w-xs"
-                        />
+                        /> */}
+
                         <ContactFormTextArea
                             label="Notes"
                             className="max-w-lg"
@@ -159,7 +197,7 @@ export const CreateContactForm = () => {
                                     receive mail."
                     className={"pt-6"}
                 >
-                    <div className="space-y-6 sm:space-y-5">
+                    <div className="">
                         <ContactFormInput
                             label="Street address"
                             name="streetAddress"
@@ -184,11 +222,15 @@ export const CreateContactForm = () => {
                 </Accordion>
             </div>
             <div className="divide-y divide-gray-200">
-                {metaFields?.map((_, idx) => (
+                {subContactFields?.map((_, idx) => (
                     <Accordion
                         defaultOpen={true}
                         key={idx}
-                        label={`Additional Contact ${idx + 1}`}
+                        label={
+                            idx == 0
+                                ? "Secondary Contact"
+                                : `Additional Contact ${idx + 1}`
+                        }
                         className="py-6"
                         description={
                             idx == 0
@@ -204,24 +246,20 @@ export const CreateContactForm = () => {
                             ) : null
                         }
                         toggleContainer={
-                            idx !== 0 ? (
-                                <button
-                                    type="button"
-                                    className="group inline-flex items-center rounded-full border border-transparent text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                    onClick={() => removeField(idx)}
-                                >
-                                    <span className="sr-only">
-                                        Remove Contact
-                                    </span>
-                                    <MinusCircleIcon
-                                        className="h-5 w-5 rounded-full bg-white text-gray-500 group-hover:bg-gray-600 group-hover:text-white"
-                                        aria-hidden="true"
-                                    />
-                                </button>
-                            ) : null
+                            <button
+                                type="button"
+                                className="group inline-flex items-center rounded-full border border-transparent text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                onClick={() => removeField(idx)}
+                            >
+                                <span className="sr-only">Remove Contact</span>
+                                <MinusCircleIcon
+                                    className="h-5 w-5 rounded-full bg-white text-gray-500 group-hover:bg-gray-600 group-hover:text-white"
+                                    aria-hidden="true"
+                                />
+                            </button>
                         }
                     >
-                        <div className="space-y-6 sm:space-y-5">
+                        <div className="">
                             <ContactFormInput
                                 label="First Name"
                                 {...register(`fields.${idx}.firstName`)}
@@ -267,6 +305,12 @@ export const CreateContactForm = () => {
                                     errors.fields[idx]?.phoneNumber?.message
                                 }
                             />
+                            <ContactFormTextArea
+                                label="Notes"
+                                className="max-w-lg"
+                                {...register(`fields.${idx}.note`)}
+                                rows={3}
+                            />
                         </div>
                     </Accordion>
                 ))}
@@ -277,7 +321,11 @@ export const CreateContactForm = () => {
                         className="my-2 w-full justify-center"
                         onClick={addFields}
                     >
-                        Add Related Contact
+                        Add{" "}
+                        {subContactFields.length == 0
+                            ? "Secondary"
+                            : "Additional"}{" "}
+                        Contact
                     </Button>
                 </div>
             </div>

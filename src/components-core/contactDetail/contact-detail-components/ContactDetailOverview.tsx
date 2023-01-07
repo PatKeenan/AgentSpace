@@ -3,17 +3,24 @@ import React from "react";
 import { SubContactList } from "./SubContactList";
 import { ContactAppointmentList } from "./ContactAppointmentList";
 import { ContactProfilesList } from "./ContactProfilesList";
-import { PaperClipIcon } from "@heroicons/react/20/solid";
+import { PaperClipIcon, PencilIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { GridSectionTitle } from "./GridSectionTitle";
 import { useContacts } from "hooks/useContacts";
 import { useSubContacts } from "hooks/useSubContacts";
+import { Button } from "components-common/Button";
+import { useContactDetailUi } from "../useContactDetailUi";
 
 const ContactDetailOverview = () => {
     const router = useRouter();
+    const { setModal } = useContactDetailUi();
     const id = router.query.contactId;
-    const { update } = useSubContacts();
+    const { getOne } = useContacts();
 
-    /* const handleUpdate = () => {}; */
+    const { data: contactQuery } = getOne(
+        { id: id as string },
+        { enabled: typeof id !== undefined }
+    );
+
     return (
         <div>
             <div className="lg:grid lg:grid-cols-3 lg:gap-8">
@@ -23,26 +30,46 @@ const ContactDetailOverview = () => {
                     <div className="">
                         <div className="w-full">
                             <GridSectionTitle
-                                title="General Information"
+                                title="Primary Information"
                                 subTitle="People that are associated with each other."
+                                actions={
+                                    <Button
+                                        variant="outlined"
+                                        type="button"
+                                        onClick={() =>
+                                            setModal({
+                                                state: true,
+                                                form: "contact",
+                                            })
+                                        }
+                                    >
+                                        <PencilIcon
+                                            className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                                            aria-hidden="true"
+                                        />
+                                        <span>Edit</span>
+                                    </Button>
+                                }
                             />
                         </div>
                         <dl className="divide-y divide-gray-200">
                             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                 <dt className="text-sm font-medium text-gray-500">
-                                    Name
+                                    First Name
                                 </dt>
                                 <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                     <span className="flex-grow">
-                                        Margot Foster
+                                        {contactQuery?.firstName || "--"}
                                     </span>
-                                    <span className="ml-4 flex-shrink-0">
-                                        <button
-                                            type="button"
-                                            className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        >
-                                            Update
-                                        </button>
+                                </dd>
+                            </div>
+                            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+                                <dt className="text-sm font-medium text-gray-500">
+                                    Last Name
+                                </dt>
+                                <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                                    <span className="flex-grow">
+                                        {contactQuery?.lastName || "--"}
                                     </span>
                                 </dd>
                             </div>
@@ -52,15 +79,7 @@ const ContactDetailOverview = () => {
                                 </dt>
                                 <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                     <span className="flex-grow">
-                                        Backend Developer
-                                    </span>
-                                    <span className="ml-4 flex-shrink-0">
-                                        <button
-                                            type="button"
-                                            className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        >
-                                            Update
-                                        </button>
+                                        {contactQuery?.email || "--"}
                                     </span>
                                 </dd>
                             </div>
@@ -70,15 +89,7 @@ const ContactDetailOverview = () => {
                                 </dt>
                                 <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                     <span className="flex-grow">
-                                        margotfoster@example.com
-                                    </span>
-                                    <span className="ml-4 flex-shrink-0">
-                                        <button
-                                            type="button"
-                                            className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        >
-                                            Update
-                                        </button>
+                                        {contactQuery?.phoneNumber || "--"}
                                     </span>
                                 </dd>
                             </div>
@@ -88,23 +99,8 @@ const ContactDetailOverview = () => {
                                     Notes
                                 </dt>
                                 <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                    <span className="flex-grow">
-                                        Fugiat ipsum ipsum deserunt culpa aute
-                                        sint do nostrud anim incididunt cillum
-                                        culpa consequat. Excepteur qui ipsum
-                                        aliquip consequat sint. Sit id mollit
-                                        nulla mollit nostrud in ea officia
-                                        proident. Irure nostrud pariatur mollit
-                                        ad adipisicing reprehenderit deserunt
-                                        qui eu.
-                                    </span>
-                                    <span className="ml-4 flex-shrink-0">
-                                        <button
-                                            type="button"
-                                            className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        >
-                                            Update
-                                        </button>
+                                    <span className="max-h-[175px] flex-grow overflow-auto whitespace-pre">
+                                        {contactQuery?.notes || "--"}
                                     </span>
                                 </dd>
                             </div>

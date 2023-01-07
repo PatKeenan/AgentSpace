@@ -47,26 +47,12 @@ export const contactsRouter = t.router({
                     AND: [
                         { workspaceId: input.workspaceId },
                         {
-                            OR: [
-                                {
-                                    name: {
-                                        contains: input.query,
-                                        mode: "insensitive",
-                                    },
-                                },
-                                {
-                                    subContacts: {
-                                        some: {
-                                            firstName: {
-                                                contains: input.query,
-                                                mode: "insensitive",
-                                            },
-                                            deleted: false,
-                                        },
-                                    },
-                                },
-                            ],
+                            name: {
+                                contains: input.query,
+                                mode: "insensitive",
+                            },
                         },
+                        { deleted: false },
                     ],
                 },
                 include: {
@@ -79,21 +65,25 @@ export const contactsRouter = t.router({
                 },
             });
         }),
-    getOne: authedProcedure
-        .input(contactSchema().baseBooleans.partial().merge(idSchema))
-        .query(async ({ ctx, input }) => {
-            const { id, name = false, notes = false } = input;
-            return await ctx.prisma.contact.findFirst({
-                where: {
-                    id: id,
-                    deleted: false,
-                },
-                select: {
-                    name,
-                    notes,
-                },
-            });
-        }),
+    getName: authedProcedure.input(idSchema).query(async ({ ctx, input }) => {
+        const { id } = input;
+
+        return await ctx.prisma.contact.findFirst({
+            where: {
+                id: id,
+                deleted: false,
+            },
+            select: { name: true },
+        });
+    }),
+    getOne: authedProcedure.input(idSchema).query(async ({ ctx, input }) => {
+        return await ctx.prisma.contact.findFirst({
+            where: {
+                id: input.id,
+                deleted: false,
+            },
+        });
+    }),
     createContact: authedProcedure
         .input(
             contactSchema().create.extend({
@@ -133,9 +123,6 @@ export const contactsRouter = t.router({
     createContactAndProfile: authedProcedure
         .input(
             contactSchema().create.extend({
-                subContact: subContactSchema().create.omit({
-                    contactId: true,
-                }),
                 profile: profileSchema()
                     .create.omit({ contactId: true, workspaceId: true })
                     .optional(),
@@ -143,7 +130,7 @@ export const contactsRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const { subContact, profile, ...contactData } = input;
+            const { profile, ...contactData } = input;
 
             return await ctx.prisma.contact.create({
                 data: {
@@ -159,11 +146,6 @@ export const contactsRouter = t.router({
                                   workspaceId: input.workspaceId,
                               }
                             : undefined,
-                    },
-                    subContacts: {
-                        create: {
-                            ...subContact,
-                        },
                     },
                 },
                 include: {

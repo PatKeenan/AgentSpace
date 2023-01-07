@@ -228,7 +228,7 @@ export const AppointmentModal = (props: {
             {addContactFormOpen ? (
                 <QuickAddContactFrom
                     defaultName={contactInput.state}
-                    setDisplayName={contactInput.setState}
+                    setName={contactInput.setState}
                     workspaceId={workspaceId as string}
                     onCancel={() => setAddContactFormOpen(false)}
                     onSuccessCallback={(data) =>

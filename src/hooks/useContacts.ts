@@ -10,6 +10,7 @@ export const useContacts = () => {
         getAll: contacts.getAll.useQuery,
         search: contacts.search.useQuery,
         invalidateGetAll: utils.contacts.getAll.invalidate,
+        getName: contacts.getName.useQuery,
         getOne: contacts.getOne.useQuery,
         createContact: contacts.createContact.useMutation,
         createContactAndProfile: contacts.createContactAndProfile.useMutation,

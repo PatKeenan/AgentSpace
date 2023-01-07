@@ -13,11 +13,20 @@ export const idSchema = z.object({
  *
  */
 
+export const sharedContactDetailsSchema = z.object({
+    firstName: z.string().trim().min(2, errMsg("First Name", "greater", 2)),
+    lastName: z.string().optional(),
+    phoneNumber: z.string().trim().optional(),
+    email: z.string().trim().email().optional().or(z.literal("")),
+});
+
 export const contactSchema = () => {
-    const base = z.object({
-        name: z.string().trim().min(2, errMsg("Display Name", "greater", 2)),
-        notes: z.string().trim().optional().or(z.literal("")),
-    });
+    const base = z
+        .object({
+            name: z.string().trim().min(2, errMsg("Name", "greater", 2)),
+            notes: z.string().trim().optional().or(z.literal("")),
+        })
+        .merge(sharedContactDetailsSchema.partial());
     const baseBooleans = z.object({
         name: z.boolean(),
         notes: z.boolean(),
@@ -48,16 +57,11 @@ export type ContactSchema = {
 export const subContactSchema = () => {
     const base = z
         .object({
-            firstName: z
-                .string()
-                .trim()
-                .min(2, errMsg("First Name", "greater", 2)),
-            lastName: z.string().optional(),
-            phoneNumber: z.string().trim().optional(),
-            email: z.string().trim().email().optional().or(z.literal("")),
             contactId: z.string(),
+            note: z.string().trim().optional().or(z.literal("")),
         })
-        .merge(idSchema);
+        .merge(idSchema)
+        .merge(sharedContactDetailsSchema);
 
     const create = base.omit({ id: true });
 

@@ -3,7 +3,7 @@ import { Button } from "components-common/Button";
 import { InputGroup } from "components-common/InputGroup";
 import { Modal } from "components-common/Modal";
 import { ContactFormTextArea } from "components-core/create-contact/create-contact-components";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import {
     DefaultProfileDataType,
     useContactDetailUi,
@@ -29,7 +29,7 @@ import { PROFILE_TYPES } from "@prisma/client";
 import { ModalTitle } from "components-common/ModalTitle";
 import { SubRouter } from "components-common/SubRouter";
 
-export const ContactDetailOverviewModal = () => {
+export const ContactDetailModal = () => {
     const { modal, resetModal } = useContactDetailUi();
     return (
         <Modal
@@ -74,7 +74,7 @@ const EditContactForm = () => {
                 { ...data, id: id as string },
                 {
                     onSuccess: (data) => {
-                        utils.getOne.invalidate({ id: data.id });
+                        utils.getName.invalidate({ id: data.id });
                         resetModal();
                     },
                 }
