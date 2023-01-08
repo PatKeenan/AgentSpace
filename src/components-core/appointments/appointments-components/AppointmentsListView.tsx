@@ -1,28 +1,17 @@
 import {
-    CheckCircleIcon,
     ChevronRightIcon,
     MagnifyingGlassIcon,
-    PaperClipIcon,
-    PlusIcon,
 } from "@heroicons/react/20/solid";
 import { AppointmentStatus } from "@prisma/client";
 import clsx from "clsx";
-import { Button, ButtonLink, IconButton } from "components-common/Button";
+import { Button, IconButton } from "components-common/Button";
 import { NextLink } from "components-common/NextLink";
 import { Select } from "components-common/Select";
-import { Tag } from "components-common/Tag";
 import { useAppointments } from "hooks/useAppointments";
 import { useWorkspace } from "hooks/useWorkspace";
-import Link from "next/link";
-import { appointmentStatusOptions } from "utils/appointmentStatusOptions";
 import { formatStringToDate } from "utils/formatDate";
 import { formatTime } from "utils/formatTime";
-import {
-    isEmpty,
-    statusColorsLight,
-    statusDisplay,
-    statusOptions,
-} from "../appointments-utils";
+import { statusColorsLight, statusDisplay } from "../appointments-utils";
 
 const filterOptions = [
     { id: "1", name: "Address" },

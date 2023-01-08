@@ -44,16 +44,14 @@ export const AppointmentsContainer: NextPageExtended = () => {
     return (
         <>
             {modal.state && <AppointmentModal invalidate={invalidate} />}
-            <div className="hidden lg:block">
-                <Breadcrumb
-                    items={[
-                        {
-                            title: "Appointments",
-                            href: `/workspace/${router.query.workspaceId}/appointments`,
-                        },
-                    ]}
-                />
-            </div>
+            <Breadcrumb
+                items={[
+                    {
+                        title: "Appointments",
+                        href: `/workspace/${router.query.workspaceId}/appointments`,
+                    },
+                ]}
+            />
 
             <PageBody
                 fullHeight={activeTab == "View By Day"}

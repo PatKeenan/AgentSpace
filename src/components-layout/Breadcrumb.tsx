@@ -26,7 +26,7 @@ export const Breadcrumb = (
     return (
         <nav
             className={clsx(
-                "flex px-4 pt-2 sm:px-6 md:py-4 lg:px-8",
+                "hidden px-4 pt-2 sm:px-6 md:py-4 lg:flex lg:px-8",
                 className
             )}
             aria-label="Breadcrumb"

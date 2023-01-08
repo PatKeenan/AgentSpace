@@ -44,6 +44,7 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
                     },
                 ]}
             />
+
             <ContactDetailModal />
             <PageBody extraClassName="max-w-8xl px-2 md:px-4 lg:px-0 mt-4 lg:mt-0">
                 <SectionHeading>

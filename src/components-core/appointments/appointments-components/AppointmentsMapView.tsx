@@ -116,7 +116,7 @@ const AppointmentsMapView = () => {
             </div>
 
             {/* Right Side */}
-            <div className="order-1 flex flex-shrink-0 flex-col lg:order-2 lg:col-span-6">
+            <div className="order-1 mt-4 flex flex-shrink-0 flex-col sm:mt-0 lg:order-2 lg:col-span-6">
                 <div className="mb-1 w-full border-b border-gray-200 lg:mb-4 lg:border-b-0">
                     <Calendar
                         activeMonth={activeMonth}
@@ -150,7 +150,7 @@ const AppointmentsMapView = () => {
                         headerClasses="px-4 lg:px-0"
                     />
                 </div>
-                <div className="h-[200px] w-full md:h-[300px] lg:h-2/3">
+                <div className=" h-[200px] w-full md:h-[300px] lg:h-2/3">
                     <React.Suspense fallback={""}>
                         <AppointmentsMap appointments={sortedByTime()} />
                     </React.Suspense>
