@@ -3,10 +3,11 @@ import {
     ChevronRightIcon,
     MagnifyingGlassIcon,
     PaperClipIcon,
+    PlusIcon,
 } from "@heroicons/react/20/solid";
 import { AppointmentStatus } from "@prisma/client";
 import clsx from "clsx";
-import { Button, ButtonLink } from "components-common/Button";
+import { Button, ButtonLink, IconButton } from "components-common/Button";
 import { NextLink } from "components-common/NextLink";
 import { Select } from "components-common/Select";
 import { Tag } from "components-common/Tag";
@@ -77,7 +78,7 @@ const AppointmentListView = () => {
                             />
                         </div>
                     </div>
-                    <div className="col-span-2 col-start-6 col-end-8">
+                    {/* <div className="col-span-2 col-start-6 col-end-8">
                         <Select
                             label="Sort"
                             direction="row"
@@ -87,11 +88,11 @@ const AppointmentListView = () => {
                             selected={filterOptions[0]}
                             setSelected={() => alert()}
                         />
-                    </div>
+                    </div> */}
                 </div>
             </div>
-            <div className="mt-2 grid grid-cols-12  gap-4">
-                <div className="col-span-9  overflow-hidden  bg-white sm:rounded-md">
+            <div className="mt-2 block grid-cols-12 gap-4 lg:grid">
+                <div className="col-span-9 overflow-hidden  bg-white sm:rounded-md">
                     <ul className="w-full space-y-2 pb-4">
                         {appointments?.map((i) => (
                             <li key={i.id} className="">
@@ -115,70 +116,15 @@ const AppointmentListView = () => {
                                                     : `${p.contact.name}`
                                             )
                                             .join(", ")}
+                                        notes={i.note || ""}
+                                        address_2={i.address_2 || ""}
                                     />
-
-                                    {/* <div className="flex items-center px-4 py-4 sm:px-6">
-                                        <div className="flex min-w-0 flex-1 items-center">
-                                            <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
-                                                <div>
-                                                    <p className="truncate text-sm font-medium text-gray-900">
-                                                        {i.address}
-                                                    </p>
-                                                    <p className="mt-2 flex items-center text-sm text-gray-500">
-                                                        <span className="truncate">
-                                                            {i.contacts
-                                                                .flatMap((p) =>
-                                                                    p.profile
-                                                                        ? `${p.contact.name} - ${p.profile.name}`
-                                                                        : `${p.contact.name}`
-                                                                )
-                                                                .join(", ")}
-                                                        </span>
-                                                    </p>
-                                                </div>
-                                                <div className="hidden md:block">
-                                                    <div>
-                                                        <p className="text-sm text-gray-900">
-                                                            <time
-                                                                dateTime={
-                                                                    i.date
-                                                                }
-                                                            >
-                                                                {i.date}
-                                                                {timeDisplay(
-                                                                    i.startTime,
-                                                                    i.endTime
-                                                                ) &&
-                                                                    ` at ${timeDisplay(
-                                                                        i.startTime,
-                                                                        i.endTime
-                                                                    )}`}
-                                                            </time>
-                                                        </p>
-                                                        <p className="mt-2 flex items-center text-sm text-gray-500">
-                                                            <div
-                                                                className="mr-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-green-400"
-                                                                aria-hidden="true"
-                                                            />
-                                                            {i.status}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <ChevronRightIcon
-                                                className="h-5 w-5 text-gray-400"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                    </div> */}
                                 </NextLink>
                             </li>
                         ))}
                     </ul>
                     <nav
-                        className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+                        className="flex items-center justify-between border-t border-gray-200 bg-white py-3 "
                         aria-label="Pagination"
                     >
                         <div className="hidden sm:block">
@@ -201,11 +147,9 @@ const AppointmentListView = () => {
                         </div>
                     </nav>
                 </div>
-                <div className="col-span-3">
+                <div className="hidden md:col-span-3 lg:block">
                     <div>
-                        <h5 className="border-b pb-1 text-gray-700">
-                            Appointment Status
-                        </h5>
+                        <h5 className="border-b pb-1 text-gray-700">Status</h5>
                         <div className="mt-4 flex items-center space-x-2 text-sm text-gray-600">
                             <input
                                 type="checkbox"
@@ -253,68 +197,108 @@ const statusColors: { [Key in AppointmentStatus]: string } = {
     NO_STATUS: "bg-gray-100 text-gray-800",
     PENDING: "bg-yellow-100 text-yellow-800",
 };
+
 const Card = ({
     address,
+    address_2,
     date,
     time,
     status,
     contacts,
+    notes,
 }: {
     address?: string;
+    address_2?: string;
     date?: string;
     time?: string;
     status?: AppointmentStatus;
     contacts?: string;
+    notes?: string;
 }) => {
     const statusDisplay = statusOptions.find((a) => a.value == status)?.display;
 
     return (
-        <div className="group block px-4 py-6 text-gray-600 hover:text-gray-800">
-            <div className="grid max-w-2xl grid-cols-3 gap-4">
-                <div className=" col-span-2 block ">
-                    <h4 className="text-sm font-medium">Address</h4>
-                    <p className="mt-1 break-words text-sm">
-                        {thisOrThat(address, "--")}
-                    </p>
-                </div>
-                <div className="col-span-1 block">
-                    <h4 className="text-sm font-medium">Date</h4>
-                    <p className="mt-1 truncate text-sm">
-                        {date ? formatStringToDate(date)?.toDateString() : "--"}
-                    </p>
-                </div>
-            </div>
-
-            <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
-                <div className="col-span-2">
-                    <h4 className=" text-sm font-medium">Time</h4>
-                    <p className="mt-1 truncate text-sm">
-                        {thisOrThat(time, "--")}
-                    </p>
-                </div>
-                <div className="col-span-1">
-                    <h4 className=" text-sm font-medium">Status</h4>
-                    <p className="mt-1 truncate text-sm capitalize">
-                        <span
+        <div className="group block p-6 text-gray-500  hover:text-gray-800">
+            <div className="flex flex-1">
+                <div className="flex-grow">
+                    <div className="mb-3 -mt-2.5 w-full">
+                        <p
                             className={clsx(
                                 status && statusColors[status],
-                                "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
+                                "-ml-2 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize"
                             )}
                         >
                             {thisOrThat(statusDisplay, "--")}
-                        </span>
-                    </p>
+                        </p>
+                    </div>
+                    <div className="grid max-w-2xl grid-cols-3 gap-4">
+                        <div className=" col-span-2 block ">
+                            <h4 className="text-sm font-medium text-gray-700">
+                                Address
+                            </h4>
+                            <p className="mt-1 max-w-sm truncate text-sm">
+                                {thisOrThat(address, "--")}
+                            </p>
+                        </div>
+                        <div className="col-span-1 block ">
+                            <h4 className="text-sm font-medium text-gray-700">
+                                Building/Apt
+                            </h4>
+                            <p className="mt-1 break-words text-sm">
+                                {thisOrThat(address_2, "--")}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
+                        <div className="col-span-2">
+                            <h4 className=" text-sm font-medium text-gray-700">
+                                Time
+                            </h4>
+                            <p className="mt-1 truncate text-sm">
+                                {thisOrThat(time, "--")}
+                            </p>
+                        </div>
+                        <div className="col-span-1 block">
+                            <h4 className="text-sm font-medium text-gray-700">
+                                Date
+                            </h4>
+                            <p className="mt-1 truncate text-sm">
+                                {date
+                                    ? formatStringToDate(date)?.toDateString()
+                                    : "--"}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
+                        <div className="col-span-2">
+                            <h4 className=" text-sm font-medium text-gray-700">
+                                Contacts
+                            </h4>
+                            <p className="mt-1 truncate text-sm">
+                                {thisOrThat(contacts, "--")}
+                            </p>
+                        </div>
+                        <div className="col-span-1 block">
+                            <h4 className="text-sm font-medium text-gray-700">
+                                Notes
+                            </h4>
+                            <p className="mt-1 truncate text-sm ">
+                                {thisOrThat(notes, "--")}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div className="-mr-3 flex flex-shrink-0">
+                    <div className="my-auto">
+                        <IconButton
+                            title="View"
+                            icon={ChevronRightIcon}
+                            textColor="text-gray-600 group-hover:text-gray-700"
+                        />
+                    </div>
                 </div>
             </div>
-
-            {contacts && (
-                <div className="mt-2">
-                    <h4 className=" text-sm font-medium">Contacts</h4>
-                    <p className="mt-1 truncate text-sm">
-                        {thisOrThat(contacts, "--")}
-                    </p>
-                </div>
-            )}
         </div>
     );
 };
