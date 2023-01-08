@@ -11,10 +11,9 @@ import { AppointmentFormType } from "./AppointmentModal";
 import { useAppointments } from "hooks/useAppointments";
 import { Button } from "components-common/Button";
 import { Select } from "components-common/Select";
-import { statusOptions } from "../appointments-utils";
+import { statusColorsDark, statusOptions } from "../appointments-utils";
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
-import { format } from "date-fns";
 import { formatDate } from "utils/formatDate";
 
 export const AppointmentCard = (props: {
@@ -149,7 +148,11 @@ export const AppointmentCard = (props: {
                         <div
                             aria-hidden="true"
                             className={clsx(
-                                getStatusColor(),
+                                status
+                                    ? statusColorsDark[
+                                          status.value as AppointmentStatus
+                                      ]
+                                    : statusColorsDark.NO_STATUS,
                                 "absolute top-[40%] -left-4 h-2 w-2 rounded-full"
                             )}
                         />

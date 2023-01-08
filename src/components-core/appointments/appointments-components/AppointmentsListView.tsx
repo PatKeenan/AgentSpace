@@ -17,7 +17,12 @@ import Link from "next/link";
 import { appointmentStatusOptions } from "utils/appointmentStatusOptions";
 import { formatStringToDate } from "utils/formatDate";
 import { formatTime } from "utils/formatTime";
-import { isEmpty, statusOptions } from "../appointments-utils";
+import {
+    isEmpty,
+    statusColorsLight,
+    statusDisplay,
+    statusOptions,
+} from "../appointments-utils";
 
 const filterOptions = [
     { id: "1", name: "Address" },
@@ -190,14 +195,6 @@ function thisOrThat<T, U>(arg1: T, arg2: U) {
     return arg1;
 }
 
-const statusColors: { [Key in AppointmentStatus]: string } = {
-    CONFIRMED: "bg-green-100 text-green-800",
-    CANCELED: "bg-red-100 text-red-800",
-    DENIED: "bg-red-100 text-red-800",
-    NO_STATUS: "bg-gray-100 text-gray-800",
-    PENDING: "bg-yellow-100 text-yellow-800",
-};
-
 const Card = ({
     address,
     address_2,
@@ -215,8 +212,6 @@ const Card = ({
     contacts?: string;
     notes?: string;
 }) => {
-    const statusDisplay = statusOptions.find((a) => a.value == status)?.display;
-
     return (
         <div className="group block p-6 text-gray-500  hover:text-gray-800">
             <div className="flex flex-1">
@@ -224,11 +219,11 @@ const Card = ({
                     <div className="mb-3 -mt-2.5 w-full">
                         <p
                             className={clsx(
-                                status && statusColors[status],
+                                status && statusColorsLight[status],
                                 "-ml-2 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize"
                             )}
                         >
-                            {thisOrThat(statusDisplay, "--")}
+                            {thisOrThat(statusDisplay(status), "--")}
                         </p>
                     </div>
                     <div className="grid max-w-2xl grid-cols-3 gap-4">

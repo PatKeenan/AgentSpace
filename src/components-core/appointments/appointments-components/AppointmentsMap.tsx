@@ -136,7 +136,7 @@ export const AppointmentsMap = ({
                 height: "100%",
                 zIndex: 0,
             }}
-            className="rounded-md"
+            className="lg:rounded-md"
             ref={mapRef}
         >
             <TileLayer

@@ -166,7 +166,7 @@ export const Calendar = (props: CalendarProps) => {
                 })}
             </ul>
             {/* Desktop */}
-            <div className="hidden items-center p-2 text-gray-900 lg:flex">
+            <div className="hidden items-center px-2 pt-2 text-gray-900 lg:flex">
                 <button
                     type="button"
                     className="-m-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"

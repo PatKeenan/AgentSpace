@@ -97,7 +97,7 @@ export const AppointmentDetailContainer = () => {
                             appointments={appointments}
                         />
                     </div>
-                    <div className="relative  mt-4 h-1/3 lg:col-start-8 lg:col-end-13 lg:h-full">
+                    <div className="relative mt-4 h-1/3 lg:col-start-8 lg:col-end-13 lg:h-full">
                         <AppointmentDetailMap appointments={appointments} />
                     </div>
                 </div>
