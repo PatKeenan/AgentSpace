@@ -12,6 +12,7 @@ import { Button, IconButton } from "components-common/Button";
 import { useContactDetailUi } from "./useContactDetailUi";
 import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
 import { ContactSchema } from "server/schemas";
+import { ProfilesList } from "./contact-detail-components/ProfilesList";
 
 export const ContactDetailOverviewContainer: NextPageExtended = () => {
     const router = useRouter();
@@ -142,7 +143,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                 />
                             )}
 
-                            <ContactProfilesList className="mt-5 pt-5" />
+                            {/*    <ContactProfilesList className="mt-5 pt-5" /> */}
                         </div>
                     </div>
                     {/* Sidebar */}
@@ -152,7 +153,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                 <ContactAppointmentList
                                     contactId={id as string}
                                 />
-                                {/*   <ContactTagsList contactId={id as string} /> */}
+                                <ProfilesList contactId={id as string} />
                             </React.Fragment>
                         ) : null}
                     </div>

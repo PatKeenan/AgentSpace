@@ -366,7 +366,7 @@ const AddProfileForm = () => {
                 {
                     onSuccess: (data) =>
                         utils.getManyForContact
-                            .invalidate({ contactId: data.contactId, take: 5 })
+                            .invalidate({ contactId: data.contactId, take: 3 })
                             .then(() => resetModal()),
                 }
             );
@@ -380,7 +380,7 @@ const AddProfileForm = () => {
                 {
                     onSuccess: (data) =>
                         utils.getManyForContact
-                            .invalidate({ contactId: data.contactId, take: 5 })
+                            .invalidate({ contactId: data.contactId, take: 3 })
                             .then(() => resetModal()),
                 }
             );

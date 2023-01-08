@@ -11,6 +11,8 @@ type SidebarListProps<T> = {
     buttonTitle?: string;
     noDataMessage?: string;
     href?: string;
+    action?: React.ReactNode;
+    titleIcon?: React.ReactNode;
 };
 
 export function SidebarList<T extends { id: string }>(
@@ -24,11 +26,17 @@ export function SidebarList<T extends { id: string }>(
         renderItem,
         noDataMessage,
         href,
+        action,
+        titleIcon,
     } = props;
 
     return (
         <GridCard>
-            <GridSectionTitle title={title} />
+            <GridSectionTitle
+                title={title}
+                actions={action}
+                titleIcon={titleIcon}
+            />
 
             {data && data.length > 0 ? (
                 <ul

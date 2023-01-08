@@ -24,19 +24,15 @@ export const profileRouter = t.router({
                     contactId: contactId,
                     deleted: false,
                 },
+
                 include: {
-                    appointments: {
-                        orderBy: {
-                            createdAt: "desc",
-                        },
-                        take: 5,
-                    },
                     _count: {
                         select: {
                             appointments: true,
                         },
                     },
                 },
+
                 orderBy: [{ active: "desc" }, { createdAt: "desc" }],
                 take: take,
             });

@@ -67,9 +67,10 @@ type IconButtonProps = {
     ) => JSX.Element;
     title: string;
     size?: keyof typeof iconSize;
+    textColor?: string;
 } & Omit<React.ComponentProps<"button">, "title">;
 export const IconButton = (props: IconButtonProps) => {
-    const { icon: Icon, size = "md", title, ...htmlProps } = props;
+    const { icon: Icon, size = "md", title, textColor, ...htmlProps } = props;
 
     return (
         <button
@@ -81,7 +82,9 @@ export const IconButton = (props: IconButtonProps) => {
             <Icon
                 className={clsx(
                     iconSize[size],
-                    "text-gray-300 group-hover:text-gray-400"
+                    textColor
+                        ? textColor
+                        : "text-gray-300 group-hover:text-gray-400"
                 )}
                 aria-hidden="true"
             />
