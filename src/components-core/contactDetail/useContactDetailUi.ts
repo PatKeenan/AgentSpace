@@ -12,29 +12,31 @@ export type DefaultProfileDataType = Profile & {
     };
 };
 
+type FormOptions = "contact" | "subContact" | "profile" | "generalInfo";
+
+export type DefaultDataType =
+    | Pick<ContactSchema["base"], "name">
+    | SubContactSchema["update"]
+    | Omit<ContactSchema["base"], "name">
+    | (Profile & {
+          appointments: ContactOnAppointment[];
+          _count: {
+              appointments: number;
+          };
+      });
+
 export type ContactDetailUiType = {
     modal: {
         title?: string;
         state?: boolean;
-        form?: "contact" | "subContact" | "profile";
-        defaultData?:
-            | SubContactSchema["update"]
-            | Omit<ContactSchema["base"], "name">
-            | DefaultProfileDataType;
+        form?: FormOptions;
+        defaultData?: DefaultDataType;
     };
     setModal: (opts: {
         title?: string;
         state?: boolean;
-        form?: "contact" | "subContact" | "profile";
-        defaultData?:
-            | SubContactSchema["update"]
-            | Omit<ContactSchema["base"], "name">
-            | (Profile & {
-                  appointments: ContactOnAppointment[];
-                  _count: {
-                      appointments: number;
-                  };
-              });
+        form?: FormOptions;
+        defaultData?: DefaultDataType;
     }) => void;
     resetModal: () => void;
 };

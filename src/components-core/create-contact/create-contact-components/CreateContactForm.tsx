@@ -129,7 +129,7 @@ export const CreateContactForm = () => {
                         ) : null
                     }
                 >
-                    <div className="">
+                    <div className="space-y-6">
                         <ContactFormInput
                             required
                             label="Full Name"
@@ -141,6 +141,7 @@ export const CreateContactForm = () => {
                         />
                         <ContactFormInput
                             label="First Name"
+                            required
                             className="max-w-xs "
                             {...register("firstName")}
                             errorMessage={
@@ -156,17 +157,18 @@ export const CreateContactForm = () => {
                                 errors["lastName"] && errors["lastName"].message
                             }
                         />
+
                         <ContactFormInput
                             label="Email"
                             {...register(`email`, {
                                 required: false,
                             })}
-                            type="email"
                             className="max-w-lg"
                             errorMessage={
                                 errors["email"] && errors["email"].message
                             }
                         />
+
                         <ContactFormInput
                             label="Phone Number"
                             {...register(`phoneNumber`)}
@@ -201,7 +203,7 @@ export const CreateContactForm = () => {
                                     receive mail."
                     className={"pt-6"}
                 >
-                    <div className="">
+                    <div className="space-y-6">
                         <ContactFormInput
                             label="Street address"
                             name="streetAddress"
@@ -264,7 +266,7 @@ export const CreateContactForm = () => {
                             </button>
                         }
                     >
-                        <div className="">
+                        <div className="space-y-6">
                             <ContactFormInput
                                 label="First Name"
                                 {...register(
@@ -297,7 +299,6 @@ export const CreateContactForm = () => {
                                 {...register(`subContactFields.${idx}.email`, {
                                     required: false,
                                 })}
-                                type="email"
                                 className="max-w-lg"
                                 errorMessage={
                                     errors.subContactFields &&

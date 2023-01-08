@@ -58,7 +58,7 @@ export function Autocomplete<
                     <Combobox.Label
                         className={clsx(
                             direction == "row" && "pt-2",
-                            "block text-sm font-medium text-gray-700"
+                            "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
                         )}
                     >
                         {label}

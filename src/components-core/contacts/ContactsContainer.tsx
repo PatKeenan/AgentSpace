@@ -1,4 +1,4 @@
-import { Button, ButtonLink, TransitionDelay } from "components-common";
+import { Button, ButtonLink, NoData, TransitionDelay } from "components-common";
 import { SectionHeading } from "components-layout/SectionHeading";
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { Breadcrumb } from "components-layout/Breadcrumb";
@@ -11,7 +11,7 @@ import clsx from "clsx";
 
 import type { NextPageExtended } from "types/index";
 import type { Contact, SubContact } from "@prisma/client";
-import { PlusIcon } from "@heroicons/react/20/solid";
+import { PlusIcon, UserGroupIcon } from "@heroicons/react/20/solid";
 
 export const ContactsContainer: NextPageExtended = () => {
     const [indeterminate, setIndeterminate] = useState(false);
@@ -46,7 +46,10 @@ export const ContactsContainer: NextPageExtended = () => {
             isIndeterminate =
                 selectedContacts.length > 0 &&
                 selectedContacts.length < contactsQuery.data.length;
-            setChecked(selectedContacts.length === contactsQuery.data.length);
+            setChecked(
+                selectedContacts.length !== 0 &&
+                    selectedContacts.length === contactsQuery.data.length
+            );
             setIndeterminate(isIndeterminate);
         }
         if (checkbox.current) {
@@ -124,13 +127,22 @@ export const ContactsContainer: NextPageExtended = () => {
                     },
                 ]}
             />
-            <PageBody>
+            <PageBody
+                fullHeight={selectedContacts && selectedContacts.length == 0}
+            >
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>Contacts</SectionHeading.Title>
                     </SectionHeading.TitleContainer>
                 </SectionHeading>
-                <div className="mt-7">
+
+                <div
+                    className={clsx(
+                        selectedContacts && selectedContacts.length == 0
+                            ? "flex flex-1 flex-grow flex-col"
+                            : "mt-7"
+                    )}
+                >
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
                             <p className="mt-2 text-sm text-gray-700">
@@ -138,7 +150,8 @@ export const ContactsContainer: NextPageExtended = () => {
                                 including their name, email and phone number.
                             </p>
                         </div>
-                        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+
+                        <div className="mt-4 mr-1 sm:mt-0 sm:ml-16 sm:flex-none">
                             <ButtonLink
                                 variant="primary"
                                 href={`/workspace/${workspace.id}/contacts/create`}
@@ -151,7 +164,7 @@ export const ContactsContainer: NextPageExtended = () => {
                             </ButtonLink>
                         </div>
                     </div>
-                    <TransitionDelay isLoading={contactsQuery.isLoading}>
+                    {contactsQuery.data && contactsQuery?.data.length > 0 ? (
                         <div className="mt-8 flex flex-col">
                             <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -159,28 +172,23 @@ export const ContactsContainer: NextPageExtended = () => {
                                         {selectedContacts &&
                                             selectedContacts.length > 0 && (
                                                 <div className="absolute top-0 left-12 flex h-12 items-center space-x-3 bg-gray-50 sm:left-16">
-                                                    <Button
-                                                        variant="outlined"
-                                                        className="text-xs"
-                                                    >
-                                                        Bulk edit
-                                                    </Button>
-                                                    <Button
-                                                        variant="outlined"
-                                                        className="text-xs"
-                                                        onClick={() =>
-                                                            handleDelete()
-                                                        }
-                                                    >
-                                                        Delete{" "}
-                                                        {selectedContacts.length !==
-                                                            0 &&
-                                                        selectedContacts.length ==
+                                                    {selectedContacts.length !==
+                                                        0 && (
+                                                        <Button
+                                                            variant="outlined"
+                                                            className="text-xs"
+                                                            onClick={() =>
+                                                                handleDelete()
+                                                            }
+                                                        >
+                                                            Delete{" "}
+                                                            {selectedContacts.length ==
                                                             contactsQuery.data
                                                                 ?.length
-                                                            ? "all"
-                                                            : `(${selectedContacts.length})`}
-                                                    </Button>
+                                                                ? "all"
+                                                                : `(${selectedContacts.length})`}
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             )}
 
@@ -381,7 +389,15 @@ export const ContactsContainer: NextPageExtended = () => {
                                 </div>
                             </div>
                         </div>
-                    </TransitionDelay>
+                    ) : (
+                        <div className="flex h-full flex-grow flex-col items-center justify-center">
+                            <NoData
+                                title="No Contacts"
+                                icon={UserGroupIcon}
+                                message="Start by adding one now."
+                            />
+                        </div>
+                    )}
                 </div>
             </PageBody>
         </>

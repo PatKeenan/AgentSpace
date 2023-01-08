@@ -30,6 +30,7 @@ import { SubRouter } from "components-common/SubRouter";
 
 export const ContactDetailModal = () => {
     const { modal, resetModal } = useContactDetailUi();
+
     return (
         <Modal
             open={modal.state || false}
@@ -48,7 +49,67 @@ export const ContactDetailModal = () => {
                 component={<AddProfileForm />}
                 active={modal?.form == "profile"}
             />
+            <SubRouter
+                component={<EditGeneralInfoForm />}
+                active={modal?.form == "generalInfo"}
+            />
         </Modal>
+    );
+};
+
+const EditGeneralInfoForm = () => {
+    const { modal, resetModal } = useContactDetailUi();
+    const router = useRouter();
+    const id = router.query.contactId;
+    const { update, utils } = useContacts();
+    const { mutate: updateContact } = update();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Pick<ContactSchema["base"], "name">>({
+        resolver: zodResolver(contactSchema().base.pick({ name: true })),
+        defaultValues:
+            modal.form == "contact" || modal.form == "generalInfo"
+                ? (modal.defaultData as Pick<ContactSchema["base"], "name">)
+                : undefined,
+    });
+
+    const onSubmit = handleSubmit(async (data) => {
+        if (id) {
+            updateContact(
+                { ...data, id: id as string },
+                {
+                    onSuccess: (data) => {
+                        utils.getName.invalidate({ id: data.id });
+                        resetModal();
+                    },
+                }
+            );
+        }
+    });
+
+    return (
+        <form onSubmit={onSubmit}>
+            <ModalTitle>Edit General Info</ModalTitle>
+
+            <InputGroup
+                label="Full Name"
+                {...register("name")}
+                direction="row"
+                errorMessage={errors && errors.name && errors.name.message}
+            />
+
+            <div className="mt-6 flex justify-end space-x-3">
+                <Button variant="outlined" onClick={resetModal}>
+                    Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                    Save
+                </Button>
+            </div>
+        </form>
     );
 };
 

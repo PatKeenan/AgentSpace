@@ -128,7 +128,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                         Notes
                                     </dt>
                                     <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                                        <span className="max-h-[175px] flex-grow overflow-auto whitespace-pre">
+                                        <span className="max-h-[200px] flex-grow flex-wrap overflow-auto whitespace-pre-line">
                                             {contactQuery?.notes || "--"}
                                         </span>
                                     </dd>

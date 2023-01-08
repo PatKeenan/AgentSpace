@@ -285,7 +285,7 @@ export const AppointmentModal = (props: {
 
                     {/* --- Address --- */}
                     <div className="grid w-full grid-cols-8 lg:gap-2">
-                        <div className="z-[99] col-span-8 mt-2 lg:col-span-6">
+                        <div className="z-[99] col-span-8 lg:col-span-6">
                             <Autocomplete
                                 required
                                 label="Address"
@@ -328,7 +328,7 @@ export const AppointmentModal = (props: {
                                 addOption={handleAddAddressOption}
                             />
                         </div>
-                        <div className="col-span-8 mt-2 lg:col-span-2 lg:mt-0">
+                        <div className="col-span-8 lg:col-span-2 ">
                             <InputGroup
                                 name="building"
                                 label="Building/Apt"
@@ -353,7 +353,7 @@ export const AppointmentModal = (props: {
                         >
                             {({ open }) => (
                                 <>
-                                    <Combobox.Label className="block text-sm font-medium text-gray-700">
+                                    <Combobox.Label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
                                         Contacts
                                     </Combobox.Label>
                                     <div

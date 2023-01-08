@@ -33,8 +33,14 @@ export function MultiAutoComplete<
     } = props;
 
     return (
-        <Combobox as="div" value={selected} onChange={onSelect} multiple>
-            <Combobox.Label className="block text-sm font-medium text-gray-700">
+        <Combobox
+            as="div"
+            value={selected}
+            onChange={onSelect}
+            multiple
+            className={clsx("sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 ")}
+        >
+            <Combobox.Label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
                 <span>{label}</span>
                 {pluralOrSingle ? <span>&#40;s&#41;</span> : null}
             </Combobox.Label>

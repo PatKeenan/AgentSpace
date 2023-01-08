@@ -1,4 +1,5 @@
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 import Link from "next/link";
 
 export type BreadcrumbItem = {
@@ -9,8 +10,10 @@ export type BreadcrumbType = {
     items: BreadcrumbItem[];
 };
 
-export const Breadcrumb = (props: BreadcrumbType) => {
-    const { items } = props;
+export const Breadcrumb = (
+    props: BreadcrumbType & React.ComponentProps<"nav">
+) => {
+    const { items, className, ...htmlProps } = props;
 
     const isActiveItem = (item: BreadcrumbItem) => {
         const lastItem = items[items.length - 1];
@@ -22,8 +25,12 @@ export const Breadcrumb = (props: BreadcrumbType) => {
 
     return (
         <nav
-            className="flex px-4 pt-2 sm:px-6 md:py-4 lg:px-8"
+            className={clsx(
+                "flex px-4 pt-2 sm:px-6 md:py-4 lg:px-8",
+                className
+            )}
             aria-label="Breadcrumb"
+            {...htmlProps}
         >
             <ol role="list" className="flex items-center space-x-4">
                 <li>

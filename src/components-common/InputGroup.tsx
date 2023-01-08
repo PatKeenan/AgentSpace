@@ -35,7 +35,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
             <div
                 className={clsx(
                     direction == "row" ? "sm:gap-4" : "gap-0",
-                    "z-0 sm:grid sm:grid-cols-3 sm:items-start sm:pt-5",
+                    "z-0 pb-6 sm:grid sm:grid-cols-3 sm:items-start md:pt-5 md:pb-2",
                     containerClass
                 )}
             >
@@ -96,7 +96,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
                                 direction == "row"
                                     ? "col-span-2 col-start-2"
                                     : "col-span-3",
-                                "absolute mt-0 truncate pt-1 text-red-500"
+                                "absolute truncate text-sm text-red-500 "
                             )}
                         >
                             {errorMessage}

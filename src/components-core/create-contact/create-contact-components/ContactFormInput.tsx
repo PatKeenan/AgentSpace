@@ -29,7 +29,7 @@ export const ContactFormInput = React.forwardRef<HTMLInputElement, InputProps>(
         return (
             <div
                 className={clsx(
-                    "sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:pt-5 sm:first:border-t sm:first:border-gray-200",
+                    "sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:pt-5 ",
                     containerClass
                 )}
             >

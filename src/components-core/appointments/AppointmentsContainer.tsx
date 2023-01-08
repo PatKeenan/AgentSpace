@@ -58,6 +58,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
             <PageBody
                 fullHeight={activeTab == "View By Day"}
                 noMaxWidth
+                noPadding
                 extraClassName="max-w-7xl"
             >
                 <div className="hidden lg:block">
