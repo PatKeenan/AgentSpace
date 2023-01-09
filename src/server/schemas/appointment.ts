@@ -32,3 +32,32 @@ export type ContactOnAppointmentSchemaExtended = z.infer<
 >;
 
 export type AppointmentSchema = z.infer<typeof appointmentSchema>;
+
+const appointmentSortFields = z
+    .enum(["createdAt", "updatedAt", "date"])
+    .optional();
+const appointmentSortOrder = z.enum(["asc", "desc"]).optional();
+
+export const appointmentSortSchema = z.object({
+    field: appointmentSortFields,
+    order: appointmentSortOrder,
+});
+export type AppointmentSortSchema = z.infer<typeof appointmentSortSchema>;
+
+export const appointmentQueryParamSchema = z.object({
+    searchBy: z.enum(["address", "contacts"]),
+    searchQuery: z.string().optional(),
+    statusFilters: z.object({
+        NO_STATUS: z.boolean(),
+        PENDING: z.boolean(),
+        CONFIRMED: z.boolean(),
+        CANCELED: z.boolean(),
+        DENIED: z.boolean(),
+    }),
+    sortBy: appointmentSortFields,
+    sortOrder: appointmentSortOrder,
+});
+
+export type AppointmentQueryParamSchema = z.infer<
+    typeof appointmentQueryParamSchema
+>;

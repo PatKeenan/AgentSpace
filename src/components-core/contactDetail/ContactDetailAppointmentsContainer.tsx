@@ -13,14 +13,6 @@ import { ListViewAppointmentCard } from "components-core/appointments/appointmen
 import { timeDisplay } from "utils/formatTime";
 import * as React from "react";
 
-import { z } from "zod";
-
-export const appointmentSortSchema = z.object({
-    field: z.enum(["createdAt", "updatedAt", "date"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-});
-type AppointmentSortSchema = z.infer<typeof appointmentSortSchema>;
-
 export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
     const [sort, setSort] = React.useState<AppointmentSortSchema>({
         field: "createdAt",
@@ -126,6 +118,10 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
                                             address_2={
                                                 appointment.address_2 || ""
                                             }
+                                            createdAt={formatDate(
+                                                appointment.createdAt,
+                                                "MM/DD/YYYY"
+                                            )}
                                         />
                                     </NextLink>
                                 </li>
@@ -191,6 +187,8 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { TextDropDownMenu } from "components-common/TextDropDownMenu";
 import { Appointment } from "@prisma/client";
+import { formatDate } from "utils/formatDate";
+import { AppointmentSortSchema } from "server/schemas";
 
 const sortOptions = [
     {

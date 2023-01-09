@@ -2,27 +2,77 @@ import { authedProcedure, t } from "../trpc";
 import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 import {
+    appointmentQueryParamSchema,
     appointmentSchema,
+    appointmentSortSchema,
     contactOnAppointmentSchema,
     idSchema,
 } from "server/schemas";
-import { appointmentSortSchema } from "components-core/contactDetail";
+import { AppointmentStatus } from "@prisma/client";
 
 export const appointmentRouter = t.router({
     getAll: authedProcedure
         .input(
-            z.object({
-                workspaceId: z.string(),
-            })
+            z
+                .object({
+                    workspaceId: z.string(),
+                })
+                .merge(appointmentQueryParamSchema)
         )
         .query(async ({ ctx, input }) => {
+            const {
+                searchBy,
+                searchQuery,
+                statusFilters,
+                sortBy = "createdAt",
+                sortOrder = "desc",
+                workspaceId,
+            } = input;
+            const statusFilterKeys = Object.keys(
+                statusFilters
+            ) as AppointmentStatus[];
+            const activeStatusFilters = statusFilterKeys.filter(
+                (key) => statusFilters[key]
+            );
+
             return await ctx.prisma.appointment.findMany({
                 where: {
-                    workspaceId: input.workspaceId,
+                    workspaceId: workspaceId,
                     deleted: false,
+                    address:
+                        searchBy == "address" && searchQuery
+                            ? { contains: searchQuery, mode: "insensitive" }
+                            : undefined,
+                    contacts:
+                        searchBy == "contacts" && searchQuery
+                            ? {
+                                  some: {
+                                      contact: {
+                                          name: {
+                                              contains: searchQuery,
+                                              mode: "insensitive",
+                                          },
+
+                                          deleted: false,
+                                      },
+                                  },
+                              }
+                            : undefined,
+                    status:
+                        activeStatusFilters.length > 0
+                            ? {
+                                  in: activeStatusFilters,
+                              }
+                            : undefined,
                 },
                 include: {
                     contacts: {
+                        where: {
+                            contact: {
+                                deleted: false,
+                            },
+                            deleted: false,
+                        },
                         select: {
                             id: true,
                             contact: {
@@ -41,7 +91,7 @@ export const appointmentRouter = t.router({
                     },
                 },
 
-                orderBy: { createdAt: "desc" },
+                orderBy: { [sortBy]: sortOrder },
             });
         }),
     getAllForContact: authedProcedure

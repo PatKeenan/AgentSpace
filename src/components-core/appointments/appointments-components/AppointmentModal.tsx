@@ -61,9 +61,7 @@ const appointmentReducer = (
     ...newState,
 });
 
-export const AppointmentModal = (props: {
-    invalidate: (date: Date) => void;
-}) => {
+export const AppointmentModal = () => {
     const { resetModal, modal, activeTab } = useAppointmentsUI();
     const [state, setState] = React.useReducer(
         appointmentReducer,

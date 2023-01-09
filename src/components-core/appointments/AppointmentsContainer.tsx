@@ -34,16 +34,16 @@ export const AppointmentsContainer: NextPageExtended = () => {
 
     const utils = trpc.useContext();
 
-    const invalidate = (date: Date) =>
+    /*  const invalidate = (date: Date) =>
         utils.appointment.getByDate.invalidate({
             date: String(date),
             workspaceId: id as string,
-        });
+        }); */
 
     ///////////////////////////////////
     return (
         <>
-            {modal.state && <AppointmentModal invalidate={invalidate} />}
+            {modal.state && <AppointmentModal />}
             <Breadcrumb
                 items={[
                     {

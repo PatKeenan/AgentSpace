@@ -21,6 +21,7 @@ export const ListViewAppointmentCard = ({
     status,
     contacts,
     notes,
+    createdAt,
 }: {
     address?: string;
     address_2?: string;
@@ -29,9 +30,15 @@ export const ListViewAppointmentCard = ({
     status?: AppointmentStatus;
     contacts?: string;
     notes?: string;
+    createdAt?: string;
 }) => {
     return (
-        <div className="group block p-6 text-gray-500  hover:text-gray-800">
+        <div
+            className={clsx(
+                createdAt ? "px-6 pt-6 pb-8 lg:pb-6" : " p-6",
+                "group relative block text-gray-500 hover:text-gray-800"
+            )}
+        >
             <div className="flex flex-1">
                 <div className="flex-grow">
                     <div className="mb-3 -mt-2.5 w-full">
@@ -44,59 +51,53 @@ export const ListViewAppointmentCard = ({
                             {thisOrThat(statusDisplay(status), "--")}
                         </p>
                     </div>
-                    <div className="grid max-w-2xl grid-cols-3 gap-4">
-                        <div className=" col-span-2 block ">
+                    <div className="grid max-w-2xl grid-cols-3 gap-4 text-sm">
+                        <div className="col-span-2 block ">
                             <h4 className="text-sm font-medium text-gray-700">
                                 Address
                             </h4>
-                            <p className="mt-1 max-w-sm truncate text-sm">
+                            <p className="mt-1 max-w-sm truncate ">
                                 {thisOrThat(address, "--")}
                             </p>
                         </div>
                         <div className="col-span-1 block ">
-                            <h4 className="text-sm font-medium text-gray-700">
+                            <h4 className="font-medium text-gray-700">
                                 Building/Apt
                             </h4>
-                            <p className="mt-1 break-words text-sm">
+                            <p className="mt-1 break-words ">
                                 {thisOrThat(address_2, "--")}
                             </p>
                         </div>
                     </div>
 
-                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
+                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4 text-sm">
                         <div className="col-span-2">
-                            <h4 className=" text-sm font-medium text-gray-700">
-                                Time
-                            </h4>
-                            <p className="mt-1 truncate text-sm">
+                            <h4 className="font-medium text-gray-700">Time</h4>
+                            <p className="mt-1 truncate ">
                                 {thisOrThat(time, "--")}
                             </p>
                         </div>
                         <div className="col-span-1 block">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                Date
-                            </h4>
-                            <p className="mt-1 truncate text-sm">
+                            <h4 className="font-medium text-gray-700">Date</h4>
+                            <p className="mt-1 truncate ">
                                 {date
                                     ? formatStringToDate(date)?.toDateString()
                                     : "--"}
                             </p>
                         </div>
                     </div>
-                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
+                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4 text-sm">
                         <div className="col-span-2">
-                            <h4 className=" text-sm font-medium text-gray-700">
+                            <h4 className="text-sm font-medium text-gray-700">
                                 Contacts
                             </h4>
-                            <p className="mt-1 truncate text-sm">
+                            <p className="mt-1 truncate">
                                 {thisOrThat(contacts, "--")}
                             </p>
                         </div>
                         <div className="col-span-1 block">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                Notes
-                            </h4>
-                            <p className="mt-1 truncate text-sm ">
+                            <h4 className="font-medium text-gray-700">Notes</h4>
+                            <p className="mt-1 truncate">
                                 {thisOrThat(notes, "--")}
                             </p>
                         </div>
@@ -112,6 +113,12 @@ export const ListViewAppointmentCard = ({
                     </div>
                 </div>
             </div>
+
+            {createdAt && (
+                <p className="absolute left-6 bottom-2 text-xs md:left-auto md:right-5">
+                    Created {createdAt}
+                </p>
+            )}
         </div>
     );
 };
