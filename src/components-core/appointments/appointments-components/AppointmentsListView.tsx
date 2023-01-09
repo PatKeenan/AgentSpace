@@ -1,17 +1,11 @@
-import {
-    ChevronRightIcon,
-    MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
-import { AppointmentStatus } from "@prisma/client";
-import clsx from "clsx";
-import { Button, IconButton } from "components-common/Button";
-import { NextLink } from "components-common/NextLink";
-import { Select } from "components-common/Select";
+import { ListViewAppointmentCard } from "./ListViewAppointmentCard";
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { useAppointments } from "hooks/useAppointments";
+import { NextLink } from "components-common/NextLink";
+import { Button } from "components-common/Button";
+import { Select } from "components-common/Select";
 import { useWorkspace } from "hooks/useWorkspace";
-import { formatStringToDate } from "utils/formatDate";
-import { formatTime } from "utils/formatTime";
-import { statusColorsLight, statusDisplay } from "../appointments-utils";
+import { timeDisplay } from "utils/formatTime";
 
 const filterOptions = [
     { id: "1", name: "Address" },
@@ -23,18 +17,6 @@ const AppointmentListView = () => {
     const { id } = useWorkspace();
 
     const { data: appointments } = getAll({ workspaceId: id as string });
-
-    const timeDisplay = (
-        start: string | undefined | null,
-        end: string | undefined | null
-    ) => {
-        const startTime = start ? formatTime(start) : undefined;
-        if (startTime) {
-            return end ? `${startTime} - ${formatTime(end)}` : startTime;
-        }
-        return undefined;
-    };
-
     return (
         <div className="px-2">
             <div className="mt-4 block">
@@ -94,7 +76,7 @@ const AppointmentListView = () => {
                                     href={"/"}
                                     className="block rounded-md border border-gray-200  hover:bg-gray-50"
                                 >
-                                    <Card
+                                    <ListViewAppointmentCard
                                         key={i.id}
                                         address={i.address}
                                         date={i.date}
@@ -175,114 +157,3 @@ const AppointmentListView = () => {
     );
 };
 export default AppointmentListView;
-
-function thisOrThat<T, U>(arg1: T, arg2: U) {
-    if (!arg1) return arg2;
-    if (typeof arg1 == "object") {
-        return Object.keys(arg1).length == 0 ? arg2 : arg1;
-    }
-    return arg1;
-}
-
-const Card = ({
-    address,
-    address_2,
-    date,
-    time,
-    status,
-    contacts,
-    notes,
-}: {
-    address?: string;
-    address_2?: string;
-    date?: string;
-    time?: string;
-    status?: AppointmentStatus;
-    contacts?: string;
-    notes?: string;
-}) => {
-    return (
-        <div className="group block p-6 text-gray-500  hover:text-gray-800">
-            <div className="flex flex-1">
-                <div className="flex-grow">
-                    <div className="mb-3 -mt-2.5 w-full">
-                        <p
-                            className={clsx(
-                                status && statusColorsLight[status],
-                                "-ml-2 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize"
-                            )}
-                        >
-                            {thisOrThat(statusDisplay(status), "--")}
-                        </p>
-                    </div>
-                    <div className="grid max-w-2xl grid-cols-3 gap-4">
-                        <div className=" col-span-2 block ">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                Address
-                            </h4>
-                            <p className="mt-1 max-w-sm truncate text-sm">
-                                {thisOrThat(address, "--")}
-                            </p>
-                        </div>
-                        <div className="col-span-1 block ">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                Building/Apt
-                            </h4>
-                            <p className="mt-1 break-words text-sm">
-                                {thisOrThat(address_2, "--")}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
-                        <div className="col-span-2">
-                            <h4 className=" text-sm font-medium text-gray-700">
-                                Time
-                            </h4>
-                            <p className="mt-1 truncate text-sm">
-                                {thisOrThat(time, "--")}
-                            </p>
-                        </div>
-                        <div className="col-span-1 block">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                Date
-                            </h4>
-                            <p className="mt-1 truncate text-sm">
-                                {date
-                                    ? formatStringToDate(date)?.toDateString()
-                                    : "--"}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4">
-                        <div className="col-span-2">
-                            <h4 className=" text-sm font-medium text-gray-700">
-                                Contacts
-                            </h4>
-                            <p className="mt-1 truncate text-sm">
-                                {thisOrThat(contacts, "--")}
-                            </p>
-                        </div>
-                        <div className="col-span-1 block">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                Notes
-                            </h4>
-                            <p className="mt-1 truncate text-sm ">
-                                {thisOrThat(notes, "--")}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="-mr-3 flex flex-shrink-0">
-                    <div className="my-auto">
-                        <IconButton
-                            title="View"
-                            icon={ChevronRightIcon}
-                            textColor="text-gray-600 group-hover:text-gray-700"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};

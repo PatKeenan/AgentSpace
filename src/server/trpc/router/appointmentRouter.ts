@@ -6,6 +6,7 @@ import {
     contactOnAppointmentSchema,
     idSchema,
 } from "server/schemas";
+import { appointmentSortSchema } from "components-core/contactDetail";
 
 export const appointmentRouter = t.router({
     getAll: authedProcedure
@@ -44,8 +45,13 @@ export const appointmentRouter = t.router({
             });
         }),
     getAllForContact: authedProcedure
-        .input(z.object({ contactId: z.string(), take: z.number().optional() }))
+        .input(
+            z
+                .object({ contactId: z.string(), take: z.number().optional() })
+                .merge(appointmentSortSchema)
+        )
         .query(async ({ ctx, input }) => {
+            const { order = "desc", field = "createdAt" } = input;
             return await ctx.prisma.contactOnAppointment.findMany({
                 where: {
                     contactId: input.contactId,
@@ -76,7 +82,7 @@ export const appointmentRouter = t.router({
                 },
                 orderBy: {
                     appointment: {
-                        date: "desc",
+                        [field]: order,
                     },
                 },
                 take: input.take,

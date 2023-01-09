@@ -17,3 +17,14 @@ export function formatTime(time: string) {
     }
     return time;
 }
+
+export const timeDisplay = (
+    start: string | undefined | null,
+    end: string | undefined | null
+) => {
+    const startTime = start ? formatTime(start) : undefined;
+    if (startTime) {
+        return end ? `${startTime} - ${formatTime(end)}` : startTime;
+    }
+    return undefined;
+};
