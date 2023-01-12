@@ -29,17 +29,18 @@ type TextDropDownProps<T, K> = {
     options: T[];
     displayField: K;
     title: string;
+    menuPosition?: "right" | "left";
 };
 
 export function TextDropDownMenu<
     T extends OptionWithButton | OptionWithLink,
     K extends keyof T
 >(props: TextDropDownProps<T, K>) {
-    const { options, displayField, title } = props;
+    const { options, displayField, title, menuPosition = "right" } = props;
     return (
         <Menu as="div" className="relative inline-block text-left">
             <div>
-                <Menu.Button className="group inline-flex justify-center text-sm font-medium capitalize text-gray-700 hover:text-gray-900">
+                <Menu.Button className="group inline-flex justify-center text-sm font-medium capitalize text-gray-600 hover:text-gray-800">
                     {title}
                     <ChevronDownIcon
                         className="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -57,7 +58,14 @@ export function TextDropDownMenu<
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
             >
-                <Menu.Items className="absolute left-0 z-10 mt-2 w-40 origin-top-left rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items
+                    className={clsx(
+                        menuPosition == "right"
+                            ? "left-0 origin-top-left"
+                            : "right-0 origin-top-right",
+                        "absolute z-10 mt-2 w-40 rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    )}
+                >
                     <div className="py-1">
                         {options.map((option) => (
                             <Menu.Item key={option.id}>
