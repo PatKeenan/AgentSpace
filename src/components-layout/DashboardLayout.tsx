@@ -107,16 +107,20 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         </Transition.Child>
 
                         <div className="fixed inset-0 z-40 flex ">
+                            <div
+                                className="w-14 flex-shrink-0"
+                                aria-hidden="true"
+                            />
                             <Transition.Child
                                 as={React.Fragment}
                                 enter="transition ease-in-out duration-300 transform"
-                                enterFrom="-translate-x-full"
-                                enterTo="translate-x-0"
+                                enterFrom="translate-x-full"
+                                enterTo="-translate-x-0"
                                 leave="transition ease-in-out duration-300 transform"
-                                leaveFrom="translate-x-0"
-                                leaveTo="-translate-x-full"
+                                leaveFrom="-translate-x-0"
+                                leaveTo="translate-x-full"
                             >
-                                <Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
+                                <Dialog.Panel className="relative ml-auto flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
                                     <Transition.Child
                                         as={React.Fragment}
                                         enter="ease-in-out duration-300"
@@ -126,7 +130,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         leaveFrom="opacity-100"
                                         leaveTo="opacity-0"
                                     >
-                                        <div className="absolute top-0 right-0 -mr-12 pt-2">
+                                        <div className="absolute top-0 left-0 -ml-12 pt-2">
                                             <button
                                                 type="button"
                                                 className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -144,13 +148,13 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             </button>
                                         </div>
                                     </Transition.Child>
-                                    <div className="flex flex-shrink-0 items-center px-4">
+                                    {/* <div className="flex flex-shrink-0 items-center px-4">
                                         <img
                                             className="h-8 w-auto"
                                             src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
                                             alt="Your Company"
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="mt-5 flex h-full flex-1 flex-grow flex-col overflow-y-auto">
                                         <nav className="flex-shrink-0 px-2">
                                             <div className="space-y-1">
@@ -239,10 +243,6 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>
-                            <div
-                                className="w-14 flex-shrink-0"
-                                aria-hidden="true"
-                            ></div>
                         </div>
                     </Dialog>
                 </Transition.Root>
@@ -369,9 +369,16 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                 <div className="flex flex-col lg:pl-64">
                     {/* Search header */}
                     <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white lg:hidden">
+                        <div className="flex flex-shrink-0 items-center px-4">
+                            <img
+                                className="h-8 w-auto"
+                                src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
+                                alt="Your Company"
+                            />
+                        </div>
                         <button
                             type="button"
-                            className="border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
+                            className="ml-auto border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
                             onClick={() => setSidebarOpen(true)}
                         >
                             <span className="sr-only">Open sidebar</span>
@@ -380,7 +387,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                 aria-hidden="true"
                             />
                         </button>
-                        <div className="flex flex-1 justify-between px-4 sm:px-6 lg:px-8">
+                        {/* <div className="flex flex-1 justify-between px-4 sm:px-6 lg:px-8">
                             <div className="flex flex-1">
                                 <form
                                     className="flex w-full md:ml-0"
@@ -410,7 +417,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     </div>
                                 </form>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     <main className="flex-1">{children}</main>

@@ -63,7 +63,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                     <SectionHeading>
                         <SectionHeading.TitleContainer>
                             <SectionHeading.Title>
-                                Appointments{" "}
+                                Appointments
                             </SectionHeading.Title>
                         </SectionHeading.TitleContainer>
                         <SectionHeading.Actions>
@@ -80,7 +80,7 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                     className="gray-600 h-4 w-4 xl:-ml-0.5 xl:mr-1"
                                     aria-hidden
                                 />
-                                <span className="hidden xl:block">Add New</span>
+                                <span className="hidden lg:block">Add New</span>
                             </Button>
                         </SectionHeading.Actions>
                     </SectionHeading>
@@ -91,6 +91,28 @@ export const AppointmentsContainer: NextPageExtended = () => {
                         id="appointment-tabs"
                         tabs={[{ title: "View By Day" }, { title: "View All" }]}
                         onTabClick={handleTabClick}
+                        actions={
+                            activeTab == "View All" ? (
+                                <Button
+                                    variant="primary"
+                                    onClick={() =>
+                                        setModal({
+                                            state: true,
+                                            selectedDate: modal.selectedDate,
+                                        })
+                                    }
+                                    className="mb-1 block md:mb-0 lg:hidden"
+                                >
+                                    <PlusIcon
+                                        className="gray-600 h-4 w-4 xl:-ml-0.5 xl:mr-1"
+                                        aria-hidden
+                                    />
+                                    <span className="block lg:hidden">
+                                        Add New
+                                    </span>
+                                </Button>
+                            ) : null
+                        }
                     />
                 </div>
                 <React.Suspense fallback={<p>Loading..</p>}>

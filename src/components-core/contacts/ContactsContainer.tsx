@@ -133,7 +133,23 @@ export const ContactsContainer: NextPageExtended = () => {
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>Contacts</SectionHeading.Title>
+                        <p className="mt-2 text-sm text-gray-700">
+                            A list of all the contacts in your workspace
+                            including their name, email and phone number.
+                        </p>
                     </SectionHeading.TitleContainer>
+                    <SectionHeading.Actions>
+                        <ButtonLink
+                            variant="primary"
+                            href={`/workspace/${workspace.id}/contacts/create`}
+                        >
+                            <PlusIcon
+                                className="gray-600 -ml-0.5 mr-1 h-4 w-4"
+                                aria-hidden
+                            />
+                            Add New
+                        </ButtonLink>
+                    </SectionHeading.Actions>
                 </SectionHeading>
 
                 <div
@@ -143,27 +159,6 @@ export const ContactsContainer: NextPageExtended = () => {
                             : "mt-7"
                     )}
                 >
-                    <div className="sm:flex sm:items-center">
-                        <div className="sm:flex-auto">
-                            <p className="mt-2 text-sm text-gray-700">
-                                A list of all the contacts in your workspace
-                                including their name, email and phone number.
-                            </p>
-                        </div>
-
-                        <div className="mt-4 mr-1 sm:mt-0 sm:ml-16 sm:flex-none">
-                            <ButtonLink
-                                variant="primary"
-                                href={`/workspace/${workspace.id}/contacts/create`}
-                            >
-                                <PlusIcon
-                                    className="gray-600 -ml-0.5 mr-1 h-4 w-4"
-                                    aria-hidden
-                                />
-                                Add New
-                            </ButtonLink>
-                        </div>
-                    </div>
                     {contactsQuery.data && contactsQuery?.data.length > 0 ? (
                         <div className="mt-8 flex flex-col">
                             <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">

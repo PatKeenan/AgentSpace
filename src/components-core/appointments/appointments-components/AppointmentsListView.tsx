@@ -1,5 +1,9 @@
 import { ListViewAppointmentCard } from "./ListViewAppointmentCard";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import {
+    EllipsisVerticalIcon,
+    MagnifyingGlassIcon,
+    PlusIcon,
+} from "@heroicons/react/20/solid";
 import { useAppointments } from "hooks/useAppointments";
 import { NextLink } from "components-common/NextLink";
 import { Button } from "components-common/Button";
@@ -13,6 +17,8 @@ import { z } from "zod";
 import { AppointmentQueryParamSchema } from "server/schemas";
 import { useDebounceState } from "hooks/useDebounce";
 import { AppointmentStatus } from "@prisma/client";
+import { useAppointmentsUI } from "../useAppointmentsUI";
+import { ToggleMenu } from "components-common/ToggleMenu";
 
 const initialQueryParamsState: AppointmentQueryParamSchema = {
     searchBy: "address",
@@ -40,6 +46,7 @@ const AppointmentListView = () => {
     );
 
     const searchQuery = useDebounceState("", 500);
+    const { setModal } = useAppointmentsUI();
 
     const { getAll } = useAppointments();
     const { id } = useWorkspace();
@@ -128,8 +135,8 @@ const AppointmentListView = () => {
     return (
         <div className="px-2">
             {/* Search */}
-            <div className="my-4 flex w-full grid-cols-12 gap-4 lg:grid">
-                <div className="col-span-4 flex max-w-md flex-grow space-x-2">
+            <div className="my-4 w-full grid-cols-12 flex-col gap-4 md:grid">
+                <div className="col-span-4 flex flex-grow space-x-2 md:max-w-md">
                     <label htmlFor="search" className="sr-only">
                         Search
                     </label>
@@ -144,7 +151,6 @@ const AppointmentListView = () => {
                             id="search"
                             className="flex flex-grow rounded-md border border-transparent bg-white bg-opacity-20 py-2 pl-10 pr-3 leading-5 text-gray-900 placeholder-gray-400 focus:border-transparent focus:bg-opacity-100 focus:placeholder-gray-500 focus:outline-none focus:ring-0 sm:text-sm"
                             placeholder="Search"
-                            type="search"
                             name="search"
                             autoComplete="off"
                             value={searchQuery.state}
@@ -160,8 +166,17 @@ const AppointmentListView = () => {
                             />
                         </div>
                     </div>
+                    <div className="my-auto block h-full md:hidden">
+                        <button className="flex items-center justify-center rounded-full p-2 hover:bg-gray-100">
+                            <span className="sr-only">Options</span>
+                            <EllipsisVerticalIcon
+                                className="h-5 w-5 text-gray-500"
+                                aria-hidden="true"
+                            />
+                        </button>
+                    </div>
                 </div>
-                <div className="col-span-5 mr-3 flex justify-end space-x-8">
+                <div className="col-span-5 mr-3 hidden space-x-8 md:flex md:justify-end">
                     <div className="flex w-8">
                         {showResetButton ? (
                             <div className="mt-auto">
@@ -175,7 +190,7 @@ const AppointmentListView = () => {
                             </div>
                         ) : null}
                     </div>
-                    <div className="mt-auto">
+                    <div className=" mt-auto ">
                         <TextDropDownMenu
                             title={"Sort"}
                             options={sortByOptions}
@@ -183,7 +198,7 @@ const AppointmentListView = () => {
                             menuPosition="left"
                         />
                     </div>
-                    <div className="mt-auto">
+                    <div className="mt-auto ">
                         <TextDropDownMenu
                             title={"Order"}
                             options={sortOrderOptions}

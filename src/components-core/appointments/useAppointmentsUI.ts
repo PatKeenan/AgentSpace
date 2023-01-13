@@ -1,6 +1,21 @@
 import { devtools } from "zustand/middleware";
 import create from "zustand";
 import { AppointmentFormType } from "./appointments-components";
+import { AppointmentQueryParamSchema } from "server/schemas";
+
+const initialQueryParamsState: AppointmentQueryParamSchema = {
+    searchBy: "address",
+    searchQuery: undefined,
+    statusFilters: {
+        CONFIRMED: true,
+        CANCELED: true,
+        NO_STATUS: true,
+        PENDING: true,
+        DENIED: true,
+    },
+    sortBy: "createdAt",
+    sortOrder: "desc",
+};
 
 export type AppointmentsUiType = {
     activeTab: typeof appointmentTabOptions[number];
@@ -19,6 +34,8 @@ export type AppointmentsUiType = {
         defaultData?: (AppointmentFormType & { id: string }) | undefined;
     }) => void;
     resetModal: () => void;
+    queryParams: AppointmentQueryParamSchema;
+    setQueryParams: (data: Partial<AppointmentQueryParamSchema>) => void;
 };
 
 const appointmentTabOptions = ["View By Day", "View All"] as const;
@@ -38,6 +55,11 @@ export const useAppointmentsUI = create<AppointmentsUiType>()(
                     state: false,
                     defaultData: undefined,
                 },
+            })),
+        queryParams: initialQueryParamsState,
+        setQueryParams: (data) =>
+            set((state) => ({
+                queryParams: { ...state.queryParams, ...data },
             })),
     }))
 );
