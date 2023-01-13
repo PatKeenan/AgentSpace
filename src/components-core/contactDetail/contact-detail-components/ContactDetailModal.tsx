@@ -93,15 +93,15 @@ const EditGeneralInfoForm = () => {
     return (
         <form onSubmit={onSubmit}>
             <ModalTitle>Edit General Info</ModalTitle>
-
-            <InputGroup
-                label="Full Name"
-                {...register("name")}
-                direction="row"
-                errorMessage={errors && errors.name && errors.name.message}
-            />
-
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-6">
+                <InputGroup
+                    label="Full Name"
+                    {...register("name")}
+                    direction="column"
+                    errorMessage={errors && errors.name && errors.name.message}
+                />
+            </div>
+            <div className="mt-8 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>
@@ -148,46 +148,54 @@ const EditContactForm = () => {
     return (
         <form onSubmit={onSubmit}>
             <ModalTitle>Edit Primary Info</ModalTitle>
-            <InputGroup
-                label="First Name"
-                {...register("firstName")}
-                direction="row"
-                errorMessage={
-                    errors && errors.firstName && errors.firstName.message
-                }
-            />
+            <div className="mt-6 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
+                <InputGroup
+                    label="First Name"
+                    {...register("firstName")}
+                    direction="column"
+                    errorMessage={
+                        errors && errors.firstName && errors.firstName.message
+                    }
+                />
+                <InputGroup
+                    label="Last Name"
+                    {...register("lastName")}
+                    direction="column"
+                    errorMessage={
+                        errors && errors.lastName && errors.lastName.message
+                    }
+                />
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
+                <InputGroup
+                    label="Email"
+                    {...register("email")}
+                    direction="column"
+                    errorMessage={
+                        errors && errors.email && errors.email.message
+                    }
+                />
+                <InputGroup
+                    label="Phone Number"
+                    {...register("phoneNumber")}
+                    direction="column"
+                    errorMessage={
+                        errors &&
+                        errors.phoneNumber &&
+                        errors.phoneNumber.message
+                    }
+                />
+            </div>
+            <div className="mt-4">
+                <Textarea
+                    id="contact-notes"
+                    label="Notes"
+                    {...register("notes")}
+                    direction="column"
+                />
+            </div>
 
-            <InputGroup
-                label="Last Name"
-                {...register("lastName")}
-                direction="row"
-                errorMessage={
-                    errors && errors.lastName && errors.lastName.message
-                }
-            />
-
-            <InputGroup
-                label="Email"
-                {...register("email")}
-                direction="row"
-                errorMessage={errors && errors.email && errors.email.message}
-            />
-            <InputGroup
-                label="Phone Number"
-                {...register("phoneNumber")}
-                direction="row"
-                errorMessage={
-                    errors && errors.phoneNumber && errors.phoneNumber.message
-                }
-            />
-            <Textarea
-                id="contact-notes"
-                label="Notes"
-                {...register("notes")}
-                direction="row"
-            />
-
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-8 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>
@@ -275,38 +283,47 @@ const SubContactForm = () => {
             <ModalTitle>
                 {modal.defaultData ? "Edit" : "Add"} Contact
             </ModalTitle>
+            <div className="mt-6 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
+                <InputGroup
+                    direction="column"
+                    required
+                    label="First Name"
+                    {...register("firstName")}
+                    errorMessage={
+                        errors && errors.firstName && errors.firstName.message
+                    }
+                />
+                <InputGroup
+                    direction="column"
+                    label="Last Name"
+                    {...register("lastName")}
+                    errorMessage={
+                        errors && errors.lastName && errors.lastName.message
+                    }
+                />
+            </div>
 
-            <InputGroup
-                required
-                label="First Name"
-                {...register("firstName")}
-                errorMessage={
-                    errors && errors.firstName && errors.firstName.message
-                }
-            />
-            <InputGroup
-                label="Last Name"
-                {...register("lastName")}
-                className="mt-1"
-                errorMessage={
-                    errors && errors.lastName && errors.lastName.message
-                }
-            />
-            <InputGroup
-                label="Email"
-                {...register("email")}
-                className="mt-1"
-                errorMessage={errors && errors.email && errors.email.message}
-            />
-            <InputGroup
-                label="Phone"
-                {...register("phoneNumber")}
-                className="mt-1"
-                errorMessage={
-                    errors && errors.phoneNumber && errors.phoneNumber.message
-                }
-            />
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-4 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
+                <InputGroup
+                    direction="column"
+                    label="Email"
+                    {...register("email")}
+                    errorMessage={
+                        errors && errors.email && errors.email.message
+                    }
+                />
+                <InputGroup
+                    direction="column"
+                    label="Phone"
+                    {...register("phoneNumber")}
+                    errorMessage={
+                        errors &&
+                        errors.phoneNumber &&
+                        errors.phoneNumber.message
+                    }
+                />
+            </div>
+            <div className="mt-8 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>
@@ -414,37 +431,48 @@ const AddProfileForm = () => {
             <ModalTitle>
                 {modal.defaultData ? "Edit" : "Add"} Profile
             </ModalTitle>
-            <InputGroup
-                required
-                label="Name"
-                {...register("name")}
-                errorMessage={errors && errors.name && errors.name.message}
-            />
-            <Select
-                options={options}
-                label="Type"
-                displayField="display"
-                direction="row"
-                selected={selected}
-                setSelected={setSelected}
-                className={"max-h-[125px]"}
-            />
-            <Textarea
-                id="notes"
-                label="Notes"
-                direction="row"
-                {...register("notes")}
-            />
-            <div>
+            <div className="mt-6">
                 <InputGroup
+                    direction="column"
+                    containerClass="sm:items-center"
+                    required
+                    label="Unique Name"
+                    {...register("name")}
+                    errorMessage={errors && errors.name && errors.name.message}
+                />
+            </div>
+            <div className="mt-4">
+                <Select
+                    options={options}
+                    label="Type"
+                    displayField="display"
+                    direction="column"
+                    selected={selected}
+                    setSelected={setSelected}
+                    className={"max-h-[125px]"}
+                />
+            </div>
+
+            <div className="mt-4">
+                <Textarea
+                    id="notes"
+                    label="Notes"
+                    direction="column"
+                    {...register("notes")}
+                />
+            </div>
+            <div className="mt-4 max-w-[150px]">
+                <InputGroup
+                    direction="row"
                     type="checkbox"
                     label="Active"
                     className="h-5 w-5"
+                    containerClass="sm:items-center"
                     {...register("active")}
                 />
             </div>
 
-            <div className="mt-6 flex justify-end space-x-3">
+            <div className="mt-8 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>

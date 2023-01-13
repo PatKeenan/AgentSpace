@@ -185,7 +185,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                                     className="max-h-[110px]"
                                     selected={selectedProfile}
                                     setSelected={setSelectedProfile}
-                                    direction="col"
+                                    direction="column"
                                 />
                             </div>
                             <div className="col-span-1 flex justify-center">

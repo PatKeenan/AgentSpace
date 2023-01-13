@@ -28,6 +28,7 @@ import {
 } from "server/schemas";
 import { formatDate } from "utils/formatDate";
 import { dateUtils } from "utils/dateUtils";
+import clsx from "clsx";
 
 export type AppointmentFormType = AppointmentSchema & {
     contacts?: ContactOnAppointmentSchemaExtended[];
@@ -112,7 +113,7 @@ export const AppointmentModal = () => {
     };
 
     const handleAddAddressOption = () => {
-        setState({
+        return setState({
             address: addressInput.state,
             latitude: undefined,
             longitude: undefined,
@@ -260,13 +261,13 @@ export const AppointmentModal = () => {
                 />
             ) : (
                 <form onSubmit={onSubmit} tabIndex={0}>
-                    <ModalTitle className="text-center lg:text-left">
+                    <ModalTitle>
                         {modal?.defaultData ? "Edit" : "Add"} Appointment
                     </ModalTitle>
 
                     {/* Date only in edit mode */}
 
-                    <div className="col-span-8">
+                    <div className="col-span-8 mt-6">
                         <InputGroup
                             autoFocus={false}
                             type="date"
@@ -278,11 +279,12 @@ export const AppointmentModal = () => {
                             )}
                             onChange={(e) => setState({ date: e.target.value })}
                             direction="column"
+                            containerClass="pb-0"
                         />
                     </div>
 
                     {/* --- Address --- */}
-                    <div className="grid w-full grid-cols-8 lg:gap-2">
+                    <div className="mt-4 grid w-full grid-cols-8 gap-4">
                         <div className="z-[99] col-span-8 lg:col-span-6">
                             <Autocomplete
                                 required
@@ -323,10 +325,15 @@ export const AppointmentModal = () => {
                                 }}
                                 isFetched={addressQuery.isFetched}
                                 isLoading={addressQuery.isLoading}
-                                addOption={handleAddAddressOption}
+                                optionValue={{
+                                    address: addressInput.state || "",
+                                    id: "",
+                                    latitude: undefined,
+                                    longitude: undefined,
+                                }}
                             />
                         </div>
-                        <div className="col-span-8 lg:col-span-2 ">
+                        <div className="col-span-8  lg:col-span-2">
                             <InputGroup
                                 name="building"
                                 label="Building/Apt"
@@ -341,17 +348,17 @@ export const AppointmentModal = () => {
                     {/* --- End Address ---  */}
 
                     {/* Contacts */}
-                    <div className="relative z-50 col-span-8 grid w-full">
+                    <div className="relative z-50 col-span-8 mt-4 grid w-full">
                         <Combobox
                             as="div"
                             value={state.contacts}
                             onChange={(i) => handleSelectContacts(i)}
                             multiple
-                            className="relative mt-2 sm:pt-5 md:mt-0"
+                            className="relative  md:mt-0"
                         >
                             {({ open }) => (
                                 <>
-                                    <Combobox.Label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                                    <Combobox.Label className="block text-sm font-medium text-gray-700">
                                         Contacts
                                     </Combobox.Label>
                                     <div
@@ -513,7 +520,7 @@ export const AppointmentModal = () => {
                     </div>
 
                     {/* Time & Status*/}
-                    <div className="mt-4 mb-4 grid w-full grid-cols-6 gap-4 lg:mt-0 lg:mb-0">
+                    <div className="mt-4 grid w-full grid-cols-6 gap-4">
                         <div className="col-span-3 lg:col-span-2">
                             <InputGroup
                                 type="time"
@@ -538,11 +545,11 @@ export const AppointmentModal = () => {
                                 direction="column"
                             />
                         </div>
-                        <div className="col-span-6 lg:col-span-2 lg:pt-2">
+                        <div className="col-span-6 lg:col-span-2 ">
                             <Select
                                 label="Status"
                                 name="status"
-                                direction="col"
+                                direction="column"
                                 displayField="display"
                                 selected={statusOptions.find(
                                     (i) => i.value == state.status
@@ -553,13 +560,13 @@ export const AppointmentModal = () => {
                                     })
                                 }
                                 className="max-h-[140px] capitalize"
-                                containerClass="sm:pt-5"
                                 options={statusOptions}
                             />
                         </div>
                     </div>
 
                     <Textarea
+                        containerClass="mt-4"
                         label="Notes"
                         name="notes"
                         id="notes"

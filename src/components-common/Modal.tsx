@@ -16,7 +16,7 @@ export const Modal = (
     /////////////////////////////////////////////////////////////
     return (
         <Transition.Root show={open} as={React.Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={onClose}>
+            <Dialog as="div" className="relative z-[1000]" onClose={onClose}>
                 <Transition.Child
                     as={React.Fragment}
                     enter="ease-out duration-300"
@@ -30,7 +30,7 @@ export const Modal = (
                 </Transition.Child>
 
                 <div className="fixed inset-0 z-10 overflow-y-auto">
-                    <div className="flex min-h-full items-start justify-center p-4 text-center sm:items-center sm:p-0">
+                    <div className="flex min-h-full items-start justify-center text-center sm:items-center sm:p-0">
                         {showInnerContainer ? (
                             <Transition.Child
                                 as={React.Fragment}
@@ -41,7 +41,7 @@ export const Modal = (
                                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                             >
-                                <Dialog.Panel className="relative w-full transform overflow-hidden rounded-lg bg-white px-6 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:max-w-2xl ">
+                                <Dialog.Panel className="relative w-full transform overflow-hidden bg-white px-3 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:max-w-2xl md:rounded-lg md:px-6 ">
                                     {children}
                                 </Dialog.Panel>
                             </Transition.Child>

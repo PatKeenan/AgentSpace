@@ -38,9 +38,9 @@ export function MultiAutoComplete<
             value={selected}
             onChange={onSelect}
             multiple
-            className={clsx("sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 ")}
+            className={clsx("sm:grid sm:grid-cols-3 sm:items-start")}
         >
-            <Combobox.Label className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <Combobox.Label className="block text-sm font-medium text-gray-700">
                 <span>{label}</span>
                 {pluralOrSingle ? <span>&#40;s&#41;</span> : null}
             </Combobox.Label>

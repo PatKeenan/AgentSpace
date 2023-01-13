@@ -11,7 +11,7 @@ type SelectProps<T, K> = {
     setSelected: (selected: T) => void;
     className?: string;
     containerClass?: string;
-    direction?: "row" | "col";
+    direction?: "row" | "column";
     name?: string;
 };
 
@@ -59,7 +59,6 @@ export function Select<
                         {label && (
                             <Listbox.Label
                                 className={clsx(
-                                    direction == "row" && "pt-2",
                                     "block text-sm font-medium text-gray-700"
                                 )}
                             >
@@ -97,7 +96,7 @@ export function Select<
                                 <Listbox.Options
                                     className={clsx(
                                         className,
-                                        "absolute z-[99] mt-1 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                                        "absolute z-[99] mt-1 w-full overflow-scroll rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                                     )}
                                 >
                                     {options?.map((option: T) => (

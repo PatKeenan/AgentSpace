@@ -1,6 +1,6 @@
 type PageTitleProps = {
     title: string;
-    actions: React.ReactNode | React.ReactNode[];
+    actions?: React.ReactNode | React.ReactNode[];
 };
 export const PageTitle = (props: PageTitleProps) => {
     const { title, actions } = props;

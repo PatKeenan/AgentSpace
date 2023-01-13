@@ -35,7 +35,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
             <div
                 className={clsx(
                     direction == "row" ? "sm:gap-4" : "gap-0",
-                    "z-0 pb-6 sm:grid sm:grid-cols-3 sm:items-start md:pt-5 md:pb-2",
+                    "z-0 sm:grid sm:grid-cols-3 sm:items-start",
                     containerClass
                 )}
             >
@@ -43,7 +43,7 @@ export const InputGroup = React.forwardRef<HTMLInputElement, InputGroupProps>(
                     htmlFor={name}
                     className={clsx(
                         direction == "row" ? "col-span-1" : "col-span-3",
-                        "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                        "block text-sm font-medium text-gray-700"
                     )}
                 >
                     {label}

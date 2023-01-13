@@ -18,7 +18,7 @@ interface AutoCompleteProps<T>
     onClear?: () => void;
     isLoading?: boolean;
     isFetched?: boolean;
-    addOption?: () => void;
+    optionValue?: T;
 }
 
 export function Autocomplete<
@@ -38,7 +38,7 @@ export function Autocomplete<
         name,
         onClear,
         isFetched,
-        addOption,
+        optionValue,
     } = props;
 
     return (
@@ -49,7 +49,7 @@ export function Autocomplete<
             className={clsx(
                 className,
                 direction == "row" ? "sm:gap-4" : "gap-0",
-                "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 "
+                "sm:grid sm:grid-cols-3 sm:items-start"
             )}
             nullable
         >
@@ -57,8 +57,7 @@ export function Autocomplete<
                 <>
                     <Combobox.Label
                         className={clsx(
-                            direction == "row" && "pt-2",
-                            "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
+                            "block text-sm font-medium text-gray-700"
                         )}
                     >
                         {label}
@@ -67,31 +66,27 @@ export function Autocomplete<
                     <div
                         className={clsx(
                             direction == "row" ? "sm:col-span-2" : "col-span-3",
-                            "sm:mt-0, relative  pt-1"
+                            "sm:mt-0, relative pt-1"
                         )}
                     >
                         <Combobox.Input
                             required={required}
                             name={name}
-                            className="w-full rounded-md border border-gray-300 bg-white pb-2 pl-3 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                            className="w-full rounded-md border border-gray-300 bg-white px-3 pr-10 pb-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                             onChange={(event) => setValue(event.target.value)}
                             autoComplete="off"
                             displayValue={renderValue}
                         />
                         {selected && (
                             <Combobox.Button
-                                as="div"
                                 className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
+                                onClick={onClear}
                             >
-                                <button onClick={() => onClear && onClear()}>
-                                    <span className="sr-only">
-                                        Clear address
-                                    </span>
-                                    <XMarkIcon
-                                        className="h-5 w-5 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                </button>
+                                <span className="sr-only">Clear address</span>
+                                <XMarkIcon
+                                    className="h-5 w-5 text-gray-400"
+                                    aria-hidden="true"
+                                />
                             </Combobox.Button>
                         )}
 
@@ -164,10 +159,10 @@ export function Autocomplete<
                                             )
                                         );
                                     })}
-                                {addOption && open && isFetched && (
-                                    <button
+                                {optionValue && open && isFetched && (
+                                    <Combobox.Option
+                                        value={optionValue}
                                         className="relative w-full cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                        onClick={addOption}
                                     >
                                         <div className="flex items-center space-x-2">
                                             <PlusIcon
@@ -180,7 +175,7 @@ export function Autocomplete<
                                                 &quot;
                                             </span>
                                         </div>
-                                    </button>
+                                    </Combobox.Option>
                                 )}
                             </Combobox.Options>
                         </Transition>

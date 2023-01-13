@@ -5,7 +5,7 @@ type TextareaProps = {
     id: string;
     label: string;
     containerClass?: string;
-    direction?: "col" | "row";
+    direction?: "column" | "row";
 } & Omit<React.ComponentProps<"textarea">, "id">;
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -23,7 +23,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
             <div
                 className={clsx(
                     direction == "row" ? "sm:gap-4" : "gap-0",
-                    "sm:grid sm:grid-cols-3 sm:items-start sm:pt-5 sm:first:border-t sm:first:border-gray-200",
+                    "sm:grid sm:grid-cols-3 sm:items-start ",
                     containerClass
                 )}
             >
