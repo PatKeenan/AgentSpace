@@ -237,11 +237,6 @@ export const ContactsContainer: NextPageExtended = () => {
                                             <tbody className="divide-y divide-gray-200 bg-white">
                                                 {contactsQuery.data?.map(
                                                     (contact) => {
-                                                        const meta = contact
-                                                            .subContacts.length
-                                                            ? contact
-                                                                  .subContacts[0]
-                                                            : undefined;
                                                         return (
                                                             <tr
                                                                 key={contact.id}

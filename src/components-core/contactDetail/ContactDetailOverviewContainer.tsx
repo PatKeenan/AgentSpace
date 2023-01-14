@@ -7,7 +7,6 @@ import { ProfilesList } from "./contact-detail-components/ProfilesList";
 import { Button, IconButton } from "components-common/Button";
 import { useContactDetailUi } from "./useContactDetailUi";
 import { useContacts } from "hooks/useContacts";
-/* import { ContactSchema } from "server/schemas"; */
 import { useRouter } from "next/router";
 import { ContactSingleton } from "lib";
 import React from "react";
@@ -28,6 +27,20 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
         { enabled: typeof id !== undefined }
     );
 
+    const handleClickEdit = () => {
+        return setModal({
+            state: true,
+            form: "contact",
+            defaultData: {
+                firstName: contactQuery?.firstName,
+                lastName: contactQuery?.lastName,
+                phoneNumber: contactQuery?.phoneNumber,
+                email: contactQuery?.email,
+                notes: contactQuery?.notes,
+            } as Omit<ContactSchema["base"], "name">,
+        });
+    };
+
     return (
         <ContactDetailLayout activeTab="Overview">
             <div>
@@ -44,25 +57,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                         <Button
                                             variant="outlined"
                                             type="button"
-                                            onClick={() =>
-                                                setModal({
-                                                    state: true,
-                                                    form: "contact",
-                                                    defaultData: {
-                                                        firstName:
-                                                            contactQuery?.firstName,
-                                                        lastName:
-                                                            contactQuery?.lastName,
-                                                        phoneNumber:
-                                                            contactQuery?.phoneNumber,
-                                                        email: contactQuery?.email,
-                                                        notes: contactQuery?.notes,
-                                                    } as Omit<
-                                                        ContactSchema["base"],
-                                                        "name"
-                                                    >,
-                                                })
-                                            }
+                                            onClick={handleClickEdit}
                                         >
                                             <PencilIcon
                                                 className="-ml-1 mr-2 h-5 w-5 text-gray-400"

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ComponentType, ReactElement, SVGProps } from "react";
+import { SVGProps } from "react";
 import { NextLink } from "./NextLink";
 
 export const variantStyles = {

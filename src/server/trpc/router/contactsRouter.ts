@@ -1,12 +1,10 @@
-import {
-    subContactSchema,
-    contactSchema,
-    idSchema,
-    profileSchema,
-} from "server/schemas";
+import { idSchema, profileSchema } from "server/schemas";
+import { inferRouterOutputs } from "@trpc/server";
 import { authedProcedure, t } from "../trpc";
-import { z } from "zod";
 import { ContactSingleton } from "lib";
+import { z } from "zod";
+
+const { contactSchemas, subContactSchema } = ContactSingleton;
 
 export const contactsRouter = t.router({
     getAll: authedProcedure
@@ -96,10 +94,8 @@ export const contactsRouter = t.router({
     }),
     createContact: authedProcedure
         .input(
-            contactSchema().create.extend({
-                subContacts: z.array(
-                    subContactSchema().create.omit({ contactId: true })
-                ),
+            contactSchemas.create.extend({
+                subContacts: z.array(subContactSchema.create),
                 workspaceId: z.string(),
             })
         )
@@ -132,7 +128,7 @@ export const contactsRouter = t.router({
         }),
     createContactAndProfile: authedProcedure
         .input(
-            contactSchema().create.extend({
+            contactSchemas.create.extend({
                 profile: profileSchema()
                     .create.omit({ contactId: true, workspaceId: true })
                     .optional(),
@@ -165,9 +161,7 @@ export const contactsRouter = t.router({
         }),
     update: authedProcedure
         .input(
-            ContactSingleton.contactSchemas.base
-                .partial()
-                .merge(z.object({ id: z.string() }))
+            contactSchemas.base.partial().merge(z.object({ id: z.string() }))
         )
         .mutation(async ({ ctx, input }) => {
             const { id, ...rest } = input;
@@ -272,3 +266,5 @@ export const contactsRouter = t.router({
             });
         }),
 });
+
+export type ContactsRouterOutlet = inferRouterOutputs<typeof contactsRouter>;

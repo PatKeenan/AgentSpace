@@ -110,7 +110,7 @@ model SubContact {
     phoneNumber String?
     firstName   String?
     lastName    String?
-    note        String?
+    notes       String?
     deleted     Boolean?  @default(false)
     deletedAt   DateTime?
 }

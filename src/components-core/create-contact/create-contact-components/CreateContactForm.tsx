@@ -8,11 +8,13 @@ import { Button, ButtonLink } from "components-common/Button";
 import { useForm } from "react-hook-form";
 import * as React from "react";
 import * as z from "zod";
-import { subContactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
 import { ContactSingleton } from "lib/ContactSingleton";
+
+const { contactFormFields, contactSchemas, subContactSchema } =
+    ContactSingleton;
 
 const initialMeta = {
     firstName: "",
@@ -32,15 +34,11 @@ const initialState = {
     subContactFields: [],
 };
 
-const createContactFormSchema = ContactSingleton.contactSchemas.create.extend({
-    subContactFields: z.array(
-        subContactSchema().create.omit({ contactId: true })
-    ),
+const createContactFormSchema = contactSchemas.create.extend({
+    subContactFields: z.array(subContactSchema.create),
 });
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
-
-const { contactFormFields, contactSchemas } = ContactSingleton;
 
 export const CreateContactForm = () => {
     const [subContactFields, setMetaFields] = React.useState<
@@ -326,7 +324,7 @@ export const CreateContactForm = () => {
                             <ContactFormTextArea
                                 label={contactFormFields.notes.label}
                                 className="max-w-lg"
-                                {...register(`subContactFields.${idx}.note`)}
+                                {...register(`subContactFields.${idx}.notes`)}
                                 rows={3}
                             />
                         </div>

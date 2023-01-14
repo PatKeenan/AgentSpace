@@ -50,14 +50,14 @@ const formFields = {
 const contactOnAppointmentObj = {
     contactId: z.string(),
     selectedProfileId: z.string().optional(),
-};
+} as const;
 
 const contactOnAppointmentObjExtended = {
     ...contactOnAppointmentObj,
     profileName: z.string(),
     name: z.string(),
     contactOnAppointmentId: z.string(),
-};
+} as const;
 
 const extendedContactOnAppointmentSchema = z
     .object(contactOnAppointmentObjExtended)

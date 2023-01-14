@@ -8,14 +8,7 @@ import {
     useContactDetailUi,
 } from "../useContactDetailUi";
 import * as React from "react";
-import {
-    subContactSchema,
-    contactSchema,
-    profileSchema,
-    ProfileSchema,
-} from "server/schemas";
-
-import type { SubContactSchema, ContactSchema } from "server/schemas";
+import { contactSchema, profileSchema, ProfileSchema } from "server/schemas";
 
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
@@ -29,7 +22,7 @@ import { ModalTitle } from "components-common/ModalTitle";
 import { SubRouter } from "components-common/SubRouter";
 import { ContactSingleton, ContactSingletonType } from "lib/ContactSingleton";
 
-const { contactFormFields, contactSchemas } = ContactSingleton;
+const { contactFormFields, subContactSchema } = ContactSingleton;
 
 export const ContactDetailModal = () => {
     const { modal, resetModal } = useContactDetailUi();
@@ -71,7 +64,7 @@ const EditGeneralInfoForm = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Pick<ContactSchema["base"], "name">>({
+    } = useForm<Pick<ContactSingletonType["contactSchemas"]["base"], "name">>({
         resolver: zodResolver(
             ContactSingleton.contactSchemas.update.pick({ name: true })
         ),
@@ -132,11 +125,11 @@ const EditContactForm = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Omit<ContactSchema["base"], "name">>({
+    } = useForm<ContactSingletonType["contactSchemas"]["updateWithoutName"]>({
         resolver: zodResolver(contactSchema().base.partial()),
         defaultValues:
             modal.form == "contact"
-                ? (modal.defaultData as Omit<ContactSchema["base"], "name">)
+                ? (modal.defaultData as ContactSingletonType["contactSchemas"]["updateWithoutName"])
                 : undefined,
     });
 
@@ -219,12 +212,14 @@ const SubContactForm = () => {
     const router = useRouter();
     const { modal, resetModal } = useContactDetailUi();
     const [defaultFormState] = React.useState<
-        SubContactSchema["update"] | SubContactSchema["create"] | undefined
+        | ContactSingletonType["subContactSchema"]["update"]
+        | ContactSingletonType["subContactSchema"]["create"]
+        | undefined
     >(
         modal.form == "subContact"
             ? (modal.defaultData as
-                  | SubContactSchema["create"]
-                  | SubContactSchema["update"])
+                  | ContactSingletonType["subContactSchema"]["update"]
+                  | ContactSingletonType["subContactSchema"]["create"])
             : undefined
     );
 
@@ -242,11 +237,12 @@ const SubContactForm = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<SubContactSchema["update"] | SubContactSchema["create"]>({
+    } = useForm<
+        | ContactSingletonType["subContactSchema"]["update"]
+        | ContactSingletonType["subContactSchema"]["create"]
+    >({
         resolver: zodResolver(
-            defaultFormState
-                ? subContactSchema().update
-                : subContactSchema().create.omit({ contactId: true })
+            defaultFormState ? subContactSchema.update : subContactSchema.create
         ),
         defaultValues: defaultFormState,
     });
