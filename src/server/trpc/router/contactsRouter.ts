@@ -6,6 +6,7 @@ import {
 } from "server/schemas";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
+import { ContactSingleton } from "lib";
 
 export const contactsRouter = t.router({
     getAll: authedProcedure
@@ -163,7 +164,11 @@ export const contactsRouter = t.router({
             });
         }),
     update: authedProcedure
-        .input(contactSchema().base.partial().merge(idSchema))
+        .input(
+            ContactSingleton.contactSchemas.base
+                .partial()
+                .merge(z.object({ id: z.string() }))
+        )
         .mutation(async ({ ctx, input }) => {
             const { id, ...rest } = input;
             return await ctx.prisma.contact.update({

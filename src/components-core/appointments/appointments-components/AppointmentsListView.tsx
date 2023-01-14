@@ -7,36 +7,34 @@ import {
 import { useAppointments } from "hooks/useAppointments";
 import { NextLink } from "components-common/NextLink";
 import { Button } from "components-common/Button";
-import { Select } from "components-common/Select";
 import { useWorkspace } from "hooks/useWorkspace";
 import { timeDisplay } from "utils/formatTime";
 import { formatDate } from "utils/formatDate";
 import { TextDropDownMenu } from "components-common/TextDropDownMenu";
 import * as React from "react";
-import { z } from "zod";
-import { AppointmentQueryParamSchema } from "server/schemas";
 import { useDebounceState } from "hooks/useDebounce";
 import { AppointmentStatus } from "@prisma/client";
 import { useAppointmentsUI } from "../useAppointmentsUI";
-import { ToggleMenu } from "components-common/ToggleMenu";
+import { AppointmentSingletonType } from "lib/AppointmentSingleton";
 
-const initialQueryParamsState: AppointmentQueryParamSchema = {
-    searchBy: "address",
-    searchQuery: undefined,
-    statusFilters: {
-        CONFIRMED: true,
-        CANCELED: true,
-        NO_STATUS: true,
-        PENDING: true,
-        DENIED: true,
-    },
-    sortBy: "createdAt",
-    sortOrder: "desc",
-};
+const initialQueryParamsState: AppointmentSingletonType["appointmentSchemas"]["search"] =
+    {
+        searchBy: "address",
+        searchQuery: undefined,
+        statusFilters: {
+            CONFIRMED: true,
+            CANCELED: true,
+            NO_STATUS: true,
+            PENDING: true,
+            DENIED: true,
+        },
+        sortBy: "createdAt",
+        sortOrder: "desc",
+    };
 
 const queryParamReducer = (
-    state: AppointmentQueryParamSchema,
-    newState: Partial<AppointmentQueryParamSchema>
+    state: AppointmentSingletonType["appointmentSchemas"]["search"],
+    newState: Partial<AppointmentSingletonType["appointmentSchemas"]["search"]>
 ) => ({ ...state, ...newState });
 
 const AppointmentListView = () => {
@@ -59,7 +57,7 @@ const AppointmentListView = () => {
 
     const searchByOptions: {
         name: string;
-        value: AppointmentQueryParamSchema["searchBy"];
+        value: AppointmentSingletonType["appointmentSchemas"]["search"]["searchBy"];
         onClick: () => void;
         current: boolean;
     }[] = [
@@ -78,7 +76,7 @@ const AppointmentListView = () => {
     ];
     const sortByOptions: {
         name: string;
-        value: AppointmentQueryParamSchema["sortBy"];
+        value: AppointmentSingletonType["appointmentSchemas"]["search"]["sortBy"];
         onClick: () => void;
         current: boolean;
     }[] = [
@@ -103,7 +101,7 @@ const AppointmentListView = () => {
     ];
     const sortOrderOptions: {
         name: string;
-        value: AppointmentQueryParamSchema["sortOrder"];
+        value: AppointmentSingletonType["appointmentSchemas"]["search"]["sortOrder"];
         onClick: () => void;
         current: boolean;
     }[] = [

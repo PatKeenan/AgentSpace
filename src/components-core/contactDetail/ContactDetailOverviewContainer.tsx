@@ -1,18 +1,21 @@
-import React from "react";
-import { NextPageExtended } from "types/index";
-
-import { useRouter } from "next/router";
-import { SubContactList } from "./contact-detail-components/SubContactList";
 import { ContactAppointmentList } from "./contact-detail-components/ContactAppointmentList";
-import { ContactProfilesList } from "./contact-detail-components/ContactProfilesList";
+import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
 import { EnvelopeIcon, PencilIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import { GridSectionTitle } from "./contact-detail-components/GridSectionTitle";
-import { useContacts } from "hooks/useContacts";
+import { SubContactList } from "./contact-detail-components/SubContactList";
+import { ProfilesList } from "./contact-detail-components/ProfilesList";
 import { Button, IconButton } from "components-common/Button";
 import { useContactDetailUi } from "./useContactDetailUi";
-import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
+import { useContacts } from "hooks/useContacts";
+/* import { ContactSchema } from "server/schemas"; */
+import { useRouter } from "next/router";
+import { ContactSingleton } from "lib";
+import React from "react";
+
+import type { NextPageExtended } from "types/index";
 import { ContactSchema } from "server/schemas";
-import { ProfilesList } from "./contact-detail-components/ProfilesList";
+
+const { contactFormFields } = ContactSingleton;
 
 export const ContactDetailOverviewContainer: NextPageExtended = () => {
     const router = useRouter();
@@ -73,7 +76,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                             <dl className="divide-y divide-gray-200">
                                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        First Name
+                                        {contactFormFields.firstName.label}
                                     </dt>
                                     <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="flex-grow">
@@ -83,7 +86,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                 </div>
                                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Last Name
+                                        {contactFormFields.lastName.label}
                                     </dt>
                                     <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="flex-grow">
@@ -93,7 +96,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                 </div>
                                 <div className="items-center py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Email
+                                        {contactFormFields.email.label}
                                     </dt>
                                     <dd className="mt-1 flex items-center text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="flex-grow">
@@ -109,7 +112,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                 </div>
                                 <div className="items-center py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Phone Number
+                                        {contactFormFields.phoneNumber.label}
                                     </dt>
                                     <dd className="mt-1 flex items-center text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="flex-grow">
@@ -126,7 +129,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
 
                                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
                                     <dt className="text-sm font-medium text-gray-500">
-                                        Notes
+                                        {contactFormFields.notes.label}
                                     </dt>
                                     <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                                         <span className="max-h-[200px] flex-grow flex-wrap overflow-auto whitespace-pre-line">

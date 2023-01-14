@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 
 type TextareaProps = {
-    id: string;
+    id?: string;
     label: string;
     containerClass?: string;
     direction?: "column" | "row";
@@ -28,7 +28,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                 )}
             >
                 <label
-                    htmlFor={id}
+                    htmlFor={id || label}
                     className="block text-sm font-medium text-gray-700"
                 >
                     {label}

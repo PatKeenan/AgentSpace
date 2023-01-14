@@ -2,8 +2,11 @@ import { useDebounceState, useContacts, useWorkspace } from "hooks";
 import { QuickAddContactFrom } from "./QuickAddContactForm";
 import { useAppointmentsUI } from "../useAppointmentsUI";
 import { Combobox, Transition } from "@headlessui/react";
+import {
+    AppointmentSingleton,
+    type AppointmentSingletonType,
+} from "lib/AppointmentSingleton";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { AppointmentStatus } from "@prisma/client";
 import { useAppointments } from "hooks";
 import { trpc } from "utils/trpc";
 import * as React from "react";
@@ -19,38 +22,26 @@ import {
     Tag,
     Autocomplete,
 } from "components-common";
-import { v4 } from "uuid";
 
-import {
-    AppointmentSchema,
-    ContactOnAppointmentSchema,
-    ContactOnAppointmentSchemaExtended,
-} from "server/schemas";
+import { v4 } from "uuid";
 import { formatDate } from "utils/formatDate";
 import { dateUtils } from "utils/dateUtils";
-import clsx from "clsx";
 
-export type AppointmentFormType = AppointmentSchema & {
-    contacts?: ContactOnAppointmentSchemaExtended[];
+export type AppointmentFormType = Omit<
+    AppointmentSingletonType["appointmentSchemas"]["create"],
+    "contacts"
+> & {
+    contacts?: AppointmentSingletonType["appointmentSchemas"]["extendedContactOnAppointmentSchema"][];
 };
 
 // Used for the select component when choosing an appointment status
-const statusOptions = Object.keys(AppointmentStatus).map((key, index) => ({
-    id: String(index),
-    value: key,
-    display: key.toLowerCase().replace("_", " "),
-}));
+
+const { appointmentFormFields, appointmentStatusOptions } =
+    AppointmentSingleton;
 
 const initialFormState: AppointmentFormType = {
     address: "",
-    latitude: undefined,
-    longitude: undefined,
-    contacts: [],
-    address_2: undefined,
     status: "NO_STATUS",
-    startTime: "",
-    endTime: "",
-    note: undefined,
     date: new Date().toISOString(),
 };
 
@@ -101,22 +92,15 @@ export const AppointmentModal = () => {
     );
 
     const handleSelectAddress = (
-        e:
-            | Pick<AppointmentSchema, "address" | "latitude" | "longitude">
-            | undefined
+        e?: Pick<
+            AppointmentSingletonType["appointmentSchemas"]["create"],
+            "address" | "latitude" | "longitude"
+        >
     ) => {
         setState({
             address: e?.address,
             latitude: e?.latitude,
             longitude: e?.longitude,
-        });
-    };
-
-    const handleAddAddressOption = () => {
-        return setState({
-            address: addressInput.state,
-            latitude: undefined,
-            longitude: undefined,
         });
     };
 
@@ -126,7 +110,9 @@ export const AppointmentModal = () => {
         return contactInput.setState("");
     };
 
-    const handleDeleteContact = (contact: ContactOnAppointmentSchema) => {
+    const handleDeleteContact = (
+        contact: AppointmentSingletonType["appointmentSchemas"]["base"]["contacts"][number]
+    ) => {
         const filteredContacts = state.contacts
             ? state.contacts.filter((selectedContact) => {
                   if (
@@ -221,6 +207,10 @@ export const AppointmentModal = () => {
         }
     };
 
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => setState({ [e.target.name]: e.target.value });
+
     /////////////////////////////////////////////////////////////
     return (
         <Modal open={modal.state || false} onClose={handleClose}>
@@ -269,15 +259,14 @@ export const AppointmentModal = () => {
 
                     <div className="col-span-8 mt-6">
                         <InputGroup
+                            {...appointmentFormFields.date}
                             autoFocus={false}
                             type="date"
-                            label="Date"
-                            name="date"
                             value={formatDate(
                                 state.date || new Date(),
                                 "YYYY-MM-DD"
                             )}
-                            onChange={(e) => setState({ date: e.target.value })}
+                            onChange={handleChange}
                             direction="column"
                             containerClass="pb-0"
                         />
@@ -287,9 +276,8 @@ export const AppointmentModal = () => {
                     <div className="mt-4 grid w-full grid-cols-8 gap-4">
                         <div className="z-[99] col-span-8 lg:col-span-6">
                             <Autocomplete
+                                {...appointmentFormFields.address}
                                 required
-                                label="Address"
-                                name="address"
                                 selected={
                                     state.address
                                         ? {
@@ -335,13 +323,10 @@ export const AppointmentModal = () => {
                         </div>
                         <div className="col-span-8  lg:col-span-2">
                             <InputGroup
-                                name="building"
-                                label="Building/Apt"
+                                {...appointmentFormFields.address_2}
                                 direction="column"
                                 value={state.address_2}
-                                onChange={(e) =>
-                                    setState({ address_2: e.target.value })
-                                }
+                                onChange={handleChange}
                             />
                         </div>
                     </div>
@@ -351,7 +336,7 @@ export const AppointmentModal = () => {
                     <div className="relative z-50 col-span-8 mt-4 grid w-full">
                         <Combobox
                             as="div"
-                            value={state.contacts}
+                            value={state.contacts || []}
                             onChange={(i) => handleSelectContacts(i)}
                             multiple
                             className="relative  md:mt-0"
@@ -359,7 +344,7 @@ export const AppointmentModal = () => {
                             {({ open }) => (
                                 <>
                                     <Combobox.Label className="block text-sm font-medium text-gray-700">
-                                        Contacts
+                                        {appointmentFormFields.contacts.label}
                                     </Combobox.Label>
                                     <div
                                         className="relative mt-1"
@@ -523,55 +508,46 @@ export const AppointmentModal = () => {
                     <div className="mt-4 grid w-full grid-cols-6 gap-4">
                         <div className="col-span-3 lg:col-span-2">
                             <InputGroup
+                                {...appointmentFormFields.startTime}
                                 type="time"
-                                label="Start Time"
-                                name="start-time"
                                 value={state.startTime}
-                                onChange={(e) =>
-                                    setState({ startTime: e.target.value })
-                                }
+                                onChange={handleChange}
                                 direction="column"
                             />
                         </div>
                         <div className="col-span-3 lg:col-span-2">
                             <InputGroup
+                                {...appointmentFormFields.endTime}
                                 type="time"
-                                label="End Time"
-                                name="end-time"
                                 value={state.endTime}
-                                onChange={(e) =>
-                                    setState({ endTime: e.target.value })
-                                }
+                                onChange={handleChange}
                                 direction="column"
                             />
                         </div>
                         <div className="col-span-6 lg:col-span-2 ">
                             <Select
-                                label="Status"
-                                name="status"
+                                {...appointmentFormFields.status}
                                 direction="column"
                                 displayField="display"
-                                selected={statusOptions.find(
+                                selected={appointmentStatusOptions.find(
                                     (i) => i.value == state.status
                                 )}
                                 setSelected={(i) =>
                                     setState({
-                                        status: i.value as AppointmentStatus,
+                                        status: i.value,
                                     })
                                 }
                                 className="max-h-[140px] capitalize"
-                                options={statusOptions}
+                                options={appointmentStatusOptions}
                             />
                         </div>
                     </div>
 
                     <Textarea
+                        {...appointmentFormFields.note}
                         containerClass="mt-4"
-                        label="Notes"
-                        name="notes"
-                        id="notes"
                         value={state.note}
-                        onChange={(e) => setState({ note: e.target.value })}
+                        onChange={handleChange}
                     />
 
                     <div className="mt-8 flex justify-end space-x-3">

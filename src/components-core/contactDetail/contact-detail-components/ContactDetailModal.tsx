@@ -27,6 +27,9 @@ import { Select } from "components-common/Select";
 import { PROFILE_TYPES } from "@prisma/client";
 import { ModalTitle } from "components-common/ModalTitle";
 import { SubRouter } from "components-common/SubRouter";
+import { ContactSingleton, ContactSingletonType } from "lib/ContactSingleton";
+
+const { contactFormFields, contactSchemas } = ContactSingleton;
 
 export const ContactDetailModal = () => {
     const { modal, resetModal } = useContactDetailUi();
@@ -69,10 +72,15 @@ const EditGeneralInfoForm = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<Pick<ContactSchema["base"], "name">>({
-        resolver: zodResolver(contactSchema().base.pick({ name: true })),
+        resolver: zodResolver(
+            ContactSingleton.contactSchemas.update.pick({ name: true })
+        ),
         defaultValues:
-            modal.form == "contact" || modal.form == "generalInfo"
-                ? (modal.defaultData as Pick<ContactSchema["base"], "name">)
+            modal.form == "generalInfo"
+                ? (modal.defaultData as Pick<
+                      ContactSingletonType["contactSchemas"]["update"],
+                      "name"
+                  >)
                 : undefined,
     });
 
@@ -95,7 +103,7 @@ const EditGeneralInfoForm = () => {
             <ModalTitle>Edit General Info</ModalTitle>
             <div className="mt-6">
                 <InputGroup
-                    label="Full Name"
+                    label={contactFormFields.name.label}
                     {...register("name")}
                     direction="column"
                     errorMessage={errors && errors.name && errors.name.message}
@@ -150,7 +158,7 @@ const EditContactForm = () => {
             <ModalTitle>Edit Primary Info</ModalTitle>
             <div className="mt-6 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
                 <InputGroup
-                    label="First Name"
+                    label={contactFormFields.firstName.label}
                     {...register("firstName")}
                     direction="column"
                     errorMessage={
@@ -158,7 +166,7 @@ const EditContactForm = () => {
                     }
                 />
                 <InputGroup
-                    label="Last Name"
+                    label={contactFormFields.lastName.label}
                     {...register("lastName")}
                     direction="column"
                     errorMessage={
@@ -168,7 +176,7 @@ const EditContactForm = () => {
             </div>
             <div className="mt-4 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
                 <InputGroup
-                    label="Email"
+                    label={contactFormFields.email.label}
                     {...register("email")}
                     direction="column"
                     errorMessage={
@@ -176,7 +184,7 @@ const EditContactForm = () => {
                     }
                 />
                 <InputGroup
-                    label="Phone Number"
+                    label={contactFormFields.phoneNumber.label}
                     {...register("phoneNumber")}
                     direction="column"
                     errorMessage={
@@ -189,7 +197,7 @@ const EditContactForm = () => {
             <div className="mt-4">
                 <Textarea
                     id="contact-notes"
-                    label="Notes"
+                    label={contactFormFields.notes.label}
                     {...register("notes")}
                     direction="column"
                 />
@@ -287,7 +295,7 @@ const SubContactForm = () => {
                 <InputGroup
                     direction="column"
                     required
-                    label="First Name"
+                    label={contactFormFields.firstName.label}
                     {...register("firstName")}
                     errorMessage={
                         errors && errors.firstName && errors.firstName.message
@@ -295,7 +303,7 @@ const SubContactForm = () => {
                 />
                 <InputGroup
                     direction="column"
-                    label="Last Name"
+                    label={contactFormFields.lastName.label}
                     {...register("lastName")}
                     errorMessage={
                         errors && errors.lastName && errors.lastName.message
@@ -306,7 +314,7 @@ const SubContactForm = () => {
             <div className="mt-4 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
                 <InputGroup
                     direction="column"
-                    label="Email"
+                    label={contactFormFields.email.label}
                     {...register("email")}
                     errorMessage={
                         errors && errors.email && errors.email.message
@@ -314,7 +322,7 @@ const SubContactForm = () => {
                 />
                 <InputGroup
                     direction="column"
-                    label="Phone"
+                    label={contactFormFields.phoneNumber.label}
                     {...register("phoneNumber")}
                     errorMessage={
                         errors &&

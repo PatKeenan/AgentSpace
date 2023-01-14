@@ -1,14 +1,11 @@
-import { authedProcedure, t } from "../trpc";
+import { AppointmentSingleton } from "lib/AppointmentSingleton";
+import { appointmentSortSchema, idSchema } from "server/schemas";
 import type { inferRouterOutputs } from "@trpc/server";
-import { z } from "zod";
-import {
-    appointmentQueryParamSchema,
-    appointmentSchema,
-    appointmentSortSchema,
-    contactOnAppointmentSchema,
-    idSchema,
-} from "server/schemas";
 import { AppointmentStatus } from "@prisma/client";
+import { authedProcedure, t } from "../trpc";
+import { z } from "zod";
+
+const { appointmentSchemas } = AppointmentSingleton;
 
 export const appointmentRouter = t.router({
     getAll: authedProcedure
@@ -17,7 +14,7 @@ export const appointmentRouter = t.router({
                 .object({
                     workspaceId: z.string(),
                 })
-                .merge(appointmentQueryParamSchema)
+                .merge(appointmentSchemas.search)
         )
         .query(async ({ ctx, input }) => {
             const {
@@ -28,9 +25,11 @@ export const appointmentRouter = t.router({
                 sortOrder = "desc",
                 workspaceId,
             } = input;
+
             const statusFilterKeys = Object.keys(
                 statusFilters
             ) as AppointmentStatus[];
+
             const activeStatusFilters = statusFilterKeys.filter(
                 (key) => statusFilters[key]
             );
@@ -98,7 +97,7 @@ export const appointmentRouter = t.router({
         .input(
             z
                 .object({ contactId: z.string(), take: z.number().optional() })
-                .merge(appointmentSortSchema)
+                .merge(appointmentSchemas.sort)
         )
         .query(async ({ ctx, input }) => {
             const { order = "desc", field = "createdAt" } = input;
@@ -213,9 +212,8 @@ export const appointmentRouter = t.router({
         }),
     create: authedProcedure
         .input(
-            appointmentSchema.extend({
+            appointmentSchemas.create.extend({
                 workspaceId: z.string(),
-                contacts: z.array(contactOnAppointmentSchema).optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {
@@ -247,9 +245,13 @@ export const appointmentRouter = t.router({
         }),
     update: authedProcedure
         .input(
-            appointmentSchema.extend({
+            appointmentSchemas.update.omit({ contacts: true }).extend({
                 id: z.string(),
-                newContacts: z.array(contactOnAppointmentSchema).optional(),
+                newContacts: z
+                    .array(
+                        appointmentSchemas.extendedContactOnAppointmentSchema
+                    )
+                    .optional(),
                 removedContactOnAppointmentIds: z
                     .array(z.object({ id: z.string() }))
                     .optional(),
@@ -294,8 +296,14 @@ export const appointmentRouter = t.router({
                 },
             });
         }),
+    // Used mostly for status
     quickUpdate: authedProcedure
-        .input(appointmentSchema.partial().merge(idSchema))
+        .input(
+            appointmentSchemas.update
+                .omit({ contacts: true })
+                .partial()
+                .merge(idSchema)
+        )
         .mutation(async ({ ctx, input }) => {
             const { id, ...rest } = input;
             return await ctx.prisma.appointment.update({
@@ -329,5 +337,6 @@ export const appointmentRouter = t.router({
         }),
 });
 
-type AppointmentRouter = typeof appointmentRouter;
-export type AppointmentRouterOutput = inferRouterOutputs<AppointmentRouter>;
+export type AppointmentRouterOutput = inferRouterOutputs<
+    typeof appointmentRouter
+>;

@@ -8,10 +8,11 @@ import { Button, ButtonLink } from "components-common/Button";
 import { useForm } from "react-hook-form";
 import * as React from "react";
 import * as z from "zod";
-import { subContactSchema, contactSchema } from "server/schemas";
+import { subContactSchema } from "server/schemas";
 import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
+import { ContactSingleton } from "lib/ContactSingleton";
 
 const initialMeta = {
     firstName: "",
@@ -31,13 +32,15 @@ const initialState = {
     subContactFields: [],
 };
 
-const createContactFormSchema = contactSchema().create.extend({
+const createContactFormSchema = ContactSingleton.contactSchemas.create.extend({
     subContactFields: z.array(
         subContactSchema().create.omit({ contactId: true })
     ),
 });
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
+
+const { contactFormFields, contactSchemas } = ContactSingleton;
 
 export const CreateContactForm = () => {
     const [subContactFields, setMetaFields] = React.useState<
@@ -131,8 +134,8 @@ export const CreateContactForm = () => {
                 >
                     <div className="space-y-6">
                         <ContactFormInput
+                            label={contactFormFields.name.label}
                             required
-                            label="Full Name"
                             className="max-w-lg"
                             {...register("name")}
                             errorMessage={
@@ -140,7 +143,7 @@ export const CreateContactForm = () => {
                             }
                         />
                         <ContactFormInput
-                            label="First Name"
+                            label={contactFormFields.firstName.label}
                             required
                             className="max-w-xs "
                             {...register("firstName")}
@@ -150,7 +153,7 @@ export const CreateContactForm = () => {
                             }
                         />
                         <ContactFormInput
-                            label="Last Name"
+                            label={contactFormFields.lastName.label}
                             className="max-w-xs"
                             {...register("lastName")}
                             errorMessage={
@@ -159,7 +162,7 @@ export const CreateContactForm = () => {
                         />
 
                         <ContactFormInput
-                            label="Email"
+                            label={contactFormFields.email.label}
                             {...register(`email`, {
                                 required: false,
                             })}
@@ -170,7 +173,7 @@ export const CreateContactForm = () => {
                         />
 
                         <ContactFormInput
-                            label="Phone Number"
+                            label={contactFormFields.phoneNumber.label}
                             {...register(`phoneNumber`)}
                             type="tel"
                             className="max-w-xs"
@@ -187,7 +190,7 @@ export const CreateContactForm = () => {
                         /> */}
 
                         <ContactFormTextArea
-                            label="Notes"
+                            label={contactFormFields.notes.label}
                             className="max-w-lg"
                             {...register("notes")}
                             rows={3}
@@ -268,7 +271,7 @@ export const CreateContactForm = () => {
                     >
                         <div className="space-y-6">
                             <ContactFormInput
-                                label="First Name"
+                                label={contactFormFields.firstName.label}
                                 {...register(
                                     `subContactFields.${idx}.firstName`
                                 )}
@@ -282,7 +285,7 @@ export const CreateContactForm = () => {
                                 }
                             />
                             <ContactFormInput
-                                label="Last Name"
+                                label={contactFormFields.lastName.label}
                                 {...register(
                                     `subContactFields.${idx}.lastName`
                                 )}
@@ -295,7 +298,7 @@ export const CreateContactForm = () => {
                                 }
                             />
                             <ContactFormInput
-                                label="Email"
+                                label={contactFormFields.email.label}
                                 {...register(`subContactFields.${idx}.email`, {
                                     required: false,
                                 })}
@@ -307,7 +310,7 @@ export const CreateContactForm = () => {
                                 }
                             />
                             <ContactFormInput
-                                label="Phone Number"
+                                label={contactFormFields.phoneNumber.label}
                                 {...register(
                                     `subContactFields.${idx}.phoneNumber`
                                 )}
@@ -321,7 +324,7 @@ export const CreateContactForm = () => {
                                 }
                             />
                             <ContactFormTextArea
-                                label="Notes"
+                                label={contactFormFields.notes.label}
                                 className="max-w-lg"
                                 {...register(`subContactFields.${idx}.note`)}
                                 rows={3}
