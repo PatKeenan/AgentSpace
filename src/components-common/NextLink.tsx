@@ -9,7 +9,7 @@ export const NextLink = React.forwardRef<HTMLAnchorElement, NextLinkPropType>(
     (props, ref) => {
         const { href, children, ...rest } = props;
         return (
-            <Link href={href}>
+            <Link href={href} passHref>
                 <a ref={ref} {...rest}>
                     {children}
                 </a>

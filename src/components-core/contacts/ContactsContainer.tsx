@@ -142,11 +142,8 @@ export const ContactsContainer: NextPageExtended = () => {
                         <ButtonLink
                             variant="primary"
                             href={`/workspace/${workspace.id}/contacts/create`}
+                            actionIcon="add"
                         >
-                            <PlusIcon
-                                className="gray-600 -ml-0.5 mr-1 h-4 w-4"
-                                aria-hidden
-                            />
                             Add New
                         </ButtonLink>
                     </SectionHeading.Actions>

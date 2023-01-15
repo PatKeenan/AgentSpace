@@ -1,6 +1,6 @@
 import { ContactAppointmentList } from "./contact-detail-components/ContactAppointmentList";
 import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
-import { EnvelopeIcon, PencilIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import { GridSectionTitle } from "./contact-detail-components/GridSectionTitle";
 import { SubContactList } from "./contact-detail-components/SubContactList";
 import { ProfilesList } from "./contact-detail-components/ProfilesList";
@@ -58,12 +58,9 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                             variant="outlined"
                                             type="button"
                                             onClick={handleClickEdit}
+                                            actionIcon="edit"
                                         >
-                                            <PencilIcon
-                                                className="-ml-1 mr-2 h-5 w-5 text-gray-400"
-                                                aria-hidden="true"
-                                            />
-                                            <span>Edit</span>
+                                            Edit
                                         </Button>
                                     }
                                 />

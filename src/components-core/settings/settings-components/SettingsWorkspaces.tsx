@@ -43,8 +43,9 @@ const SettingsWorkspaces = () => {
                     href="/workspace/create"
                     variant="primary"
                     className="ml-auto"
+                    actionIcon="add"
                 >
-                    Add Workspace
+                    Add New
                 </ButtonLink>
             </div>
             <ul>

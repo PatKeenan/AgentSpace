@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { Button, Input, Loading } from "components-common";
+import { Button, ButtonLink, Input, Loading } from "components-common";
 import { Listbox, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
@@ -13,9 +13,6 @@ import clsx from "clsx";
 import type { UserOnWorkspace } from "@prisma/client";
 
 export const CreateWorkspaceContainer = () => {
-    const [defaultWorkspaceId, setDefaultWorkspaceId] =
-        React.useState<string>();
-
     const { status } = useSession({
         required: true,
         onUnauthenticated() {
@@ -85,7 +82,7 @@ export const CreateWorkspaceContainer = () => {
                         {workspaces && workspaces.length > 0 && (
                             <>
                                 <h3 className="mb-3 text-center text-lg font-semibold text-gray-700">
-                                    Select a Workspace
+                                    Select Workspace
                                 </h3>
                                 <div className="space-y-6">
                                     <Listbox
@@ -203,7 +200,7 @@ export const CreateWorkspaceContainer = () => {
                             </>
                         )}
                         <h3 className="mb-3 text-center text-lg font-semibold text-gray-700">
-                            Create a New Workspace
+                            Create New Workspace
                         </h3>
                         <form className="space-y-6" onSubmit={onSubmit}>
                             <div>
@@ -231,6 +228,11 @@ export const CreateWorkspaceContainer = () => {
                             </div>
                         </form>
                     </div>
+                    {workspaces && workspaces.length > 0 && (
+                        <ButtonLink variant="text" href="/" className="mt-4">
+                            Cancel
+                        </ButtonLink>
+                    )}
                 </div>
             </div>
         </div>

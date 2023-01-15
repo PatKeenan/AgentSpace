@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, IconButton } from "components-common";
-import { PencilIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/20/solid";
 import { SectionHeading } from "components-layout/SectionHeading";
 import {
     ContactDetailModal,
@@ -71,14 +71,12 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
                     </SectionHeading.TitleContainer>
                     <SectionHeading.Actions>
                         <div className="flex flex-shrink-0 items-center space-x-2">
-                            <Button variant="outlined" type="button">
-                                <TrashIcon
-                                    className={
-                                        "h-5 w-5 text-gray-400 md:-ml-1 md:mr-2"
-                                    }
-                                    aria-hidden="true"
-                                />
-                                <span className="hidden md:block">Delete</span>
+                            <Button
+                                variant="outlined"
+                                type="button"
+                                actionIcon="delete"
+                            >
+                                Delete
                             </Button>
                         </div>
                     </SectionHeading.Actions>

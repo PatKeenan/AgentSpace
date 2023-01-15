@@ -1,6 +1,5 @@
 import { useContactDetailUi } from "../useContactDetailUi";
 import { ToggleMenu } from "components-common/ToggleMenu";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import { useSubContacts } from "hooks/useSubContacts";
 import { GridSectionTitle } from "./GridSectionTitle";
@@ -70,16 +69,16 @@ export const SubContactList = ({
                         subTitle="People that are associated with each other."
                         actions={
                             <Button
-                                variant="outlined"
+                                variant="primary"
                                 onClick={() =>
                                     setModal({
                                         state: true,
                                         form: "subContact",
                                     })
                                 }
+                                actionIcon="add"
                             >
-                                <PlusIcon className="mr-1 h-4 w-4 text-gray-400" />
-                                <span>Add</span>
+                                Add
                             </Button>
                         }
                     />

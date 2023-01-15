@@ -48,16 +48,16 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
                             subTitle="Personal details and application."
                             actions={
                                 <Button
-                                    variant="outlined"
+                                    variant="primary"
                                     onClick={() =>
                                         setModal({
                                             state: true,
                                             form: "profile",
                                         })
                                     }
+                                    actionIcon="add"
                                 >
-                                    <PlusIcon className="mr-1 h-4 w-4 text-gray-400" />
-                                    <span>Add</span>
+                                    Add New
                                 </Button>
                             }
                         />

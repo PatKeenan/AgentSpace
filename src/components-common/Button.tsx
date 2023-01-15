@@ -1,3 +1,4 @@
+import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { SVGProps } from "react";
 import { NextLink } from "./NextLink";
@@ -10,12 +11,30 @@ export const variantStyles = {
         "border-transparent bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
 };
 
+const actionIcons = {
+    delete: TrashIcon,
+    edit: PencilIcon,
+    add: PlusIcon,
+};
+
 type ButtonProps = {
     variant: keyof typeof variantStyles;
+    actionIcon?: keyof typeof actionIcons;
+    iconPosition?: "left" | "right";
 } & React.ComponentProps<"button">;
 
 export const Button = (props: ButtonProps) => {
-    const { variant, className, type = "button", ...htmlProps } = props;
+    const {
+        variant,
+        className,
+        children,
+        actionIcon,
+        iconPosition = "left",
+        type = "button",
+        ...htmlProps
+    } = props;
+
+    const Icon = actionIcon ? actionIcons[actionIcon] : null;
     return (
         <button
             type={type}
@@ -27,16 +46,46 @@ export const Button = (props: ButtonProps) => {
                     "inline-flex items-center border px-4 py-2 shadow-sm"
             )}
             {...htmlProps}
-        />
+        >
+            {Icon && iconPosition == "left" && (
+                <Icon
+                    className={clsx(
+                        "h-5 w-5 lg:-ml-1 lg:mr-2",
+                        variant == "primary" ? "text-white" : "text-gray-400"
+                    )}
+                    aria-hidden
+                />
+            )}
+            <span className={clsx(Icon && "hidden lg:block")}>{children}</span>
+            {Icon && iconPosition == "right" && (
+                <Icon
+                    className={clsx(
+                        "h-5 w-5 lg:-mr-1 lg:ml-2",
+                        variant == "primary" ? "text-white" : "text-gray-400"
+                    )}
+                    aria-hidden
+                />
+            )}
+        </button>
     );
 };
 type ButtonLinkProps = {
     variant: keyof typeof variantStyles;
     href: string;
+    actionIcon?: keyof typeof actionIcons;
+    iconPosition?: "left" | "right";
 } & Omit<React.HtmlHTMLAttributes<HTMLAnchorElement>, "href">;
 
 export const ButtonLink = (props: ButtonLinkProps) => {
-    const { variant, className, ...htmlProps } = props;
+    const {
+        variant,
+        className,
+        actionIcon,
+        children,
+        iconPosition = "left",
+        ...htmlProps
+    } = props;
+    const Icon = actionIcon ? actionIcons[actionIcon] : null;
     return (
         <NextLink
             type="button"
@@ -48,7 +97,27 @@ export const ButtonLink = (props: ButtonLinkProps) => {
                     "inline-flex items-center border px-4 py-2 shadow-sm"
             )}
             {...htmlProps}
-        />
+        >
+            {Icon && iconPosition == "left" && (
+                <Icon
+                    className={clsx(
+                        "h-5 w-5 lg:-ml-1 lg:mr-2",
+                        variant == "primary" ? "text-white" : "text-gray-400"
+                    )}
+                    aria-hidden
+                />
+            )}
+            <span className={clsx(Icon && "hidden lg:block")}>{children}</span>
+            {Icon && iconPosition == "right" && (
+                <Icon
+                    className={clsx(
+                        "h-5 w-5 lg:-mr-1 lg:ml-2",
+                        variant == "primary" ? "text-white" : "text-gray-400"
+                    )}
+                    aria-hidden
+                />
+            )}
+        </NextLink>
     );
 };
 

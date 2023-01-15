@@ -75,12 +75,9 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                         selectedDate: modal.selectedDate,
                                     })
                                 }
+                                actionIcon="add"
                             >
-                                <PlusIcon
-                                    className="gray-600 h-4 w-4 xl:-ml-0.5 xl:mr-1"
-                                    aria-hidden
-                                />
-                                <span className="hidden lg:block">Add New</span>
+                                Add New
                             </Button>
                         </SectionHeading.Actions>
                     </SectionHeading>

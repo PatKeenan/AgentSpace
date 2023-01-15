@@ -1,9 +1,5 @@
 import { NextPageExtended } from "types/index";
-import {
-    Cog6ToothIcon,
-    MagnifyingGlassIcon,
-    PlusIcon,
-} from "@heroicons/react/20/solid";
+import { Cog6ToothIcon } from "@heroicons/react/20/solid";
 import { Button, ButtonLink } from "components-common/Button";
 import { useAppointments } from "hooks/useAppointments";
 import { useRouter } from "next/router";
@@ -83,8 +79,7 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
                     </div>
 
                     <div className="ml-auto">
-                        <ButtonLink variant="primary" href="">
-                            <PlusIcon className="-ml-1.5 mr-2 h-4 w-4" />
+                        <ButtonLink variant="primary" href="" actionIcon="add">
                             Add New
                         </ButtonLink>
                     </div>

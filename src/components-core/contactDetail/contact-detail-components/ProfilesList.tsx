@@ -42,14 +42,6 @@ export const ProfilesList = ({ contactId }: { contactId: string }) => {
                 </div>
             )}
             buttonTitle={"View All"}
-            action={
-                <IconButton
-                    title="Add Profile"
-                    textColor="text-gray-500 group-hover:text-gray-600"
-                    icon={PlusIcon}
-                    onClick={() => setModal({ state: true, form: "profile" })}
-                />
-            }
         />
     );
 };
