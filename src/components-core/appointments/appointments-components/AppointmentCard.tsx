@@ -15,6 +15,9 @@ import { statusColorsDark, statusOptions } from "../appointments-utils";
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
 import { formatDate } from "utils/formatDate";
+import { AppointmentSingleton } from "lib";
+
+const { appointmentFormFields } = AppointmentSingleton;
 
 export const AppointmentCard = (props: {
     idx: number;
@@ -116,7 +119,7 @@ export const AppointmentCard = (props: {
         }
         return undefined;
     };
-    const getStatusColor = () => {
+    /*     const getStatusColor = () => {
         switch (appointment.status) {
             case "CONFIRMED": {
                 return "bg-green-400";
@@ -132,7 +135,7 @@ export const AppointmentCard = (props: {
             default:
                 return "bg-gray-300";
         }
-    };
+    }; */
 
     return (
         <GridCard>
@@ -192,18 +195,18 @@ export const AppointmentCard = (props: {
                 </div>
             </div>
             <DetailsRow
-                title="Date"
+                title={appointmentFormFields.date.label}
                 value={formatDate(appointment.date, "MM/DD/YYYY")}
             />
             <DetailsRow title="Time" value={timeDisplay()} />
             <DetailsRow
-                title="Address"
+                title={appointmentFormFields.address.label}
                 value={appointment?.address}
                 expand={expanded}
             />
             {appointment?.address_2 && (
                 <DetailsRow
-                    title="Building/Apt"
+                    title={appointmentFormFields.address_2.label}
                     value={appointment?.address_2}
                     expand={expanded}
                 />
@@ -211,7 +214,7 @@ export const AppointmentCard = (props: {
 
             <div className="mt-2 grid w-full grid-cols-4 items-start ">
                 <dt className="col-span-1 text-sm font-medium text-gray-700">
-                    Contacts
+                    {appointmentFormFields.contacts.label}
                 </dt>
                 <ul
                     className={clsx(
@@ -248,7 +251,7 @@ export const AppointmentCard = (props: {
             </div>
 
             <DetailsRow
-                title="Notes"
+                title={appointmentFormFields.note.label}
                 value={appointment?.note}
                 expand={expanded}
             />

@@ -5,6 +5,8 @@ import { IconButton } from "components-common/Button";
 
 import { formatStringToDate } from "utils/formatDate";
 import { statusColorsLight, statusDisplay } from "../appointments-utils";
+import { AppointmentSingleton } from "lib";
+
 function thisOrThat<T, U>(arg1: T, arg2: U) {
     if (!arg1) return arg2;
     if (typeof arg1 == "object") {
@@ -12,6 +14,8 @@ function thisOrThat<T, U>(arg1: T, arg2: U) {
     }
     return arg1;
 }
+
+const { appointmentFormFields } = AppointmentSingleton;
 
 export const ListViewAppointmentCard = ({
     address,
@@ -54,7 +58,7 @@ export const ListViewAppointmentCard = ({
                     <div className="grid max-w-2xl grid-cols-3 gap-4 text-sm">
                         <div className="col-span-2 block ">
                             <h4 className="text-sm font-medium text-gray-700">
-                                Address
+                                {appointmentFormFields.address.label}
                             </h4>
                             <p className="mt-1 max-w-sm truncate ">
                                 {thisOrThat(address, "--")}
@@ -62,7 +66,7 @@ export const ListViewAppointmentCard = ({
                         </div>
                         <div className="col-span-1 block ">
                             <h4 className="font-medium text-gray-700">
-                                Building/Apt
+                                {appointmentFormFields.address_2.label}
                             </h4>
                             <p className="mt-1 break-words ">
                                 {thisOrThat(address_2, "--")}
@@ -78,7 +82,9 @@ export const ListViewAppointmentCard = ({
                             </p>
                         </div>
                         <div className="col-span-1 block">
-                            <h4 className="font-medium text-gray-700">Date</h4>
+                            <h4 className="font-medium text-gray-700">
+                                {appointmentFormFields.date.label}
+                            </h4>
                             <p className="mt-1 truncate ">
                                 {date
                                     ? formatStringToDate(date)?.toDateString()
@@ -89,14 +95,16 @@ export const ListViewAppointmentCard = ({
                     <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4 text-sm">
                         <div className="col-span-2">
                             <h4 className="text-sm font-medium text-gray-700">
-                                Contacts
+                                {appointmentFormFields.contacts.label}
                             </h4>
                             <p className="mt-1 truncate">
                                 {thisOrThat(contacts, "--")}
                             </p>
                         </div>
                         <div className="col-span-1 block">
-                            <h4 className="font-medium text-gray-700">Notes</h4>
+                            <h4 className="font-medium text-gray-700">
+                                {appointmentFormFields.note.label}
+                            </h4>
                             <p className="mt-1 truncate">
                                 {thisOrThat(notes, "--")}
                             </p>

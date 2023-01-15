@@ -34,6 +34,7 @@ function errMsg(
     return `${formFields[fieldName].label} must be ${option} than ${value} characters.`;
 }
 
+// Ensures consistent naming across the app
 const formFields = {
     date: { name: "date", label: "Date" },
     address: { name: "address", label: "Address" },

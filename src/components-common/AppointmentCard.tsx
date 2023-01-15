@@ -3,17 +3,14 @@ import { ToggleMenu } from "components-common/ToggleMenu";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { formatTime } from "utils/formatTime";
 import * as React from "react";
-import type { Appointment, AppointmentStatus } from "@prisma/client";
+import type { Appointment } from "@prisma/client";
 import clsx from "clsx";
 import { Button } from "components-common/Button";
 import { Select } from "components-common/Select";
 
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
-import {
-    type AppointmentStatusOption,
-    appointmentStatusOptions,
-} from "utils/appointmentStatusOptions";
+import { AppointmentSingleton, type AppointmentSingletonType } from "lib";
 
 type ContactOnAppointment = {
     contact: {
@@ -31,9 +28,14 @@ type AppointmentCardProps = {
     appointment: Appointment & { contacts: ContactOnAppointment[] };
     idx: number;
     onEdit?: () => void;
-    onStatusChange?: (status: AppointmentStatusOption) => void;
+    onStatusChange?: (
+        status: AppointmentSingletonType["appointmentStatusOptions"][number]
+    ) => void;
     onDelete?: () => void;
 };
+
+const { appointmentStatusOptions, appointmentFormFields } =
+    AppointmentSingleton;
 
 export const AppointmentCard = (props: AppointmentCardProps) => {
     const { idx, appointment, onEdit, onDelete, onStatusChange } = props;
@@ -41,7 +43,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
     const [expanded, setExpanded] = React.useState(false);
 
     const [status, setStatus] = React.useState<
-        AppointmentStatusOption | undefined
+        AppointmentSingletonType["appointmentStatusOptions"][number] | undefined
     >(() =>
         appointmentStatusOptions.find(
             (i) => i.value == String(appointment?.status)
@@ -63,7 +65,9 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
         onDelete && onDelete();
     };
 
-    const handleChangeStatus = (i: AppointmentStatusOption) => {
+    const handleChangeStatus = (
+        i: AppointmentSingletonType["appointmentStatusOptions"][number]
+    ) => {
         onStatusChange && onStatusChange(i);
     };
 
@@ -151,13 +155,13 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
             </div>
             <DetailsRow title="Time" value={timeDisplay()} expand={expanded} />
             <DetailsRow
-                title="Address"
+                title={appointmentFormFields.address.label}
                 value={appointment?.address}
                 expand={expanded}
             />
             {appointment?.address_2 && (
                 <DetailsRow
-                    title="Building/Apt"
+                    title={appointmentFormFields.address_2.label}
                     value={appointment?.address_2}
                     expand={expanded}
                 />
@@ -165,7 +169,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
 
             <div className="mt-2 grid w-full grid-cols-4 items-start ">
                 <dt className="col-span-1 text-sm font-medium text-gray-700">
-                    Contacts
+                    {appointmentFormFields.contacts.label}
                 </dt>
                 <ul
                     className={clsx(
@@ -202,7 +206,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
             </div>
 
             <DetailsRow
-                title="Notes"
+                title={appointmentFormFields.note.label}
                 value={appointment?.note}
                 expand={expanded}
             />
