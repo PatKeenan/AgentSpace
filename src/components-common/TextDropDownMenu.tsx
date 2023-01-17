@@ -22,7 +22,7 @@ type OptionWithLink = {
 
 type OptionWithButton = {
     href?: never;
-    onClick: () => void;
+    onClick?: () => void;
 } & OptionBase;
 
 type TextDropDownProps<T, K> = {
@@ -30,13 +30,20 @@ type TextDropDownProps<T, K> = {
     displayField: K;
     title: string;
     menuPosition?: "right" | "left";
+    onOptionClick?: (option?: T) => void;
 };
 
 export function TextDropDownMenu<
     T extends OptionWithButton | OptionWithLink,
     K extends keyof T
 >(props: TextDropDownProps<T, K>) {
-    const { options, displayField, title, menuPosition = "right" } = props;
+    const {
+        options,
+        displayField,
+        title,
+        menuPosition = "right",
+        onOptionClick,
+    } = props;
     return (
         <Menu as="div" className="relative inline-block text-left">
             <div>
@@ -67,8 +74,8 @@ export function TextDropDownMenu<
                     )}
                 >
                     <div className="py-1">
-                        {options.map((option) => (
-                            <Menu.Item key={option.id}>
+                        {options.map((option, optionIdx) => (
+                            <Menu.Item key={`${option.id || optionIdx}`}>
                                 {({ active }) => {
                                     return option.href ? (
                                         <NextLink
@@ -109,7 +116,14 @@ export function TextDropDownMenu<
                                                 active && "bg-gray-100",
                                                 "block w-full px-4 py-2 text-sm"
                                             )}
-                                            onClick={option.onClick}
+                                            onClick={
+                                                option.onClick
+                                                    ? option.onClick
+                                                    : onOptionClick
+                                                    ? () =>
+                                                          onOptionClick(option)
+                                                    : undefined
+                                            }
                                         >
                                             <div className="flex items-center">
                                                 {(option.icon &&
