@@ -98,15 +98,10 @@ export const AppointmentsContainer: NextPageExtended = () => {
                                             selectedDate: modal.selectedDate,
                                         })
                                     }
-                                    className="mb-1 block md:mb-0 lg:hidden"
+                                    actionIcon="add"
+                                    className="mb-1 md:mb-0 lg:hidden"
                                 >
-                                    <PlusIcon
-                                        className="gray-600 h-4 w-4 xl:-ml-0.5 xl:mr-1"
-                                        aria-hidden
-                                    />
-                                    <span className="block lg:hidden">
-                                        Add New
-                                    </span>
+                                    Add New
                                 </Button>
                             ) : null
                         }

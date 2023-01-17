@@ -6,6 +6,7 @@ import { IconButton } from "components-common/Button";
 import { formatStringToDate } from "utils/formatDate";
 import { statusColorsLight, statusDisplay } from "../appointments-utils";
 import { AppointmentSingleton } from "lib";
+import { format } from "date-fns";
 
 function thisOrThat<T, U>(arg1: T, arg2: U) {
     if (!arg1) return arg2;
@@ -39,79 +40,90 @@ export const ListViewAppointmentCard = ({
     return (
         <div
             className={clsx(
-                createdAt ? "px-6 pt-6 pb-8 lg:pb-6" : " p-6",
+                createdAt
+                    ? "mt-3 px-3 pb-4 md:px-6 md:pt-6 md:pb-8 lg:pb-6"
+                    : "p-3 md:p-6",
                 "group relative block text-gray-500 hover:text-gray-800"
             )}
         >
             <div className="flex flex-1">
                 <div className="flex-grow">
-                    <div className="mb-3 -mt-2.5 w-full">
+                    <div className="mb-3 flex w-full items-center justify-end md:-mt-2.5 md:justify-start">
                         <p
                             className={clsx(
                                 status && statusColorsLight[status],
-                                "-ml-2 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize"
+                                "order-1 -ml-1 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize md:-ml-2"
                             )}
                         >
                             {thisOrThat(statusDisplay(status), "--")}
                         </p>
                     </div>
-                    <div className="grid max-w-2xl grid-cols-3 gap-4 text-sm">
-                        <div className="col-span-2 block ">
-                            <h4 className="text-sm font-medium text-gray-700">
-                                {appointmentFormFields.address.label}
-                            </h4>
-                            <p className="mt-1 max-w-sm truncate ">
-                                {thisOrThat(address, "--")}
-                            </p>
-                        </div>
-                        <div className="col-span-1 block ">
-                            <h4 className="font-medium text-gray-700">
-                                {appointmentFormFields.address_2.label}
-                            </h4>
-                            <p className="mt-1 break-words ">
-                                {thisOrThat(address_2, "--")}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4 text-sm">
-                        <div className="col-span-2">
-                            <h4 className="font-medium text-gray-700">Time</h4>
-                            <p className="mt-1 truncate ">
-                                {thisOrThat(time, "--")}
-                            </p>
-                        </div>
-                        <div className="col-span-1 block">
-                            <h4 className="font-medium text-gray-700">
+                    <ResponsiveGroup className="-mt-8 md:-mt-0">
+                        <div className="grid grid-cols-5 md:block">
+                            <FormFieldTitle className="col-span-1">
                                 {appointmentFormFields.date.label}
-                            </h4>
-                            <p className="mt-1 truncate ">
+                            </FormFieldTitle>
+                            <p className="col-span-4 truncate">
                                 {date
-                                    ? formatStringToDate(date)?.toDateString()
+                                    ? format(
+                                          formatStringToDate(date) ||
+                                              new Date(),
+                                          "PP"
+                                      )
                                     : "--"}
                             </p>
                         </div>
-                    </div>
-                    <div className="mt-3 grid max-w-2xl grid-cols-3 gap-4 text-sm">
-                        <div className="col-span-2">
-                            <h4 className="text-sm font-medium text-gray-700">
+                        <div className="grid grid-cols-5 md:block">
+                            <FormFieldTitle className="col-span-1">
+                                Time
+                            </FormFieldTitle>
+                            <p className="col-span-4 truncate ">
+                                {thisOrThat(time, "--")}
+                            </p>
+                        </div>
+                    </ResponsiveGroup>
+
+                    <ResponsiveGroup singleItem={!address_2}>
+                        <div className="grid grid-cols-5 md:block">
+                            <FormFieldTitle className="col-span-1">
+                                {appointmentFormFields.address.label}
+                            </FormFieldTitle>
+                            <p className="col-span-4 max-w-lg line-clamp-2">
+                                {thisOrThat(address, "--")}
+                            </p>
+                        </div>
+                        {address_2 && (
+                            <div className="grid grid-cols-5 md:block">
+                                <FormFieldTitle className="col-span-1">
+                                    {appointmentFormFields.address_2.label}
+                                </FormFieldTitle>
+                                <p className="col-span-4 break-words">
+                                    {thisOrThat(address_2, "--")}
+                                </p>
+                            </div>
+                        )}
+                    </ResponsiveGroup>
+                    <ResponsiveGroup>
+                        <div className="grid grid-cols-5 md:block">
+                            <FormFieldTitle className="col-span-1">
                                 {appointmentFormFields.contacts.label}
-                            </h4>
-                            <p className="mt-1 truncate">
+                            </FormFieldTitle>
+                            <p className="col-span-4">
                                 {thisOrThat(contacts, "--")}
                             </p>
                         </div>
-                        <div className="col-span-1 block">
-                            <h4 className="font-medium text-gray-700">
+
+                        <div className="hidden md:block">
+                            <FormFieldTitle>
                                 {appointmentFormFields.note.label}
-                            </h4>
-                            <p className="mt-1 truncate">
+                            </FormFieldTitle>
+                            <p className="truncate">
                                 {thisOrThat(notes, "--")}
                             </p>
                         </div>
-                    </div>
+                    </ResponsiveGroup>
                 </div>
-                <div className="-mr-3 flex flex-shrink-0">
+                <div className="-mr-3 hidden flex-shrink-0 md:flex">
                     <div className="my-auto">
                         <IconButton
                             title="View"
@@ -123,10 +135,40 @@ export const ListViewAppointmentCard = ({
             </div>
 
             {createdAt && (
-                <p className="absolute left-6 bottom-2 text-xs md:left-auto md:right-5">
+                <p className="absolute left-6 bottom-2 hidden text-xs md:left-auto md:right-5 md:block">
                     Created {createdAt}
                 </p>
             )}
         </div>
     );
 };
+const ResponsiveGroup = ({
+    singleItem = false,
+    className,
+    ...props
+}: {
+    singleItem?: boolean;
+} & React.ComponentProps<"div">) => {
+    return (
+        <div
+            className={clsx(
+                className,
+                singleItem
+                    ? "[&>div:nth-child(odd)]:col-span-5 md:[&>div:nth-child(odd)]:col-span-3"
+                    : "[&>div:nth-child(odd)]:col-span-3 md:[&>div:nth-child(odd)]:col-span-2 [&>div:nth-child(even)]:col-span-2 md:[&>div:nth-child(even)]:col-span-1",
+                "mt-4 block grid-cols-5 gap-3 space-y-3 text-sm md:grid md:grid-cols-3 md:space-y-0"
+            )}
+            {...props}
+        />
+    );
+};
+
+const FormFieldTitle = ({
+    className,
+    ...props
+}: React.ComponentProps<"h4">) => (
+    <h4
+        className={clsx(className, "mb-1 text-sm font-medium text-gray-700")}
+        {...props}
+    />
+);
