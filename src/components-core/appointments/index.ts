@@ -1,2 +1,3 @@
-export * from "./AppointmentsContainer";
 export * from "./useAppointmentsUI";
+export * from "./AppointmentsMapViewContainer";
+export * from "./AppointmentsListViewContainer";

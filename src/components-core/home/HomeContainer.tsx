@@ -1,9 +1,8 @@
-import { PageBody, SectionHeading } from "components-layout";
+import { ButtonLink, PageBody, SectionHeading } from "components-common";
 import { useWorkspace } from "hooks/useWorkspace";
-import { NextPageExtended } from "types/index";
 import { classNames } from "utils/classNames";
+import { useSession } from "next-auth/react";
 import { exists } from "utils/helpers";
-
 import {
     AcademicCapIcon,
     BanknotesIcon,
@@ -12,8 +11,8 @@ import {
     ReceiptRefundIcon,
     UsersIcon,
 } from "@heroicons/react/24/outline";
-import { ButtonLink } from "components-common/Button";
-import { useSession } from "next-auth/react";
+
+import type { NextPageExtended } from "types/index";
 
 const actions = [
     {

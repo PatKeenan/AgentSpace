@@ -2,8 +2,14 @@
 import clsx from "clsx";
 import type { ChildrenPropsObj } from "types/index";
 
-export const SectionHeading = (props: ChildrenPropsObj) => (
-    <div className="mb-4 flex items-center justify-between" {...props} />
+export const SectionHeading = ({
+    className,
+    ...props
+}: ChildrenPropsObj & React.ComponentProps<"div">) => (
+    <div
+        className={clsx("mb-4 flex items-center justify-between", className)}
+        {...props}
+    />
 );
 SectionHeading.TitleContainer = (props: ChildrenPropsObj) => (
     <div className="min-w-0 flex-1 items-center" {...props} />

@@ -1,7 +1,12 @@
-import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
-import { ButtonLink } from "components-common/Button";
 import { useWorkspace } from "hooks/useWorkspace";
-import { NextPageExtended } from "types/index";
+import {
+    ButtonLink,
+    Breadcrumb,
+    PageBody,
+    SectionHeading,
+} from "components-common";
+
+import type { NextPageExtended } from "types/index";
 
 export const ProfilesContainer: NextPageExtended = () => {
     const { id } = useWorkspace();

@@ -1,29 +1,30 @@
-import { ListViewAppointmentCard } from "./ListViewAppointmentCard";
+import { NextLink, Button, TextDropDownMenu } from "components-common";
+import { Dialog, Disclosure, Transition } from "@headlessui/react";
+import { useAppointments } from "hooks/useAppointments";
+import { useDebounceState } from "hooks/useDebounce";
+import { AppointmentStatus } from "@prisma/client";
+import { useWorkspace } from "hooks/useWorkspace";
+import { Pagination } from "components-common";
+import { timeDisplay } from "utils/formatTime";
+import { formatDate } from "utils/formatDate";
+import * as React from "react";
+import clsx from "clsx";
+import {
+    AppointmentSingleton,
+    AppointmentSingletonType,
+} from "lib/AppointmentSingleton";
+import {
+    ListViewAppointmentCard,
+    AppointmentsNestedLayout,
+} from "./appointments-components";
 import {
     ChevronDownIcon,
     EllipsisVerticalIcon,
     MagnifyingGlassIcon,
     XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useAppointments } from "hooks/useAppointments";
-import { NextLink } from "components-common/NextLink";
-import { Button } from "components-common/Button";
-import { useWorkspace } from "hooks/useWorkspace";
-import { timeDisplay } from "utils/formatTime";
-import { formatDate } from "utils/formatDate";
-import { TextDropDownMenu } from "components-common/TextDropDownMenu";
-import * as React from "react";
-import { useDebounceState } from "hooks/useDebounce";
-import { AppointmentStatus } from "@prisma/client";
-import { useAppointmentsUI } from "../useAppointmentsUI";
-import {
-    AppointmentSingleton,
-    AppointmentSingletonType,
-} from "lib/AppointmentSingleton";
-import { Dialog, Disclosure, Transition } from "@headlessui/react";
-import clsx from "clsx";
-import { Pagination } from "components-common";
-import { useRouter } from "next/router";
+
+import type { NextPageExtended } from "types/index";
 
 type FiltersType = {
     name: keyof Omit<
@@ -56,8 +57,7 @@ const queryParamReducer = (
     newState: Partial<AppointmentSingletonType["appointmentSchemas"]["search"]>
 ) => ({ ...state, ...newState });
 
-const AppointmentListView = () => {
-    const router = useRouter();
+export const AppointmentsListViewContainer: NextPageExtended = () => {
     const [queryParamsState, setQueryParamsState] = React.useReducer(
         queryParamReducer,
         initialQueryParamsState
@@ -181,7 +181,7 @@ const AppointmentListView = () => {
     }, [queryParamsState.page]);
 
     return (
-        <>
+        <AppointmentsNestedLayout activeTab="View All">
             {/* Mobile Filters */}
             <Transition.Root show={mobileFiltersOpen} as={React.Fragment}>
                 <Dialog
@@ -522,8 +522,9 @@ const AppointmentListView = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </AppointmentsNestedLayout>
     );
 };
 
-export default AppointmentListView;
+AppointmentsListViewContainer.layout = "dashboard";
+AppointmentsListViewContainer.subLayout = "appointments";

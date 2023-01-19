@@ -1,4 +1,5 @@
 import { AppointmentStatus } from "@prisma/client";
+import { paginationSchema } from "server/schemas/pagination";
 import { z } from "zod";
 
 export type AppointmentSingletonType = {
@@ -107,19 +108,21 @@ const appointmentSortSchema = z.object({
     order: appointmentSortOrder,
 });
 
-const appointmentSearchSchema = z.object({
-    searchBy: z.enum(["address", "contacts"]),
-    searchQuery: z.string().optional(),
-    statusFilters: z.object({
-        NO_STATUS: z.boolean(),
-        PENDING: z.boolean(),
-        CONFIRMED: z.boolean(),
-        CANCELED: z.boolean(),
-        DENIED: z.boolean(),
-    }),
-    sortBy: appointmentSortFields,
-    sortOrder: appointmentSortOrder,
-});
+const appointmentSearchSchema = z
+    .object({
+        searchBy: z.enum(["address", "contacts"]),
+        searchQuery: z.string().optional(),
+        statusFilters: z.object({
+            NO_STATUS: z.boolean(),
+            PENDING: z.boolean(),
+            CONFIRMED: z.boolean(),
+            CANCELED: z.boolean(),
+            DENIED: z.boolean(),
+        }),
+        sortBy: appointmentSortFields,
+        sortOrder: appointmentSortOrder,
+    })
+    .merge(paginationSchema);
 
 // -------- Main Export --------//
 

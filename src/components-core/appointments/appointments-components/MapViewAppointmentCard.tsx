@@ -19,7 +19,7 @@ import { AppointmentSingleton } from "lib";
 
 const { appointmentFormFields } = AppointmentSingleton;
 
-export const AppointmentCard = (props: {
+export const MapViewAppointmentCard = (props: {
     idx: number;
     appointment: Appointment & {
         contacts: {

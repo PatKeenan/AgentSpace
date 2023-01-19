@@ -1,9 +1,10 @@
 import { AppointmentSingleton } from "lib/AppointmentSingleton";
-import { appointmentSortSchema, idSchema } from "server/schemas";
+import { idSchema } from "server/schemas";
 import type { inferRouterOutputs } from "@trpc/server";
 import { AppointmentStatus } from "@prisma/client";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
+import { paginationSchema } from "server/schemas/pagination";
 
 const { appointmentSchemas } = AppointmentSingleton;
 
@@ -15,6 +16,7 @@ export const appointmentRouter = t.router({
                     workspaceId: z.string(),
                 })
                 .merge(appointmentSchemas.search)
+                .merge(paginationSchema)
         )
         .query(async ({ ctx, input }) => {
             const {
@@ -24,6 +26,8 @@ export const appointmentRouter = t.router({
                 sortBy = "createdAt",
                 sortOrder = "desc",
                 workspaceId,
+                page = 0,
+                take = 10,
             } = input;
 
             const statusFilterKeys = Object.keys(
@@ -34,64 +38,100 @@ export const appointmentRouter = t.router({
                 (key) => statusFilters[key]
             );
 
-            return await ctx.prisma.appointment.findMany({
-                where: {
-                    workspaceId: workspaceId,
-                    deleted: false,
-                    address:
-                        searchBy == "address" && searchQuery
-                            ? { contains: searchQuery, mode: "insensitive" }
-                            : undefined,
-                    contacts:
-                        searchBy == "contacts" && searchQuery
-                            ? {
-                                  some: {
-                                      contact: {
-                                          name: {
-                                              contains: searchQuery,
-                                              mode: "insensitive",
-                                          },
+            return await ctx.prisma.$transaction([
+                ctx.prisma.appointment.findMany({
+                    where: {
+                        workspaceId: workspaceId,
+                        deleted: false,
+                        address:
+                            searchBy == "address" && searchQuery
+                                ? { contains: searchQuery, mode: "insensitive" }
+                                : undefined,
+                        contacts:
+                            searchBy == "contacts" && searchQuery
+                                ? {
+                                      some: {
+                                          contact: {
+                                              name: {
+                                                  contains: searchQuery,
+                                                  mode: "insensitive",
+                                              },
 
-                                          deleted: false,
+                                              deleted: false,
+                                          },
                                       },
-                                  },
-                              }
-                            : undefined,
-                    status:
-                        activeStatusFilters.length > 0
-                            ? {
-                                  in: activeStatusFilters,
-                              }
-                            : undefined,
-                },
-                include: {
-                    contacts: {
-                        where: {
-                            contact: {
+                                  }
+                                : undefined,
+                        status:
+                            activeStatusFilters.length > 0
+                                ? {
+                                      in: activeStatusFilters,
+                                  }
+                                : undefined,
+                    },
+
+                    skip: take * (page - 1),
+                    take: take,
+                    include: {
+                        contacts: {
+                            where: {
+                                contact: {
+                                    deleted: false,
+                                },
                                 deleted: false,
                             },
-                            deleted: false,
-                        },
-                        select: {
-                            id: true,
-                            contact: {
-                                select: {
-                                    id: true,
-                                    name: true,
+                            select: {
+                                id: true,
+                                contact: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                    },
                                 },
-                            },
-                            profile: {
-                                select: {
-                                    id: true,
-                                    name: true,
+                                profile: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                    },
                                 },
                             },
                         },
                     },
-                },
 
-                orderBy: { [sortBy]: sortOrder },
-            });
+                    orderBy: { [sortBy]: sortOrder },
+                }),
+                ctx.prisma.appointment.count({
+                    where: {
+                        workspaceId: workspaceId,
+                        deleted: false,
+                        address:
+                            searchBy == "address" && searchQuery
+                                ? { contains: searchQuery, mode: "insensitive" }
+                                : undefined,
+                        contacts:
+                            searchBy == "contacts" && searchQuery
+                                ? {
+                                      some: {
+                                          contact: {
+                                              name: {
+                                                  contains: searchQuery,
+                                                  mode: "insensitive",
+                                              },
+
+                                              deleted: false,
+                                          },
+                                      },
+                                  }
+                                : undefined,
+                        status:
+                            activeStatusFilters.length > 0
+                                ? {
+                                      in: activeStatusFilters,
+                                  }
+                                : undefined,
+                    },
+                }),
+            ]);
         }),
     getAllForContact: authedProcedure
         .input(

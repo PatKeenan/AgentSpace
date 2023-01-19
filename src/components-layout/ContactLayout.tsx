@@ -1,13 +1,18 @@
 import React from "react";
-import { Button, IconButton } from "components-common";
+
 import { PencilIcon } from "@heroicons/react/20/solid";
-import { SectionHeading } from "components-layout/SectionHeading";
+
 import {
     ContactDetailModal,
     useContactDetailUi,
 } from "components-core/contactDetail";
-
-import { Breadcrumb, PageBody } from "components-layout";
+import {
+    Button,
+    IconButton,
+    SectionHeading,
+    Breadcrumb,
+    PageBody,
+} from "components-common";
 import { useContacts } from "hooks/useContacts";
 import { useRouter } from "next/router";
 import { exists } from "utils/helpers";
@@ -46,8 +51,8 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
             />
 
             <ContactDetailModal />
-            <PageBody extraClassName="max-w-8xl px-2 md:px-4 lg:px-0 mt-4 lg:mt-0">
-                <SectionHeading>
+            <PageBody>
+                <SectionHeading className="mt-2">
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title
                             icon={

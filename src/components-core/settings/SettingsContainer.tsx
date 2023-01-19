@@ -1,7 +1,4 @@
-import { SectionHeading } from "components-layout/SectionHeading";
-import { Breadcrumb } from "components-layout/Breadcrumb";
-import { PageBody } from "components-layout/PageBody";
-import { Tabs } from "components-common/Tabs";
+import { Tabs, PageBody, Breadcrumb, SectionHeading } from "components-common";
 import { useSettingsUI } from "./useSettingsUI";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";

@@ -1,4 +1,4 @@
-import { Breadcrumb, PageBody, SectionHeading } from "components-layout";
+import { Breadcrumb, PageBody, SectionHeading } from "components-common";
 import { CreateContactForm } from "./create-contact-components";
 
 import type { NextPageExtended } from "types/index";

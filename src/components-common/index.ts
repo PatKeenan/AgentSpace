@@ -24,5 +24,8 @@ export * from "./ComboboxOption";
 export * from "./Tag";
 export * from "./Calendar";
 export * from "./SubRouter";
-
+export * from "./Pagination";
 export * from "./TextDropDownMenu";
+export * from "./Breadcrumb";
+export * from "./PageBody";
+export * from "./SectionHeading";

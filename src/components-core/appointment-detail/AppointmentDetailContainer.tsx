@@ -1,9 +1,12 @@
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid";
-import { SectionHeading, PageBody } from "components-layout";
-import { Breadcrumb } from "components-layout/Breadcrumb";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { useWorkspace } from "hooks/useWorkspace";
-import { Button } from "components-common/Button";
+import {
+    Button,
+    Breadcrumb,
+    SectionHeading,
+    PageBody,
+} from "components-common";
 import { useRouter } from "next/router";
 import * as React from "react";
 import {

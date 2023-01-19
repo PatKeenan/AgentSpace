@@ -1,5 +1,4 @@
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
+import { PageBody, SectionHeading } from "components-common";
 import { NextPageExtended } from "types/index";
 
 export const TagsContainer: NextPageExtended = () => {

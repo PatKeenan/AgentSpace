@@ -1,6 +1,4 @@
-import { ButtonLink } from "components-common/Button";
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
+import { ButtonLink, PageBody, SectionHeading } from "components-common";
 import { useWorkspace } from "hooks/useWorkspace";
 import { NextPageExtended } from "types/index";
 

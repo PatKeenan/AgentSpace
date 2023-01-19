@@ -1,6 +1,4 @@
-import { Breadcrumb } from "components-layout/Breadcrumb";
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
+import { PageBody, Breadcrumb, SectionHeading } from "components-common";
 import { NextPageExtended } from "types/index";
 
 export const NotificationsContainer: NextPageExtended = () => {

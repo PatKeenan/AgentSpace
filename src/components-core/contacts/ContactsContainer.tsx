@@ -1,17 +1,20 @@
-import { Button, ButtonLink, NoData, TransitionDelay } from "components-common";
-import { SectionHeading } from "components-layout/SectionHeading";
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { Breadcrumb } from "components-layout/Breadcrumb";
+import { UserGroupIcon } from "@heroicons/react/20/solid";
 import { NextLink } from "components-common/NextLink";
-import { PageBody } from "components-layout/PageBody";
-
 import { useWorkspace } from "hooks/useWorkspace";
 import { useContacts } from "hooks/useContacts";
+import {
+    Button,
+    ButtonLink,
+    NoData,
+    Breadcrumb,
+    SectionHeading,
+    PageBody,
+} from "components-common";
 import clsx from "clsx";
 
-import type { NextPageExtended } from "types/index";
 import type { Contact, SubContact } from "@prisma/client";
-import { PlusIcon, UserGroupIcon } from "@heroicons/react/20/solid";
+import type { NextPageExtended } from "types/index";
 
 export const ContactsContainer: NextPageExtended = () => {
     const [indeterminate, setIndeterminate] = useState(false);

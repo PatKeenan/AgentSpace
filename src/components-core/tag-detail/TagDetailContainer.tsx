@@ -1,7 +1,5 @@
-import { PageBody } from "components-layout/PageBody";
-import { SectionHeading } from "components-layout/SectionHeading";
+import { PageBody, SectionHeading } from "components-common";
 import { useRouter } from "next/router";
-import React from "react";
 import { NextPageExtended } from "types/index";
 
 export const TagDetailContainer: NextPageExtended = () => {
