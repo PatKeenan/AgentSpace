@@ -6,7 +6,7 @@ import { AppointmentStatus } from "@prisma/client";
 import { useWorkspace } from "hooks/useWorkspace";
 import { Pagination } from "components-common";
 import { timeDisplay } from "utils/formatTime";
-import { formatDate } from "utils/formatDate";
+import { formatDate, formatStringToDate } from "utils/formatDate";
 import * as React from "react";
 import clsx from "clsx";
 import {
@@ -19,12 +19,16 @@ import {
 } from "./appointments-components";
 import {
     ChevronDownIcon,
-    EllipsisVerticalIcon,
+    ChevronRightIcon,
     MagnifyingGlassIcon,
     XMarkIcon,
 } from "@heroicons/react/20/solid";
 
 import type { NextPageExtended } from "types/index";
+import { statusColorsLight, statusDisplay } from "./appointments-utils";
+import { format } from "date-fns";
+import { FunnelIcon } from "@heroicons/react/24/outline";
+import { ColumnHeader, Table } from "components-common/Table";
 
 type FiltersType = {
     name: keyof Omit<
@@ -180,13 +184,21 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
         });
     }, [queryParamsState.page]);
 
+    const tableColumnHeaders: ColumnHeader[] = [
+        { value: "Status" },
+        { value: "Date" },
+        { value: "Address" },
+        { value: "Time" },
+        { value: "Clients" },
+        { value: "View", className: "sr-only" },
+    ];
+
     return (
         <AppointmentsNestedLayout activeTab="View All">
-            {/* Mobile Filters */}
             <Transition.Root show={mobileFiltersOpen} as={React.Fragment}>
                 <Dialog
                     as="div"
-                    className="relative z-40 lg:hidden"
+                    className="relative z-40"
                     onClose={setMobileFiltersOpen}
                 >
                     <Transition.Child
@@ -210,7 +222,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                             leaveFrom="translate-x-0"
                             leaveTo="translate-x-full"
                         >
-                            <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-6 shadow-xl">
+                            <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-6 shadow-xl md:max-w-lg">
                                 <div className="flex items-center justify-between px-4">
                                     <h2 className="text-lg font-medium text-gray-900">
                                         Sort & Filter Options
@@ -330,15 +342,14 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                 </Dialog>
             </Transition.Root>
 
-            {/* End Mobile FIlters */}
             <div className="px-2">
                 {/* Search */}
-                <div className="my-4 w-full grid-cols-12 flex-col gap-4 md:grid">
-                    <div className="col-span-4 flex flex-grow md:max-w-md ">
+                <div className="my-4 flex w-full items-center">
+                    <div className="flex flex-grow">
                         <label htmlFor="search" className="sr-only">
                             Search
                         </label>
-                        <div className="relative flex w-full flex-grow items-center rounded-md border border-gray-300 text-gray-700 shadow focus-within:text-gray-600">
+                        <div className=" relative flex w-full max-w-md flex-grow items-center rounded-md border border-gray-300 text-gray-700 shadow focus-within:text-gray-600">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <MagnifyingGlassIcon
                                     className="h-5 w-5"
@@ -366,161 +377,141 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                 />
                             </div>
                         </div>
-                        <div className="my-auto block h-full md:hidden">
+                        <div className="ml-4 flex items-center">
                             <button
-                                className="flex items-center justify-center rounded-full p-2 hover:bg-gray-100"
+                                className="inline-flex items-center justify-center rounded-md border border-transparent px-2 py-1 text-sm text-gray-700  hover:border-gray-300"
                                 onClick={() =>
                                     setMobileFiltersOpen(!mobileFiltersOpen)
                                 }
                             >
-                                <span className="sr-only">Options</span>
-                                <EllipsisVerticalIcon
-                                    className="h-5 w-5 text-gray-500"
+                                <span>Filter</span>
+                                <FunnelIcon
+                                    className="ml-2 h-5 w-5 "
                                     aria-hidden="true"
                                 />
                             </button>
-                        </div>
-                    </div>
-                    <div className="col-span-5 mr-3 hidden space-x-8 md:flex md:justify-end">
-                        <div className="flex w-8">
-                            {showResetButton ? (
-                                <div className="mt-auto">
+                            <div className="ml-4 flex">
+                                {showResetButton && (
                                     <Button
                                         variant="text"
-                                        className="text-xs"
+                                        className="my-auto text-xs"
                                         onClick={handleResetSort}
                                     >
-                                        (Rest)
+                                        (Reset)
                                     </Button>
-                                </div>
-                            ) : null}
-                        </div>
-                        <div className=" mt-auto ">
-                            <TextDropDownMenu
-                                title={"Sort"}
-                                options={sortByOptions || []}
-                                displayField="label"
-                                menuPosition="left"
-                                onOptionClick={(option) =>
-                                    setQueryParamsState({
-                                        page: 1,
-                                        sortBy:
-                                            (option?.value as typeof queryParamsState.sortBy) ??
-                                            "createdAt",
-                                    })
-                                }
-                            />
-                        </div>
-                        <div className="mt-auto ">
-                            <TextDropDownMenu
-                                title={"Order"}
-                                options={sortOrderOptions || []}
-                                displayField="label"
-                                onOptionClick={(option) =>
-                                    setQueryParamsState({
-                                        page: 1,
-                                        sortOrder:
-                                            (option?.value as typeof queryParamsState.sortOrder) ??
-                                            "desc",
-                                    })
-                                }
-                                menuPosition="left"
-                            />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="mt-2 block grid-cols-12 gap-4 lg:grid">
-                    <div className="col-span-9 overflow-hidden  bg-white sm:rounded-md">
-                        <ul className="w-full space-y-2 pb-4">
-                            {appointments?.map((i) => (
-                                <li key={i.id} className="">
-                                    <NextLink
-                                        href={"/"}
-                                        className="block rounded-md border border-gray-200  hover:bg-gray-50"
-                                    >
-                                        <ListViewAppointmentCard
-                                            key={i.id}
-                                            address={i.address}
-                                            date={i.date}
-                                            time={timeDisplay(
-                                                i.startTime,
-                                                i.endTime
-                                            )}
-                                            status={i.status}
-                                            contacts={i.contacts
-                                                .flatMap((p) =>
-                                                    p.profile
-                                                        ? `${p.contact.name} - ${p.profile.name}`
-                                                        : `${p.contact.name}`
-                                                )
-                                                .join(", ")}
-                                            notes={i.note || ""}
-                                            address_2={i.address_2 || ""}
-                                            createdAt={formatDate(
-                                                i.createdAt,
-                                                "MM/DD/YYYY"
-                                            )}
-                                        />
-                                    </NextLink>
-                                </li>
-                            ))}
-                        </ul>
-                        <Pagination
-                            onPaginate={(page) => setQueryParamsState({ page })}
-                            totalItems={totalAppointments}
-                            currentPage={queryParamsState.page || 1}
-                            itemsPerPage={queryParamsState.take || 10}
-                            currentResultsLength={appointments.length}
-                        />
-                    </div>
-                    <div className="hidden md:col-span-3 lg:block">
-                        <div>
-                            <h5 className="border-b pb-1 text-gray-700">
-                                Status
-                            </h5>
-                            {Object.keys(queryParamsState.statusFilters).map(
-                                (i, idx) => {
-                                    const status =
-                                        queryParamsState.statusFilters[
-                                            i as AppointmentStatus
-                                        ];
-                                    return (
-                                        <div
-                                            className="mt-4 flex items-center space-x-2 text-sm text-gray-600"
-                                            key={idx}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                name={i
-                                                    .toLowerCase()
-                                                    .replace("_", "-")}
-                                                defaultChecked={status}
-                                                onChange={() =>
-                                                    setQueryParamsState({
-                                                        statusFilters: {
-                                                            ...queryParamsState.statusFilters,
-                                                            [i]: !status,
-                                                        },
-                                                    })
-                                                }
-                                            />
-                                            <label
-                                                htmlFor={i
-                                                    .toLowerCase()
-                                                    .replace("_", "-")}
-                                                className="capitalize"
+
+                <ul className="block w-full space-y-2 pb-4 md:hidden">
+                    {appointments?.map((i) => (
+                        <li key={i.id} className="">
+                            <NextLink
+                                href={"/"}
+                                className="block rounded-md border border-gray-200  hover:bg-gray-50"
+                            >
+                                <ListViewAppointmentCard
+                                    key={i.id}
+                                    address={i.address}
+                                    date={i.date}
+                                    time={timeDisplay(i.startTime, i.endTime)}
+                                    status={i.status}
+                                    contacts={i.contacts
+                                        .flatMap((p) =>
+                                            p.profile
+                                                ? `${p.contact.name} - ${p.profile.name}`
+                                                : `${p.contact.name}`
+                                        )
+                                        .join(", ")}
+                                    notes={i.note || ""}
+                                    address_2={i.address_2 || ""}
+                                    createdAt={formatDate(
+                                        i.createdAt,
+                                        "MM/DD/YYYY"
+                                    )}
+                                />
+                            </NextLink>
+                        </li>
+                    ))}
+                </ul>
+                <div className="hidden flex-col md:flex">
+                    <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <Table>
+                            <Table.Header columnHeaders={tableColumnHeaders} />
+                            <Table.Body>
+                                {appointments.map((appointment) => (
+                                    <Table.Row key={appointment.id}>
+                                        <Table.Data className="px-3 py-4 pl-4">
+                                            <p
+                                                className={clsx(
+                                                    appointment.status &&
+                                                        statusColorsLight[
+                                                            appointment.status
+                                                        ],
+                                                    "order-1 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize md:-ml-2"
+                                                )}
                                             >
-                                                {i
-                                                    .toLowerCase()
-                                                    .replace("_", " ")}
-                                            </label>
-                                        </div>
-                                    );
-                                }
-                            )}
-                        </div>
+                                                {statusDisplay(
+                                                    appointment.status
+                                                )}
+                                            </p>
+                                        </Table.Data>
+                                        <Table.Data>
+                                            {appointment.date
+                                                ? format(
+                                                      formatStringToDate(
+                                                          appointment.date
+                                                      ) || new Date(),
+                                                      "PP"
+                                                  )
+                                                : "--"}
+                                        </Table.Data>
+                                        <Table.Data>
+                                            <div className="max-w-sm">
+                                                {appointment.address || "--"}
+                                            </div>
+                                        </Table.Data>
+                                        <Table.Data>
+                                            {timeDisplay(
+                                                appointment.startTime,
+                                                appointment.endTime
+                                            ) || "--"}
+                                        </Table.Data>
+                                        <Table.Data>
+                                            <p>
+                                                {appointment.contacts
+                                                    .flatMap((p) =>
+                                                        p.profile
+                                                            ? `${p.contact.name} - ${p.profile.name}`
+                                                            : `${p.contact.name}`
+                                                    )
+                                                    .join(", ") || "--"}
+                                            </p>
+                                        </Table.Data>
+                                        <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
+                                            <NextLink
+                                                href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
+                                                className="flex items-center justify-end text-sm font-medium text-indigo-400 hover:text-indigo-600"
+                                            >
+                                                <span>View</span>
+                                                <ChevronRightIcon className="ml-1 h-4 w-4" />
+                                            </NextLink>
+                                        </Table.Data>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                        </Table>
                     </div>
                 </div>
+                <Pagination
+                    onPaginate={(page) => setQueryParamsState({ page })}
+                    totalItems={totalAppointments}
+                    currentPage={queryParamsState.page || 1}
+                    itemsPerPage={queryParamsState.take || 10}
+                    currentResultsLength={appointments.length}
+                />
             </div>
         </AppointmentsNestedLayout>
     );

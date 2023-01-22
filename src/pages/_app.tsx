@@ -12,6 +12,7 @@ import {
 import "../styles/globals.css";
 
 import type { Session } from "next-auth";
+import Head from "next/head";
 
 const MyApp: AppType<{ session: Session | null }> = ({
     Component,
@@ -39,15 +40,28 @@ const MyApp: AppType<{ session: Session | null }> = ({
         }
     };
     return (
-        <ErrorBoundary>
-            <SessionProvider session={session}>
-                {Component.layout == "dashboard" ? (
-                    <DashboardLayout>{getSubLayout()}</DashboardLayout>
-                ) : (
-                    <Component {...pageProps} />
-                )}
-            </SessionProvider>
-        </ErrorBoundary>
+        <>
+            <Head>
+                <meta
+                    name="apple-mobile-web-app-status-bar-style"
+                    content="black-translucent"
+                />
+
+                <meta
+                    name="viewport"
+                    content="initial-scale=1, viewport-fit=cover"
+                />
+            </Head>
+            <ErrorBoundary>
+                <SessionProvider session={session}>
+                    {Component.layout == "dashboard" ? (
+                        <DashboardLayout>{getSubLayout()}</DashboardLayout>
+                    ) : (
+                        <Component {...pageProps} />
+                    )}
+                </SessionProvider>
+            </ErrorBoundary>
+        </>
     );
 };
 
