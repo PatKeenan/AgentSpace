@@ -1,3 +1,4 @@
+import { MapViewAppointmentCard } from "./appointments-components";
 import { Loading, NoData, Button, Calendar } from "components-common";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { useAppointmentsUI } from "./useAppointmentsUI";
@@ -10,15 +11,12 @@ import { trpc } from "utils/trpc";
 import * as React from "react";
 import { formatDate } from "utils/formatDate";
 import { NextPageExtended } from "types/index";
-import {
-    AppointmentsNestedLayout,
-    MapViewAppointmentCard,
-} from "./appointments-components";
+import { AppointmentsNestedLayout } from "./appointments-components";
 
 const AppointmentsMap = dynamic(
     () => import("./appointments-components/AppointmentsMap"),
     {
-        suspense: true,
+        ssr: false,
     }
 );
 
@@ -160,9 +158,7 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
                         />
                     </div>
                     <div className=" h-[200px] w-full md:h-[300px] lg:h-2/3">
-                        <React.Suspense fallback={""}>
-                            <AppointmentsMap appointments={sortedByTime()} />
-                        </React.Suspense>
+                        <AppointmentsMap appointments={sortedByTime()} />
                     </div>
                 </div>
             </div>

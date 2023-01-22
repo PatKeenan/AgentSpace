@@ -22,7 +22,7 @@ const icon = (status: AppointmentStatus) =>
         className: iconColors[status],
     });
 
-export const AppointmentsMap = ({
+const AppointmentsMap = ({
     appointments,
 }: {
     appointments: AppointmentRouterOutput["getByDate"];
@@ -136,7 +136,7 @@ export const AppointmentsMap = ({
                 height: "100%",
                 zIndex: 0,
             }}
-            className="lg:rounded-md"
+            className="rounded-md"
             ref={mapRef}
         >
             <TileLayer
