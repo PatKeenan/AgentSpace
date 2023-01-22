@@ -11,6 +11,7 @@ import { Select } from "components-common/Select";
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
 import { AppointmentSingleton, type AppointmentSingletonType } from "lib";
+import { NewInputGroup } from "./NewInputGroup";
 
 type ContactOnAppointment = {
     contact: {
@@ -119,13 +120,14 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
                             )}
                         />
 
-                        <Select
+                        <NewInputGroup.Select
                             options={appointmentStatusOptions}
-                            selected={status}
+                            selected={
+                                status ||
+                                (appointmentStatusOptions[0] as typeof appointmentStatusOptions[number])
+                            }
                             setSelected={handleChangeStatus}
                             displayField="display"
-                            className="max-h-[150px]"
-                            containerClass="sm:pt-0 sm:mt-0"
                         />
                     </div>
                     <div className="flex w-10 flex-shrink-0">

@@ -11,13 +11,15 @@ import { AppointmentFormType } from "./AppointmentModal";
 import { useAppointments } from "hooks/useAppointments";
 import { Button } from "components-common/Button";
 import { Select } from "components-common/Select";
-import { statusColorsDark, statusOptions } from "../appointments-utils";
+import { statusColorsDark } from "../appointments-utils";
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
 import { formatDate } from "utils/formatDate";
 import { AppointmentSingleton } from "lib";
+import { NewInputGroup } from "components-common/NewInputGroup";
 
-const { appointmentFormFields } = AppointmentSingleton;
+const { appointmentFormFields, appointmentStatusOptions } =
+    AppointmentSingleton;
 
 export const MapViewAppointmentCard = (props: {
     idx: number;
@@ -41,11 +43,15 @@ export const MapViewAppointmentCard = (props: {
     const [expanded, setExpanded] = React.useState(false);
 
     const [status, setStatus] = React.useState<
-        typeof statusOptions[number] | undefined
-    >(() => statusOptions.find((i) => i.value == String(appointment?.status)));
+        typeof appointmentStatusOptions[number] | undefined
+    >(() =>
+        appointmentStatusOptions.find(
+            (i) => i.value == String(appointment?.status)
+        )
+    );
 
     React.useEffect(() => {
-        const status = statusOptions.find(
+        const status = appointmentStatusOptions.find(
             (i) => i.value == appointment?.status
         );
         setStatus(status);
@@ -93,7 +99,7 @@ export const MapViewAppointmentCard = (props: {
         );
     };
 
-    const handleChangeStatus = (i: typeof statusOptions[number]) => {
+    const handleChangeStatus = (i: typeof appointmentStatusOptions[number]) => {
         update(
             {
                 id: appointment.id,
@@ -119,23 +125,6 @@ export const MapViewAppointmentCard = (props: {
         }
         return undefined;
     };
-    /*     const getStatusColor = () => {
-        switch (appointment.status) {
-            case "CONFIRMED": {
-                return "bg-green-400";
-            }
-            case "PENDING": {
-                return "bg-yellow-500";
-            }
-            case "DENIED": {
-            }
-            case "CANCELED": {
-                return "bg-red-500";
-            }
-            default:
-                return "bg-gray-300";
-        }
-    }; */
 
     return (
         <GridCard>
@@ -159,15 +148,24 @@ export const MapViewAppointmentCard = (props: {
                                 "absolute top-[40%] -left-4 h-2 w-2 rounded-full"
                             )}
                         />
-
-                        <Select
-                            options={statusOptions}
-                            selected={status}
-                            setSelected={handleChangeStatus}
-                            displayField="display"
-                            className="max-h-[150px] pt-0"
-                            containerClass="pt-0 sm:mt-0"
-                        />
+                        <NewInputGroup>
+                            <label
+                                className="sr-only"
+                                htmlFor="appointment-status"
+                            >
+                                Appointment Status
+                            </label>
+                            <NewInputGroup.Select
+                                name="appointment-status"
+                                options={appointmentStatusOptions}
+                                selected={
+                                    (status as typeof appointmentStatusOptions[number]) ||
+                                    (appointmentStatusOptions[0] as typeof appointmentStatusOptions[number])
+                                }
+                                setSelected={handleChangeStatus}
+                                displayField="display"
+                            />
+                        </NewInputGroup>
                     </div>
                     <div className="flex w-10 flex-shrink-0">
                         <ToggleMenu

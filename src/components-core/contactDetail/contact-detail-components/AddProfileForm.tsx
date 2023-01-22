@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "components-common/Button";
-import { InputGroup } from "components-common/InputGroup";
+import { OldInputGroup } from "components-common/OldIInputGroup";
 import { useForm } from "react-hook-form";
 import {
     DefaultProfileDataType,
@@ -10,14 +10,14 @@ import * as React from "react";
 
 import { useRouter } from "next/router";
 import { useProfile } from "hooks/useProfile";
-import { Textarea } from "components-common/Textarea";
-import { Select } from "components-common/Select";
 import { PROFILE_TYPES } from "@prisma/client";
 import { ModalTitle } from "components-common/ModalTitle";
 import {
     ProfileSingleton,
     type ProfileSingletonType,
 } from "lib/ProfileSingleton";
+import { NewInputGroup } from "components-common/NewInputGroup";
+import { FieldGroup } from "components-common/FieldGroup";
 
 const { profileFormFields, profileSchemas, profileTypeOptions } =
     ProfileSingleton;
@@ -39,17 +39,24 @@ export default function AddProfileForm() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ProfileSingletonType["profileSchemas"]["createSchema"]>({
+    } = useForm<
+        Omit<
+            ProfileSingletonType["profileSchemas"]["createSchema"],
+            "contactId" | "type"
+        >
+    >({
         defaultValues: {
             name: defaultFormState?.name,
             notes: defaultFormState?.notes as string | undefined,
-            type: defaultFormState?.type,
             active: defaultFormState?.active == false ? false : true,
         },
-        resolver: zodResolver(profileSchemas.createSchema),
+        resolver: zodResolver(
+            profileSchemas.createSchema.omit({ contactId: true, type: true })
+        ),
     });
     const { mutate } = create();
     const { mutate: updateMutation } = update();
+
     const onSubmit = handleSubmit(async (data) => {
         const workspaceId = router.query.workspaceId;
         const contactId = router.query.contactId;
@@ -64,7 +71,7 @@ export default function AddProfileForm() {
                 {
                     onSuccess: (data) =>
                         utils.getManyForContact
-                            .invalidate({ contactId: data.contactId, take: 3 })
+                            .invalidate({ contactId: data.contactId })
                             .then(() => resetModal()),
                 }
             );
@@ -78,17 +85,19 @@ export default function AddProfileForm() {
                 {
                     onSuccess: (data) =>
                         utils.getManyForContact
-                            .invalidate({ contactId: data.contactId, take: 3 })
+                            .invalidate({ contactId: data.contactId })
                             .then(() => resetModal()),
                 }
             );
         }
     });
 
-    const [selected, setSelected] = React.useState(
-        profileTypeOptions.filter(
+    const [selected, setSelected] = React.useState<
+        typeof profileTypeOptions[number]
+    >(
+        (profileTypeOptions.find(
             (i) => i.value == defaultFormState?.type
-        )[0] || profileTypeOptions[0]
+        ) as typeof profileTypeOptions[number]) || profileTypeOptions[0]
     );
 
     return (
@@ -96,38 +105,54 @@ export default function AddProfileForm() {
             <ModalTitle>
                 {modal.defaultData ? "Edit" : "Add"} Profile
             </ModalTitle>
-            <div className="mt-6">
-                <InputGroup
-                    direction="column"
-                    containerClass="sm:items-center"
-                    required
-                    label={profileFormFields.name.label}
-                    {...register("name")}
-                    errorMessage={errors && errors.name && errors.name.message}
-                />
-            </div>
-            <div className="mt-4">
-                <Select
-                    options={profileTypeOptions}
-                    label={profileFormFields.type.label}
-                    displayField="display"
-                    direction="column"
-                    selected={selected}
-                    setSelected={setSelected}
-                    className={"max-h-[125px]"}
-                />
-            </div>
+            <FieldGroup className="mt-4">
+                <NewInputGroup
+                    isRequired
+                    isInvalid={errors && errors.name ? true : false}
+                >
+                    <NewInputGroup.Label htmlFor={profileFormFields.name.label}>
+                        {profileFormFields.name.label}
+                    </NewInputGroup.Label>
+                    <NewInputGroup.Input {...register("name")} />
+                    <NewInputGroup.Error>
+                        {errors && errors.name && errors.name.message}
+                    </NewInputGroup.Error>
+                </NewInputGroup>
+                <NewInputGroup isRequired>
+                    <NewInputGroup.Label htmlFor={profileFormFields.type.name}>
+                        {profileFormFields.type.label}
+                    </NewInputGroup.Label>
+                    <NewInputGroup.Select
+                        options={profileTypeOptions}
+                        displayField="display"
+                        selected={
+                            profileTypeOptions.find(
+                                (i) => i.value == selected.value
+                            ) as typeof selected
+                        }
+                        setSelected={(i) => setSelected(i)}
+                    />
+                    <NewInputGroup.Error>{""}</NewInputGroup.Error>
+                </NewInputGroup>
+            </FieldGroup>
+            <FieldGroup cols="1">
+                <NewInputGroup
+                    isInvalid={errors && errors.notes ? true : false}
+                >
+                    <NewInputGroup.Label
+                        htmlFor={profileFormFields.notes.label}
+                    >
+                        {profileFormFields.notes.label}
+                    </NewInputGroup.Label>
+                    <NewInputGroup.TextArea {...register("notes")} rows={3} />
+                    <NewInputGroup.Error>
+                        {errors && errors.notes && errors.notes.message}
+                    </NewInputGroup.Error>
+                </NewInputGroup>
+            </FieldGroup>
 
-            <div className="mt-4">
-                <Textarea
-                    id="notes"
-                    label={profileFormFields.notes.label}
-                    direction="column"
-                    {...register("notes")}
-                />
-            </div>
-            <div className="mt-4 max-w-[150px]">
-                <InputGroup
+            <div className="max-w-[150px]">
+                <OldInputGroup
                     direction="row"
                     type="checkbox"
                     label={profileFormFields.active.label}
@@ -137,7 +162,7 @@ export default function AddProfileForm() {
                 />
             </div>
 
-            <div className="mt-8 flex justify-end space-x-3">
+            <div className="mt-6 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel
                 </Button>

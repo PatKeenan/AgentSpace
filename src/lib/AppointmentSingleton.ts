@@ -1,5 +1,6 @@
 import { AppointmentStatus } from "@prisma/client";
 import { paginationSchema } from "server/schemas/pagination";
+import { capitalize } from "utils/capitialize";
 import { z } from "zod";
 
 export type AppointmentSingletonType = {
@@ -24,7 +25,7 @@ const appointmentStatusOptions: {
 }[] = Object.keys(AppointmentStatus).map((key, index) => ({
     id: String(index),
     value: key as AppointmentStatus,
-    display: key.toLowerCase().replace("_", " "),
+    display: capitalize(key),
 }));
 
 function errMsg(

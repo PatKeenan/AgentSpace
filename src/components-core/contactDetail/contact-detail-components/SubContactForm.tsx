@@ -1,7 +1,7 @@
-import { ContactSingleton, ContactSingletonType } from "lib/ContactSingleton";
+import { FieldGroup, NewInputGroup } from "components-common";
 import { useContactDetailUi } from "../useContactDetailUi";
-import { InputGroup } from "components-common/InputGroup";
 import { ModalTitle } from "components-common/ModalTitle";
+import { ContactSingleton } from "lib/ContactSingleton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSubContacts } from "hooks/useSubContacts";
 import { Button } from "components-common/Button";
@@ -10,8 +10,18 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import * as React from "react";
 
-const { contactFormFields, subContactSchema } = ContactSingleton;
+import type { FormSections } from "types/index";
+import type { ContactSingletonType } from "lib/ContactSingleton";
 
+const { contactFormFields, subContactSchema } = ContactSingleton;
+const { firstName, lastName, email, phoneNumber } = contactFormFields;
+
+const formSections: FormSections<
+    ContactSingletonType["contactSchemas"]["updateWithoutName"]
+>[] = [
+    [{ field: firstName, required: true }, { field: lastName }],
+    [{ field: email }, { field: phoneNumber }],
+];
 export default function SubContactForm() {
     const router = useRouter();
     const { modal, resetModal } = useContactDetailUi();
@@ -88,49 +98,43 @@ export default function SubContactForm() {
 
     return (
         <form onSubmit={onSubmit}>
-            <ModalTitle>
-                {modal.defaultData ? "Edit" : "Add"} Contact
-            </ModalTitle>
-            <div className="mt-6 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
-                <InputGroup
-                    direction="column"
-                    required
-                    label={contactFormFields.firstName.label}
-                    {...register("firstName")}
-                    errorMessage={
-                        errors && errors.firstName && errors.firstName.message
-                    }
-                />
-                <InputGroup
-                    direction="column"
-                    label={contactFormFields.lastName.label}
-                    {...register("lastName")}
-                    errorMessage={
-                        errors && errors.lastName && errors.lastName.message
-                    }
-                />
-            </div>
-
-            <div className="mt-4 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
-                <InputGroup
-                    direction="column"
-                    label={contactFormFields.email.label}
-                    {...register("email")}
-                    errorMessage={
-                        errors && errors.email && errors.email.message
-                    }
-                />
-                <InputGroup
-                    direction="column"
-                    label={contactFormFields.phoneNumber.label}
-                    {...register("phoneNumber")}
-                    errorMessage={
-                        errors &&
-                        errors.phoneNumber &&
-                        errors.phoneNumber.message
-                    }
-                />
-            </div>
+            <fieldset>
+                <ModalTitle>
+                    <legend>
+                        {modal.defaultData ? "Edit" : "Add"} Contact
+                    </legend>
+                </ModalTitle>
+                <div className="mt-4 space-y-1">
+                    {formSections.map((section, idx) => (
+                        <FieldGroup key={idx}>
+                            {section.map(({ field, required }) => (
+                                <NewInputGroup
+                                    key={field.name}
+                                    isInvalid={
+                                        errors && errors[field.name]
+                                            ? true
+                                            : false
+                                    }
+                                    isRequired={required}
+                                >
+                                    <NewInputGroup.Label htmlFor={field.name}>
+                                        {field.label}
+                                    </NewInputGroup.Label>
+                                    <NewInputGroup.Input
+                                        placeholder={field.label}
+                                        {...register(field.name)}
+                                    />
+                                    <NewInputGroup.Error>
+                                        {errors &&
+                                            errors[field.name] &&
+                                            errors[field.name]?.message}
+                                    </NewInputGroup.Error>
+                                </NewInputGroup>
+                            ))}
+                        </FieldGroup>
+                    ))}
+                </div>
+            </fieldset>
             <div className="mt-8 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel

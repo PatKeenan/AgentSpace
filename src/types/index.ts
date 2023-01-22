@@ -31,3 +31,12 @@ export type ChildrenPropsObj = {
     children: React.ReactNode | React.ReactNode[];
 };
 export type ChildrenProps = React.ReactNode | React.ReactNode[];
+
+export type FormSections<T> = {
+    field: {
+        name: keyof T;
+        label: string;
+    };
+    required?: boolean;
+    className?: string;
+}[];

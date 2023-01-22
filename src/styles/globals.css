@@ -6,4 +6,38 @@
     #__next {
         @apply min-h-full flex-1 flex-col;
     }
+
+    .input-group {
+        @apply flex-shrink-0 text-gray-700;
+    }
+    .input-label {
+        @apply mb-1 flex text-sm font-medium text-inherit;
+    }
+    .input-label__required {
+        @apply ml-1 text-red-600;
+    }
+    .input-label__optional {
+        @apply ml-auto text-[.75rem] text-gray-500;
+    }
+    .input-error__message {
+        @apply mt-2 min-h-[1.25rem] whitespace-nowrap text-sm text-red-600;
+    }
+    .input-field__container {
+        @apply relative w-full rounded-md shadow-sm;
+    }
+    .input-field {
+        @apply block w-full rounded-md pl-2 pt-2 pb-2 pr-10 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm;
+    }
+    .input-field__invalid {
+        @apply border-red-500 text-red-600 placeholder-red-500 focus:border-red-500 focus:ring-red-500;
+    }
+    .input-field__valid {
+        @apply border-gray-300 focus:border-indigo-500 focus:ring-indigo-500;
+    }
+    .input-field__error-symbol-container {
+        @apply pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3;
+    }
+    .input-field__error-icon {
+        @apply h-5 w-5 text-red-500;
+    }
 }

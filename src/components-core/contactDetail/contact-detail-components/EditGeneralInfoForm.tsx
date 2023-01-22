@@ -1,14 +1,26 @@
 import { ContactSingleton, ContactSingletonType } from "lib/ContactSingleton";
-import { InputGroup } from "components-common/InputGroup";
 import { useContactDetailUi } from "../useContactDetailUi";
-import { ModalTitle } from "components-common/ModalTitle";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "components-common/Button";
 import { useContacts } from "hooks/useContacts";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import {
+    NewInputGroup,
+    FieldGroup,
+    Button,
+    ModalTitle,
+} from "components-common";
+
+import type { FormSections } from "types/index";
+
+type FormType = Pick<ContactSingletonType["contactSchemas"]["base"], "name">;
 
 const { contactFormFields } = ContactSingleton;
+const { name, firstName } = contactFormFields;
+
+const formSections: FormSections<FormType>[] = [
+    [{ field: name, required: true }],
+];
 
 export default function EditGeneralInfoForm() {
     const { modal, resetModal } = useContactDetailUi();
@@ -21,16 +33,13 @@ export default function EditGeneralInfoForm() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<Pick<ContactSingletonType["contactSchemas"]["base"], "name">>({
+    } = useForm<FormType>({
         resolver: zodResolver(
             ContactSingleton.contactSchemas.update.pick({ name: true })
         ),
         defaultValues:
             modal.form == "generalInfo"
-                ? (modal.defaultData as Pick<
-                      ContactSingletonType["contactSchemas"]["update"],
-                      "name"
-                  >)
+                ? (modal.defaultData as FormType)
                 : undefined,
     });
 
@@ -50,23 +59,50 @@ export default function EditGeneralInfoForm() {
 
     return (
         <form onSubmit={onSubmit}>
-            <ModalTitle>Edit General Info</ModalTitle>
-            <div className="mt-6">
-                <InputGroup
-                    label={contactFormFields.name.label}
-                    {...register("name")}
-                    direction="column"
-                    errorMessage={errors && errors.name && errors.name.message}
-                />
-            </div>
-            <div className="mt-8 flex justify-end space-x-3">
-                <Button variant="outlined" onClick={resetModal}>
-                    Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                    Save
-                </Button>
-            </div>
+            <fieldset>
+                <ModalTitle>
+                    <legend>Edit General Info</legend>
+                </ModalTitle>
+
+                <div className="mt-4 space-y-1">
+                    {formSections.map((section, idx) => (
+                        <FieldGroup key={idx}>
+                            {section.map(({ field, required = false }) => (
+                                <NewInputGroup
+                                    key={field.name}
+                                    isInvalid={
+                                        errors && errors[field.name]
+                                            ? true
+                                            : false
+                                    }
+                                    isRequired={required}
+                                >
+                                    <NewInputGroup.Label htmlFor={field.name}>
+                                        {field.label}
+                                    </NewInputGroup.Label>
+                                    <NewInputGroup.Input
+                                        placeholder={field.label}
+                                        {...register(field.name)}
+                                    />
+                                    <NewInputGroup.Error>
+                                        {errors &&
+                                            errors[field.name] &&
+                                            errors[field.name]?.message}
+                                    </NewInputGroup.Error>
+                                </NewInputGroup>
+                            ))}
+                        </FieldGroup>
+                    ))}
+                </div>
+                <div className="mt-8 flex justify-end space-x-3">
+                    <Button variant="outlined" onClick={resetModal}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" type="submit">
+                        Save
+                    </Button>
+                </div>
+            </fieldset>
         </form>
     );
 }

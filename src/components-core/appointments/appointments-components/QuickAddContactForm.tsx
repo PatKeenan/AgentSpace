@@ -1,19 +1,35 @@
-import { Button, InputGroup, ModalTitle, Select } from "components-common";
+import {
+    Button,
+    FieldGroup,
+    OldInputGroup,
+    ModalTitle,
+    NewInputGroup,
+    Select,
+} from "components-common";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Profile, PROFILE_TYPES } from "@prisma/client";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { subContactSchema, contactSchema } from "server/schemas";
-import type { SubContactSchema, ContactSchema } from "server/schemas";
+import { ContactSingleton, ProfileSingleton } from "lib";
 import { useContacts } from "hooks/useContacts";
 
-const profileOptions = Object.keys(PROFILE_TYPES).map((i, index) => ({
-    id: `${index}`,
-    name: i.toLowerCase(),
-    value: i,
-}));
+import type { ContactSingletonType } from "lib";
+import { FormSections } from "types/index";
+
+const { contactFormFields, contactSchemas, subContactSchema } =
+    ContactSingleton;
+const { profileSchemas, profileTypeOptions, profileFormFields } =
+    ProfileSingleton;
+
+const { name, firstName, lastName, phoneNumber, email } = contactFormFields;
+
+const formFields: FormSections<ContactSingletonType["contactFormFields"]>[] = [
+    [{ field: name, required: true }],
+    [{ field: firstName, required: true }, { field: lastName }],
+    [{ field: email }, { field: phoneNumber }],
+];
 
 type QuickAddContactProps = {
     setName: (input: string) => void;
@@ -32,7 +48,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
     const [attachProfile, setAttachProfile] = React.useState(false);
 
     const [selectedProfile, setSelectedProfile] = React.useState(
-        profileOptions[4]
+        profileTypeOptions[4]
     );
 
     const {
@@ -53,13 +69,14 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         handleSubmit,
         formState: { errors },
     } = useForm<
-        Omit<ContactSchema["create"], "id"> &
-            Omit<SubContactSchema["create"], "contactId">
+        ContactSingletonType["contactSchemas"]["create"] &
+            Omit<
+                ContactSingletonType["subContactSchema"]["create"],
+                "contactId"
+            >
     >({
         resolver: zodResolver(
-            subContactSchema()
-                .create.omit({ contactId: true })
-                .merge(contactSchema().create)
+            contactSchemas.create.merge(subContactSchema.create)
         ),
         defaultValues: {
             name: defaultName,
@@ -80,7 +97,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
                     attachProfile && selectedProfile
                         ? {
                               type: selectedProfile.value as PROFILE_TYPES,
-                              name: selectedProfile.name,
+                              name: selectedProfile.display,
                           }
                         : undefined,
             },
@@ -103,7 +120,7 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         createContactAndProfile();
 
     React.useEffect(() => {
-        return () => setSelectedProfile(profileOptions[4]);
+        return () => setSelectedProfile(profileTypeOptions[4]);
     }, [attachProfile]);
 
     return (
@@ -111,120 +128,100 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
             <ModalTitle className="text-center lg:text-left">
                 {title}
             </ModalTitle>
-            <div className="mt-2 grid w-full grid-cols-8">
-                <div className="col-span-8">
-                    <InputGroup
-                        label="Contact Name"
-                        direction="column"
-                        required
-                        {...register("name", {
-                            value: defaultName,
-                            onChange(event) {
-                                setName(event.target.value);
-                            },
-                        })}
-                        errorMessage={errors?.name && errors.name.message}
-                    />
-                </div>
-
-                <div className="col-span-8 mt-6 grid grid-cols-2 gap-x-4">
-                    <h4 className="col-span-2 mb-4 text-center text-sm font-medium leading-6 lg:text-left">
-                        Primary Contact Information
-                    </h4>
-                    <InputGroup
-                        label="First Name"
-                        required
-                        className="col-span-4"
-                        containerClass="sm:pt-2"
-                        direction="column"
-                        {...register("firstName")}
-                        errorMessage={
-                            errors?.firstName && errors.firstName.message
-                        }
-                    />
-
-                    <InputGroup
-                        label="Last Name"
-                        className="col-span-4"
-                        direction="column"
-                        containerClass="sm:pt-2"
-                        {...register("lastName")}
-                        errorMessage={
-                            errors?.lastName && errors.lastName.message
-                        }
-                    />
-                </div>
-                <div className="col-span-8 mb-2 mt-2 block lg:grid lg:grid-cols-2 lg:gap-y-0 lg:gap-x-4">
-                    <InputGroup
-                        containerClass="sm:pt-0"
-                        label="Email"
-                        direction="column"
-                        {...register("email")}
-                        errorMessage={errors?.email && errors.email.message}
-                    />
-
-                    <InputGroup
-                        containerClass="mt-2 sm:pt-0"
-                        label="Phone Number"
-                        direction="column"
-                        {...register("phoneNumber")}
-                        errorMessage={
-                            errors?.phoneNumber && errors.phoneNumber.message
-                        }
-                    />
-                </div>
-
-                {attachProfile ? (
-                    <div className="col-span-8 mt-4 grid grid-cols-8">
-                        <div className="col-span-8 mb-10 grid grid-cols-12">
-                            <div className="col-span-11">
-                                <Select
-                                    label="Profile"
-                                    options={profileOptions}
-                                    displayField="name"
-                                    className="max-h-[110px]"
-                                    selected={selectedProfile}
-                                    setSelected={setSelectedProfile}
-                                    direction="column"
+            <div className="mt-4 block">
+                {formFields.map((section, sectionIdx) => (
+                    <FieldGroup key={sectionIdx}>
+                        {section.map(({ field, required }) => (
+                            <NewInputGroup
+                                key={field.name}
+                                isRequired={required}
+                                isInvalid={
+                                    errors && errors[field.name] ? true : false
+                                }
+                            >
+                                <NewInputGroup.Label htmlFor={field.name}>
+                                    {field.label}
+                                </NewInputGroup.Label>
+                                <NewInputGroup.Input
+                                    placeholder={field.label}
+                                    {...register(field.name)}
                                 />
-                            </div>
-                            <div className="col-span-1 flex justify-center">
-                                <div className="mt-auto">
-                                    <button
-                                        className="appearance-none"
-                                        onClick={handleCancelAddProfile}
-                                    >
-                                        <XMarkIcon className="h-6 w-6 text-gray-400" />
-                                        <span className="sr-only">
-                                            Cancel Add Profile
-                                        </span>
-                                    </button>
-                                </div>
+                                <NewInputGroup.Error>
+                                    {errors && errors[field.name]?.message}
+                                </NewInputGroup.Error>
+                            </NewInputGroup>
+                        ))}
+                    </FieldGroup>
+                ))}
+                {attachProfile ? (
+                    <div className="grid grid-cols-12">
+                        <div className="col-span-12 mb-3">
+                            <h5 className="text-sm font-medium">Add Profile</h5>
+                        </div>
+                        <div className="col-span-11">
+                            <NewInputGroup isInvalid={false}>
+                                <NewInputGroup.Label
+                                    optionalIndicator={false}
+                                    htmlFor={profileFormFields.type.name}
+                                >
+                                    {profileFormFields.type.label}
+                                </NewInputGroup.Label>
+                                <NewInputGroup.Select
+                                    options={profileTypeOptions}
+                                    name={profileFormFields.type.name}
+                                    displayField="display"
+                                    selected={
+                                        selectedProfile ||
+                                        (profileTypeOptions[4] as typeof profileTypeOptions[number])
+                                    }
+                                    setSelected={setSelectedProfile}
+                                />
+                            </NewInputGroup>
+                        </div>
+                        <div className="col-span-1 flex justify-center">
+                            <div className="mt-auto">
+                                <button
+                                    className="appearance-none"
+                                    onClick={handleCancelAddProfile}
+                                >
+                                    <XMarkIcon className="h-6 w-6 text-gray-400" />
+                                    <span className="sr-only">
+                                        Cancel Add Profile
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
                 ) : (
-                    <div className="col-span-8 mt-4">
-                        <Button
-                            variant="outlined"
-                            className="w-full justify-center"
-                            onClick={() => setAttachProfile(true)}
-                        >
-                            Attach Profile
-                        </Button>
-                    </div>
+                    <Button
+                        variant="outlined"
+                        className="w-full justify-center"
+                        onClick={() => setAttachProfile(true)}
+                    >
+                        Attach Profile
+                    </Button>
                 )}
             </div>
-            <div className="mt-8 flex items-center justify-between">
+
+            <div className="mt-8 flex items-center justify-between ">
                 <Button
-                    variant="text"
+                    variant="outlined"
                     onClick={handleOnCancel}
-                    className="flex items-center space-x-2"
+                    actionIcon="backArrow"
+                    iconPosition="left"
+                    iconSize="md"
+                    hideChildrenOnMobile={false}
                 >
-                    <ArrowLeftIcon className="h-4" />
-                    <span>Cancel</span>
+                    Cancel
                 </Button>
-                <Button variant="primary" onClick={handleOnSave}>
+                <Button
+                    variant="primary"
+                    onClick={handleOnSave}
+                    actionIcon="forwardArrow"
+                    iconPosition="right"
+                    iconSize="md"
+                    hideChildrenOnMobile={false}
+                >
                     Continue
                 </Button>
             </div>

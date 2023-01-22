@@ -1,16 +1,31 @@
-import { ContactSingleton, ContactSingletonType } from "lib/ContactSingleton";
-import { InputGroup } from "components-common/InputGroup";
+import { ContactSingleton } from "lib/ContactSingleton";
 import { useContactDetailUi } from "../useContactDetailUi";
-import { ModalTitle } from "components-common/ModalTitle";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Textarea } from "components-common/Textarea";
-import { Button } from "components-common/Button";
 import { useContacts } from "hooks/useContacts";
 import { contactSchema } from "server/schemas";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import {
+    Button,
+    FieldGroup,
+    Textarea,
+    ModalTitle,
+    NewInputGroup,
+} from "components-common";
+
+import type { FormSections } from "types/index";
+import type { ContactSingletonType } from "lib/ContactSingleton";
+
+type FormType = ContactSingletonType["contactSchemas"]["updateWithoutName"];
 
 const { contactFormFields } = ContactSingleton;
+const { firstName, lastName, email, phoneNumber, notes } = contactFormFields;
+
+const formSections: FormSections<FormType>[] = [
+    [{ field: firstName, required: true }, { field: lastName }],
+    [{ field: email }, { field: phoneNumber }],
+    [{ field: notes }],
+];
 
 export default function EditContactForm() {
     const { modal, resetModal } = useContactDetailUi();
@@ -23,11 +38,11 @@ export default function EditContactForm() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ContactSingletonType["contactSchemas"]["updateWithoutName"]>({
+    } = useForm<FormType>({
         resolver: zodResolver(contactSchema().base.partial()),
         defaultValues:
             modal.form == "contact"
-                ? (modal.defaultData as ContactSingletonType["contactSchemas"]["updateWithoutName"])
+                ? (modal.defaultData as FormType)
                 : undefined,
     });
 
@@ -48,53 +63,42 @@ export default function EditContactForm() {
     return (
         <form onSubmit={onSubmit}>
             <ModalTitle>Edit Primary Info</ModalTitle>
-            <div className="mt-6 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
-                <InputGroup
-                    label={contactFormFields.firstName.label}
-                    {...register("firstName")}
-                    direction="column"
-                    errorMessage={
-                        errors && errors.firstName && errors.firstName.message
-                    }
-                />
-                <InputGroup
-                    label={contactFormFields.lastName.label}
-                    {...register("lastName")}
-                    direction="column"
-                    errorMessage={
-                        errors && errors.lastName && errors.lastName.message
-                    }
-                />
+            <div className="mt-4 space-y-1">
+                {formSections.map((section, idx) => (
+                    <FieldGroup key={idx}>
+                        {section.map(({ field, required = false }) => (
+                            <NewInputGroup
+                                key={field.name}
+                                isInvalid={
+                                    errors && errors[field.name] ? true : false
+                                }
+                                isRequired={required}
+                            >
+                                <NewInputGroup.Label htmlFor={field.name}>
+                                    {field.label}
+                                </NewInputGroup.Label>
+                                {field.name == "notes" ? (
+                                    <NewInputGroup.TextArea
+                                        rows={5}
+                                        placeholder={field.label}
+                                        {...register(field.name)}
+                                    />
+                                ) : (
+                                    <NewInputGroup.Input
+                                        placeholder={field.label}
+                                        {...register(field.name)}
+                                    />
+                                )}
+                                <NewInputGroup.Error>
+                                    {errors &&
+                                        errors[field.name] &&
+                                        errors[field.name]?.message}
+                                </NewInputGroup.Error>
+                            </NewInputGroup>
+                        ))}
+                    </FieldGroup>
+                ))}
             </div>
-            <div className="mt-4 grid grid-cols-1 gap-y-4 md:grid-cols-2 md:gap-4 md:gap-y-0">
-                <InputGroup
-                    label={contactFormFields.email.label}
-                    {...register("email")}
-                    direction="column"
-                    errorMessage={
-                        errors && errors.email && errors.email.message
-                    }
-                />
-                <InputGroup
-                    label={contactFormFields.phoneNumber.label}
-                    {...register("phoneNumber")}
-                    direction="column"
-                    errorMessage={
-                        errors &&
-                        errors.phoneNumber &&
-                        errors.phoneNumber.message
-                    }
-                />
-            </div>
-            <div className="mt-4">
-                <Textarea
-                    id="contact-notes"
-                    label={contactFormFields.notes.label}
-                    {...register("notes")}
-                    direction="column"
-                />
-            </div>
-
             <div className="mt-8 flex justify-end space-x-3">
                 <Button variant="outlined" onClick={resetModal}>
                     Cancel

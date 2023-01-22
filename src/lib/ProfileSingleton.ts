@@ -1,4 +1,5 @@
 import { PROFILE_TYPES } from "@prisma/client";
+import { capitalize } from "utils/capitialize";
 import { z } from "zod";
 
 export type ProfileSingletonType = {
@@ -18,7 +19,7 @@ const profileTypeOptions: {
 }[] = Object.keys(PROFILE_TYPES).map((i, idx) => ({
     id: String(idx + 1),
     value: i,
-    display: i.toLowerCase(),
+    display: capitalize(i),
 }));
 
 function errMsg(

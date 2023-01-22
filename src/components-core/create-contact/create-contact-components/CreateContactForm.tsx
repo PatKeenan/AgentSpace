@@ -12,9 +12,15 @@ import { useContacts } from "hooks/useContacts";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useRouter } from "next/router";
 import { ContactSingleton } from "lib/ContactSingleton";
+import { FormSections } from "types/index";
+import { FieldGroup } from "components-common/FieldGroup";
+import { NewInputGroup } from "components-common/NewInputGroup";
 
 const { contactFormFields, contactSchemas, subContactSchema } =
     ContactSingleton;
+
+const { email, firstName, lastName, phoneNumber, notes, name } =
+    contactFormFields;
 
 const initialMeta = {
     firstName: "",
@@ -39,6 +45,13 @@ const createContactFormSchema = contactSchemas.create.extend({
 });
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
+
+const formSections: FormSections<CreateContactFormType>[] = [
+    [{ field: name, required: true }],
+    [{ field: firstName, required: true }, { field: lastName }],
+    [{ field: email }, { field: phoneNumber }],
+    [{ field: notes }],
+];
 
 export const CreateContactForm = () => {
     const [subContactFields, setMetaFields] = React.useState<
@@ -130,70 +143,43 @@ export const CreateContactForm = () => {
                         ) : null
                     }
                 >
-                    <div className="space-y-6">
-                        <ContactFormInput
-                            label={contactFormFields.name.label}
-                            required
-                            className="max-w-lg"
-                            {...register("name")}
-                            errorMessage={
-                                errors["name"] && errors["name"].message
-                            }
-                        />
-                        <ContactFormInput
-                            label={contactFormFields.firstName.label}
-                            required
-                            className="max-w-xs "
-                            {...register("firstName")}
-                            errorMessage={
-                                errors["firstName"] &&
-                                errors["firstName"].message
-                            }
-                        />
-                        <ContactFormInput
-                            label={contactFormFields.lastName.label}
-                            className="max-w-xs"
-                            {...register("lastName")}
-                            errorMessage={
-                                errors["lastName"] && errors["lastName"].message
-                            }
-                        />
+                    {formSections.map((section, idx) => (
+                        <FieldGroup key={idx} className="lg:max-w-3xl">
+                            {section.map(({ field, required, className }) => (
+                                <NewInputGroup
+                                    key={field.name}
+                                    isRequired={required}
+                                    isInvalid={
+                                        errors && errors[field.name]
+                                            ? true
+                                            : false
+                                    }
+                                >
+                                    <NewInputGroup.Label htmlFor={field.name}>
+                                        {field.label}
+                                    </NewInputGroup.Label>
 
-                        <ContactFormInput
-                            label={contactFormFields.email.label}
-                            {...register(`email`, {
-                                required: false,
-                            })}
-                            className="max-w-lg"
-                            errorMessage={
-                                errors["email"] && errors["email"].message
-                            }
-                        />
-
-                        <ContactFormInput
-                            label={contactFormFields.phoneNumber.label}
-                            {...register(`phoneNumber`)}
-                            type="tel"
-                            className="max-w-xs"
-                            errorMessage={
-                                errors["phoneNumber"] &&
-                                errors["phoneNumber"].message
-                            }
-                        />
-
-                        {/* <ContactFormInput
-                            label="Tags"
-                            name="tags"
-                            className="max-w-xs"
-                        /> */}
-
-                        <ContactFormTextArea
-                            label={contactFormFields.notes.label}
-                            className="max-w-lg"
-                            {...register("notes")}
-                            rows={3}
-                        />
-                    </div>
+                                    {field.name == "notes" ? (
+                                        <NewInputGroup.TextArea
+                                            placeholder={field.label}
+                                            rows={5}
+                                            {...register(field.name)}
+                                        />
+                                    ) : (
+                                        <NewInputGroup.Input
+                                            placeholder={field.label}
+                                            {...register(field.name)}
+                                        />
+                                    )}
+                                    <NewInputGroup.Error>
+                                        {errors &&
+                                            errors[field.name] &&
+                                            errors[field.name]?.message}
+                                    </NewInputGroup.Error>
+                                </NewInputGroup>
+                            ))}
+                        </FieldGroup>
+                    ))}
                 </Accordion>
             </div>
             <div>

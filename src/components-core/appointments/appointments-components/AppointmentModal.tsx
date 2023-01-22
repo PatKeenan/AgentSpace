@@ -17,7 +17,8 @@ import {
     Button,
     Modal,
     ModalTitle,
-    InputGroup,
+    OldInputGroup,
+    NewInputGroup,
     ComboboxOption,
     Tag,
     Autocomplete,
@@ -206,6 +207,39 @@ export const AppointmentModal = () => {
             });
         }
     };
+    const addressOptions = React.useCallback(
+        () =>
+            addressQuery.data?.features.map((i) => ({
+                id: i.id,
+                address: i.place_name,
+                latitude: i.center && i.center[1],
+                longitude: i.center && i?.center[0],
+            })),
+        [addressQuery.data]
+    );
+    const selectedAddressValue = state.address
+        ? {
+              id: "",
+              address: state.address,
+              latitude: undefined,
+              longitude: undefined,
+          }
+        : undefined;
+    const extraAddressOptionValue = {
+        address: addressInput.state || "",
+        id: "",
+        latitude: undefined,
+        longitude: undefined,
+    };
+
+    const handleClearAddress = () => {
+        setState({
+            address: undefined,
+            latitude: undefined,
+            longitude: undefined,
+        });
+        return addressInput.setState(undefined);
+    };
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -251,313 +285,322 @@ export const AppointmentModal = () => {
                 />
             ) : (
                 <form onSubmit={onSubmit} tabIndex={0}>
-                    <ModalTitle>
-                        {modal?.defaultData ? "Edit" : "Add"} Appointment
-                    </ModalTitle>
+                    <fieldset>
+                        <ModalTitle>
+                            <legend>
+                                {modal?.defaultData ? "Edit" : "Add"}{" "}
+                                Appointment
+                            </legend>
+                        </ModalTitle>
 
-                    {/* Date only in edit mode */}
+                        {/* Date only in edit mode */}
 
-                    <div className="col-span-8 mt-6">
-                        <InputGroup
-                            {...appointmentFormFields.date}
-                            autoFocus={false}
-                            type="date"
-                            value={formatDate(
-                                state.date || new Date(),
-                                "YYYY-MM-DD"
-                            )}
-                            onChange={handleChange}
-                            direction="column"
-                            containerClass="pb-0"
-                        />
-                    </div>
-
-                    {/* --- Address --- */}
-                    <div className="mt-4 grid w-full grid-cols-8 gap-4">
-                        <div className="z-[99] col-span-8 lg:col-span-6">
-                            <Autocomplete
-                                {...appointmentFormFields.address}
-                                required
-                                selected={
-                                    state.address
-                                        ? {
-                                              id: "",
-                                              address: state.address,
-                                              latitude: undefined,
-                                              longitude: undefined,
-                                          }
-                                        : undefined
-                                }
-                                onSelect={(i) => handleSelectAddress(i)}
-                                value={addressInput.state}
-                                setValue={addressInput.setState}
-                                direction="column"
-                                options={addressQuery.data?.features.map(
-                                    (i) => ({
-                                        id: i.id,
-                                        address: i.place_name,
-                                        latitude: i.center && i.center[1],
-                                        longitude: i.center && i?.center[0],
-                                    })
-                                )}
-                                renderValue={(option) =>
-                                    option ? option.address : ""
-                                }
-                                onClear={() => {
-                                    setState({
-                                        address: undefined,
-                                        latitude: undefined,
-                                        longitude: undefined,
-                                    });
-                                    return addressInput.setState(undefined);
-                                }}
-                                isFetched={addressQuery.isFetched}
-                                isLoading={addressQuery.isLoading}
-                                optionValue={{
-                                    address: addressInput.state || "",
-                                    id: "",
-                                    latitude: undefined,
-                                    longitude: undefined,
-                                }}
-                            />
+                        <div className="col-span-8 mt-6">
+                            <NewInputGroup
+                                key={appointmentFormFields.date.name}
+                                isRequired={true}
+                            >
+                                <NewInputGroup.Label
+                                    htmlFor={appointmentFormFields.date.name}
+                                >
+                                    {appointmentFormFields.date.label}
+                                </NewInputGroup.Label>
+                                <NewInputGroup.Input
+                                    placeholder={
+                                        appointmentFormFields.date.label
+                                    }
+                                    type="date"
+                                    value={formatDate(
+                                        state.date || new Date(),
+                                        "YYYY-MM-DD"
+                                    )}
+                                    onChange={handleChange}
+                                />
+                            </NewInputGroup>
                         </div>
-                        <div className="col-span-8  lg:col-span-2">
-                            <InputGroup
-                                {...appointmentFormFields.address_2}
-                                direction="column"
-                                value={state.address_2}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-                    {/* --- End Address ---  */}
 
-                    {/* Contacts */}
-                    <div className="relative z-50 col-span-8 mt-4 grid w-full">
-                        <Combobox
-                            as="div"
-                            value={state.contacts || []}
-                            onChange={(i) => handleSelectContacts(i)}
-                            multiple
-                            className="relative  md:mt-0"
-                        >
-                            {({ open }) => (
-                                <>
-                                    <Combobox.Label className="block text-sm font-medium text-gray-700">
-                                        {appointmentFormFields.contacts.label}
-                                    </Combobox.Label>
-                                    <div
-                                        className="relative mt-1"
-                                        onClick={() =>
-                                            contactInputRef.current?.focus()
-                                        }
-                                    >
-                                        <div className="flex w-full items-center rounded-md border border-gray-300 bg-white pl-2 pr-10 shadow-sm focus-within:border-indigo-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-indigo-500 sm:text-sm">
-                                            <Combobox.Input
-                                                as={React.Fragment}
-                                                onChange={(e) =>
-                                                    contactInput.setState(
-                                                        e.target.value
-                                                    )
-                                                }
-                                            >
-                                                <input
-                                                    value={contactInput.state}
-                                                    autoComplete="off"
-                                                    ref={contactInputRef}
-                                                    className="mx-0 w-full border-0 px-2 ring-0 focus:border-0 focus:ring-0"
-                                                />
-                                            </Combobox.Input>
-                                        </div>
-                                        <Transition
-                                            show={
-                                                (open &&
-                                                    contactInput.state &&
-                                                    contactInput.state.trim()
-                                                        .length > 2) ||
-                                                false
+                        {/* --- Address --- */}
+                        <div className="mt-4 grid w-full grid-cols-8 gap-4">
+                            <div className="z-[99] col-span-8 lg:col-span-6">
+                                <Autocomplete
+                                    {...appointmentFormFields.address}
+                                    required
+                                    selected={selectedAddressValue}
+                                    onSelect={handleSelectAddress}
+                                    value={addressInput.state}
+                                    setValue={addressInput.setState}
+                                    direction="column"
+                                    options={addressOptions()}
+                                    renderValue={(option) =>
+                                        option ? option.address : ""
+                                    }
+                                    onClear={handleClearAddress}
+                                    isFetched={addressQuery.isFetched}
+                                    isLoading={addressQuery.isLoading}
+                                    optionValue={extraAddressOptionValue}
+                                />
+                            </div>
+                            <div className="col-span-8  lg:col-span-2">
+                                <OldInputGroup
+                                    {...appointmentFormFields.address_2}
+                                    direction="column"
+                                    value={state.address_2}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                        {/* --- End Address ---  */}
+
+                        {/* Contacts */}
+                        <div className="relative z-50 col-span-8 mt-4 grid w-full">
+                            <Combobox
+                                as="div"
+                                value={state.contacts || []}
+                                onChange={(i) => handleSelectContacts(i)}
+                                multiple
+                                className="relative  md:mt-0"
+                            >
+                                {({ open }) => (
+                                    <>
+                                        <Combobox.Label className="block text-sm font-medium text-gray-700">
+                                            {
+                                                appointmentFormFields.contacts
+                                                    .label
                                             }
-                                            enter="transition duration-100 ease-out"
-                                            enterFrom="transform scale-95 opacity-0"
-                                            enterTo="transform scale-100 opacity-100"
-                                            leave="transition duration-75 ease-out"
-                                            leaveFrom="transform scale-100 opacity-100"
-                                            leaveTo="transform scale-95 opacity-0"
-                                            className={"z-[99]"}
+                                        </Combobox.Label>
+                                        <div
+                                            className="relative mt-1"
+                                            onClick={() =>
+                                                contactInputRef.current?.focus()
+                                            }
                                         >
-                                            <Combobox.Options
-                                                className="absolute z-[99] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                                                static
+                                            <div className="flex w-full items-center rounded-md border border-gray-300 bg-white pl-2 pr-10 shadow-sm focus-within:border-indigo-500 focus-within:outline-none focus-within:ring-1 focus-within:ring-indigo-500 sm:text-sm">
+                                                <Combobox.Input
+                                                    as={React.Fragment}
+                                                    onChange={(e) =>
+                                                        contactInput.setState(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                >
+                                                    <input
+                                                        value={
+                                                            contactInput.state
+                                                        }
+                                                        autoComplete="off"
+                                                        ref={contactInputRef}
+                                                        className="mx-0 w-full border-0 px-2 ring-0 focus:border-0 focus:ring-0"
+                                                    />
+                                                </Combobox.Input>
+                                            </div>
+                                            <Transition
+                                                show={
+                                                    (open &&
+                                                        contactInput.state &&
+                                                        contactInput.state.trim()
+                                                            .length > 2) ||
+                                                    false
+                                                }
+                                                enter="transition duration-100 ease-out"
+                                                enterFrom="transform scale-95 opacity-0"
+                                                enterTo="transform scale-100 opacity-100"
+                                                leave="transition duration-75 ease-out"
+                                                leaveFrom="transform scale-100 opacity-100"
+                                                leaveTo="transform scale-95 opacity-0"
+                                                className={"z-[99]"}
                                             >
-                                                {contactOptions?.map(
-                                                    (contactOption) => {
-                                                        return (
-                                                            <React.Fragment
-                                                                key={
-                                                                    contactOption.id
-                                                                }
-                                                            >
-                                                                <ComboboxOption
-                                                                    value={{
-                                                                        contactId:
-                                                                            contactOption.id,
-                                                                        name: contactOption.name,
-                                                                    }}
-                                                                    display={
-                                                                        contactOption.name
-                                                                    }
+                                                <Combobox.Options
+                                                    className="absolute z-[99] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                                                    static
+                                                >
+                                                    {contactOptions?.map(
+                                                        (contactOption) => {
+                                                            return (
+                                                                <React.Fragment
                                                                     key={
                                                                         contactOption.id
                                                                     }
-                                                                />
+                                                                >
+                                                                    <ComboboxOption
+                                                                        value={{
+                                                                            contactId:
+                                                                                contactOption.id,
+                                                                            name: contactOption.name,
+                                                                        }}
+                                                                        display={
+                                                                            contactOption.name
+                                                                        }
+                                                                        key={
+                                                                            contactOption.id
+                                                                        }
+                                                                    />
 
-                                                                {contactOption.profiles.map(
-                                                                    (
-                                                                        profile
-                                                                    ) => (
-                                                                        <ComboboxOption
-                                                                            value={{
-                                                                                contactId:
-                                                                                    contactOption.id,
-                                                                                name: contactOption.name,
-                                                                                selectedProfileId:
-                                                                                    profile.id,
-                                                                                profileName:
-                                                                                    profile.name,
-                                                                            }}
-                                                                            display={`${contactOption.name} - ${profile.name}`}
-                                                                            key={
-                                                                                profile.id
-                                                                            }
-                                                                        />
-                                                                    )
-                                                                )}
-                                                            </React.Fragment>
-                                                        );
-                                                    }
-                                                )}
-                                                {open && isFetched && (
-                                                    <button
-                                                        className="relative w-full cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
-                                                        onClick={() =>
-                                                            setAddContactFormOpen(
-                                                                true
-                                                            )
+                                                                    {contactOption.profiles.map(
+                                                                        (
+                                                                            profile
+                                                                        ) => (
+                                                                            <ComboboxOption
+                                                                                value={{
+                                                                                    contactId:
+                                                                                        contactOption.id,
+                                                                                    name: contactOption.name,
+                                                                                    selectedProfileId:
+                                                                                        profile.id,
+                                                                                    profileName:
+                                                                                        profile.name,
+                                                                                }}
+                                                                                display={`${contactOption.name} - ${profile.name}`}
+                                                                                key={
+                                                                                    profile.id
+                                                                                }
+                                                                            />
+                                                                        )
+                                                                    )}
+                                                                </React.Fragment>
+                                                            );
                                                         }
-                                                    >
-                                                        <div className="flex items-center space-x-2">
-                                                            <PlusIcon
-                                                                className="h-4 w-4"
-                                                                aria-hidden={
+                                                    )}
+                                                    {open && isFetched && (
+                                                        <button
+                                                            className="relative w-full cursor-default select-none py-2 pl-3 pr-9 text-gray-900 hover:bg-indigo-600 hover:text-white"
+                                                            onClick={() =>
+                                                                setAddContactFormOpen(
                                                                     true
-                                                                }
-                                                            />
-                                                            <span>
-                                                                Add &quot;
-                                                                {
-                                                                    contactInput.state
-                                                                }
-                                                                &quot; to
-                                                                Contacts
-                                                            </span>
-                                                        </div>
-                                                    </button>
-                                                )}
-                                            </Combobox.Options>
-                                        </Transition>
-                                    </div>
-
-                                    {state.contacts &&
-                                        state.contacts.length > 0 && (
-                                            <ul className="mt-2  flex flex-wrap">
-                                                {state.contacts.map((i) => (
-                                                    <li
-                                                        key={v4()}
-                                                        className={"mr-2 mt-2"}
-                                                    >
-                                                        <Tag
-                                                            onDelete={() =>
-                                                                handleDeleteContact(
-                                                                    i
                                                                 )
                                                             }
                                                         >
-                                                            <span>
-                                                                {i.name}
-                                                            </span>
-
-                                                            {i.selectedProfileId && (
-                                                                <span className="ml-1">
-                                                                    - {}
-                                                                    {
-                                                                        i.profileName
+                                                            <div className="flex items-center space-x-2">
+                                                                <PlusIcon
+                                                                    className="h-4 w-4"
+                                                                    aria-hidden={
+                                                                        true
                                                                     }
+                                                                />
+                                                                <span>
+                                                                    Add &quot;
+                                                                    {
+                                                                        contactInput.state
+                                                                    }
+                                                                    &quot; to
+                                                                    Contacts
                                                                 </span>
-                                                            )}
-                                                        </Tag>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                </>
-                            )}
-                        </Combobox>
-                    </div>
+                                                            </div>
+                                                        </button>
+                                                    )}
+                                                </Combobox.Options>
+                                            </Transition>
+                                        </div>
 
-                    {/* Time & Status*/}
-                    <div className="mt-4 grid w-full grid-cols-6 gap-4">
-                        <div className="col-span-3 lg:col-span-2">
-                            <InputGroup
-                                {...appointmentFormFields.startTime}
-                                type="time"
-                                value={state.startTime}
-                                onChange={handleChange}
-                                direction="column"
-                            />
-                        </div>
-                        <div className="col-span-3 lg:col-span-2">
-                            <InputGroup
-                                {...appointmentFormFields.endTime}
-                                type="time"
-                                value={state.endTime}
-                                onChange={handleChange}
-                                direction="column"
-                            />
-                        </div>
-                        <div className="col-span-6 lg:col-span-2 ">
-                            <Select
-                                {...appointmentFormFields.status}
-                                direction="column"
-                                displayField="display"
-                                selected={appointmentStatusOptions.find(
-                                    (i) => i.value == state.status
+                                        {state.contacts &&
+                                            state.contacts.length > 0 && (
+                                                <ul className="mt-2  flex flex-wrap">
+                                                    {state.contacts.map((i) => (
+                                                        <li
+                                                            key={v4()}
+                                                            className={
+                                                                "mr-2 mt-2"
+                                                            }
+                                                        >
+                                                            <Tag
+                                                                onDelete={() =>
+                                                                    handleDeleteContact(
+                                                                        i
+                                                                    )
+                                                                }
+                                                            >
+                                                                <span>
+                                                                    {i.name}
+                                                                </span>
+
+                                                                {i.selectedProfileId && (
+                                                                    <span className="ml-1">
+                                                                        - {}
+                                                                        {
+                                                                            i.profileName
+                                                                        }
+                                                                    </span>
+                                                                )}
+                                                            </Tag>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                    </>
                                 )}
-                                setSelected={(i) =>
-                                    setState({
-                                        status: i.value,
-                                    })
-                                }
-                                className="max-h-[140px] capitalize"
-                                options={appointmentStatusOptions}
-                            />
+                            </Combobox>
                         </div>
-                    </div>
 
-                    <Textarea
-                        {...appointmentFormFields.note}
-                        containerClass="mt-4"
-                        value={state.note}
-                        onChange={handleChange}
-                    />
+                        {/* Time & Status*/}
+                        <div className="mt-4 grid w-full grid-cols-6 gap-4">
+                            <div className="col-span-3 lg:col-span-2">
+                                <OldInputGroup
+                                    {...appointmentFormFields.startTime}
+                                    type="time"
+                                    value={state.startTime}
+                                    onChange={handleChange}
+                                    direction="column"
+                                />
+                            </div>
+                            <div className="col-span-3 lg:col-span-2">
+                                <OldInputGroup
+                                    {...appointmentFormFields.endTime}
+                                    type="time"
+                                    value={state.endTime}
+                                    onChange={handleChange}
+                                    direction="column"
+                                />
+                            </div>
+                            <div className="col-span-6 lg:col-span-2 ">
+                                {/*  <Select
+                                    {...appointmentFormFields.status}
+                                    direction="column"
+                                    displayField="display"
+                                    selected={appointmentStatusOptions.find(
+                                        (i) => i.value == state.status
+                                    )}
+                                    setSelected={(i) =>
+                                        setState({
+                                            status: i.value,
+                                        })
+                                    }
+                                    className="max-h-[140px] capitalize"
+                                    options={appointmentStatusOptions}
+                                /> */}
+                                <Select
+                                    {...appointmentFormFields.status}
+                                    displayField="display"
+                                    selected={
+                                        appointmentStatusOptions.find(
+                                            (i) => i.value == state.status
+                                        ) as typeof appointmentStatusOptions[number]
+                                    }
+                                    setSelected={(i) =>
+                                        setState({
+                                            status: i.value,
+                                        })
+                                    }
+                                    className="max-h-[140px] capitalize"
+                                    options={appointmentStatusOptions}
+                                />
+                            </div>
+                        </div>
 
-                    <div className="mt-8 flex justify-end space-x-3">
-                        <Button variant="outlined" onClick={handleClose}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" type="submit">
-                            {modal.defaultData ? "Save Changes" : "Save"}
-                        </Button>
-                    </div>
+                        <Textarea
+                            {...appointmentFormFields.note}
+                            containerClass="mt-4"
+                            value={state.note}
+                            onChange={handleChange}
+                        />
+
+                        <div className="mt-8 flex justify-end space-x-3">
+                            <Button variant="outlined" onClick={handleClose}>
+                                Cancel
+                            </Button>
+                            <Button variant="primary" type="submit">
+                                {modal.defaultData ? "Save Changes" : "Save"}
+                            </Button>
+                        </div>
+                    </fieldset>
                 </form>
             )}
         </Modal>

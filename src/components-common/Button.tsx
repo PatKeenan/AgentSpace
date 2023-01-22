@@ -1,4 +1,10 @@
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
+import {
+    ArrowLeftIcon,
+    PencilIcon,
+    PlusIcon,
+    TrashIcon,
+} from "@heroicons/react/20/solid";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { SVGProps } from "react";
 import { NextLink } from "./NextLink";
@@ -11,16 +17,26 @@ export const variantStyles = {
         "border-transparent bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
 };
 
+const iconSizeOptions = {
+    sm: "h-3 w-3",
+    md: "h-4 w-4",
+    lg: "h-5 w-5",
+};
+
 const actionIcons = {
     delete: TrashIcon,
     edit: PencilIcon,
     add: PlusIcon,
+    backArrow: ArrowLeftIcon,
+    forwardArrow: ArrowRightIcon,
 };
 
 type ButtonProps = {
     variant: keyof typeof variantStyles;
     actionIcon?: keyof typeof actionIcons;
+    iconSize?: keyof typeof iconSizeOptions;
     iconPosition?: "left" | "right";
+    hideChildrenOnMobile?: boolean;
 } & React.ComponentProps<"button">;
 
 export const Button = (props: ButtonProps) => {
@@ -29,8 +45,10 @@ export const Button = (props: ButtonProps) => {
         className,
         children,
         actionIcon,
+        iconSize = "lg",
         iconPosition = "left",
         type = "button",
+        hideChildrenOnMobile = true,
         ...htmlProps
     } = props;
 
@@ -50,17 +68,29 @@ export const Button = (props: ButtonProps) => {
             {Icon && iconPosition == "left" && (
                 <Icon
                     className={clsx(
-                        "h-5 w-5 lg:-ml-1 lg:mr-2",
+                        iconSizeOptions[iconSize],
+                        hideChildrenOnMobile
+                            ? "lg:-ml-1 lg:mr-2"
+                            : "-ml-1 mr-2",
                         variant == "primary" ? "text-white" : "text-gray-400"
                     )}
                     aria-hidden
                 />
             )}
-            <span className={clsx(Icon && "hidden lg:block")}>{children}</span>
+            <span
+                className={clsx(
+                    Icon && hideChildrenOnMobile && "hidden lg:block"
+                )}
+            >
+                {children}
+            </span>
             {Icon && iconPosition == "right" && (
                 <Icon
                     className={clsx(
-                        "h-5 w-5 lg:-mr-1 lg:ml-2",
+                        iconSizeOptions[iconSize],
+                        hideChildrenOnMobile
+                            ? "lg:-mr-1 lg:ml-2"
+                            : "-mr-1 ml-2",
                         variant == "primary" ? "text-white" : "text-gray-400"
                     )}
                     aria-hidden
@@ -72,8 +102,10 @@ export const Button = (props: ButtonProps) => {
 type ButtonLinkProps = {
     variant: keyof typeof variantStyles;
     href: string;
+    iconSize?: keyof typeof iconSizeOptions;
     actionIcon?: keyof typeof actionIcons;
     iconPosition?: "left" | "right";
+    hideChildrenOnMobile?: boolean;
 } & Omit<React.HtmlHTMLAttributes<HTMLAnchorElement>, "href">;
 
 export const ButtonLink = (props: ButtonLinkProps) => {
@@ -82,6 +114,8 @@ export const ButtonLink = (props: ButtonLinkProps) => {
         className,
         actionIcon,
         children,
+        iconSize = "lg",
+        hideChildrenOnMobile = true,
         iconPosition = "left",
         ...htmlProps
     } = props;
@@ -101,17 +135,29 @@ export const ButtonLink = (props: ButtonLinkProps) => {
             {Icon && iconPosition == "left" && (
                 <Icon
                     className={clsx(
-                        "h-5 w-5 lg:-ml-1 lg:mr-2",
+                        iconSizeOptions[iconSize],
+                        hideChildrenOnMobile
+                            ? "lg:-ml-1 lg:mr-2"
+                            : "-ml-1 mr-2",
                         variant == "primary" ? "text-white" : "text-gray-400"
                     )}
                     aria-hidden
                 />
             )}
-            <span className={clsx(Icon && "hidden lg:block")}>{children}</span>
+            <span
+                className={clsx(
+                    Icon && hideChildrenOnMobile && "hidden lg:block"
+                )}
+            >
+                {children}
+            </span>
             {Icon && iconPosition == "right" && (
                 <Icon
                     className={clsx(
-                        "h-5 w-5 lg:-mr-1 lg:ml-2",
+                        iconSizeOptions[iconSize],
+                        hideChildrenOnMobile
+                            ? "lg:-mr-1 lg:ml-2"
+                            : "-mr-1 ml-2",
                         variant == "primary" ? "text-white" : "text-gray-400"
                     )}
                     aria-hidden
@@ -119,12 +165,6 @@ export const ButtonLink = (props: ButtonLinkProps) => {
             )}
         </NextLink>
     );
-};
-
-const iconSize = {
-    sm: "h-3 w-3",
-    md: "h-4 w-4",
-    lg: "h-5 w-5",
 };
 
 type IconButtonProps = {
@@ -135,7 +175,7 @@ type IconButtonProps = {
         }
     ) => JSX.Element;
     title: string;
-    size?: keyof typeof iconSize;
+    size?: keyof typeof iconSizeOptions;
     textColor?: string;
 } & Omit<React.ComponentProps<"button">, "title">;
 export const IconButton = (props: IconButtonProps) => {
@@ -150,7 +190,7 @@ export const IconButton = (props: IconButtonProps) => {
             <span className="sr-only">{title}</span>
             <Icon
                 className={clsx(
-                    iconSize[size],
+                    iconSizeOptions[size],
                     textColor
                         ? textColor
                         : "text-gray-300 group-hover:text-gray-400"
