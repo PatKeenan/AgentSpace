@@ -42,6 +42,8 @@ import {
     AppointmentForm,
     AppointmentFormType,
 } from "components-core/appointments/appointments-components/AppointmentForm";
+import { trpc } from "utils/trpc";
+import { useAppointmentFormStore } from "components-core/appointments/appointments-components";
 
 const { appointmentFormFields } = AppointmentSingleton;
 
@@ -61,14 +63,28 @@ const fields = [
 
 export const AppointmentDetailContainer = () => {
     const [modalOpen, setModalOpen] = React.useState(false);
+    const { setCallback } = useAppointmentFormStore();
     const router = useRouter();
 
     const { getOne } = useAppointments();
-
+    const utils = trpc.useContext();
     const { data: appointment } = getOne(
         { id: router.query.appointmentId as string },
         { enabled: typeof router.query.appointmentId === "string" }
     );
+
+    const invalidate = React.useCallback(() => {
+        utils.appointment.getOne
+            .invalidate({
+                id: router.query.appointmentId as string,
+            })
+            .then(() => setModalOpen(false));
+    }, [router.query.appointmentId]);
+
+    React.useEffect(() => {
+        setCallback(invalidate);
+        return () => setCallback(undefined);
+    }, [router.query.appointmentId]);
 
     const workspace = useWorkspace();
     const appointmentId = router.query.appointmentId;

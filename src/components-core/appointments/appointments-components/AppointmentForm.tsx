@@ -151,7 +151,6 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
 
     const { mutate: createAppointmentMutation } = create();
     const { mutate: updateAppointmentMutation } = update();
-    console.log(callback);
     const onSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (workspaceId && !defaultData) {
