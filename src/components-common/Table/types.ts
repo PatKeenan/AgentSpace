@@ -16,3 +16,8 @@ export type TableDataProps = {
     fontColor?: string;
     className?: string;
 };
+
+export type TableBodyProps = {
+    children: React.ReactNode;
+    isLoading?: boolean;
+};

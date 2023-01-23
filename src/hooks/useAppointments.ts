@@ -6,6 +6,7 @@ export const useAppointments = () => {
     return {
         getAllForContact: appointment.getAllForContact.useQuery,
         getAll: appointment.getAll.useQuery,
+        getOne: appointment.getOne.useQuery,
         getIndicators: appointment.getIndicators.useQuery, // Used for the calendar to quickly show if there is an appointment on a date
         getByDate: appointment.getByDate.useQuery,
         create: appointment.create.useMutation,

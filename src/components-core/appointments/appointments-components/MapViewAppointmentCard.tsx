@@ -7,16 +7,14 @@ import * as React from "react";
 
 import type { Appointment, AppointmentStatus } from "@prisma/client";
 import clsx from "clsx";
-import { AppointmentFormType } from "./AppointmentModal";
 import { useAppointments } from "hooks/useAppointments";
 import { Button } from "components-common/Button";
-import { Select } from "components-common/Select";
 import { statusColorsDark } from "../appointments-utils";
 import { Tag } from "components-common/Tag";
 import Link from "next/link";
-import { formatDate } from "utils/formatDate";
 import { AppointmentSingleton } from "lib";
 import { NewInputGroup } from "components-common/NewInputGroup";
+import { AppointmentFormType } from "./AppointmentForm";
 
 const { appointmentFormFields, appointmentStatusOptions } =
     AppointmentSingleton;
@@ -126,6 +124,17 @@ export const MapViewAppointmentCard = (props: {
         return undefined;
     };
 
+    const formatDate = (date: string) => {
+        const dateArr = date.split("-");
+        if (dateArr.length === 3) {
+            return `${new Date(
+                Number(dateArr[0]),
+                Number(dateArr[1]) - 1,
+                Number(dateArr[2])
+            ).toLocaleDateString("en-US")}`;
+        }
+        return new Date(date).toLocaleDateString("en-US");
+    };
     return (
         <GridCard>
             <div className="relative mb-4 -mt-2 grid grid-cols-3 items-center gap-2 border-b py-2">
@@ -194,7 +203,7 @@ export const MapViewAppointmentCard = (props: {
             </div>
             <DetailsRow
                 title={appointmentFormFields.date.label}
-                value={formatDate(appointment.date, "MM/DD/YYYY")}
+                value={formatDate(appointment.date)}
             />
             <DetailsRow title="Time" value={timeDisplay()} />
             <DetailsRow

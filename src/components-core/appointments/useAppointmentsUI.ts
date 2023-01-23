@@ -1,7 +1,8 @@
 import { devtools } from "zustand/middleware";
 import create from "zustand";
-import { AppointmentFormType } from "./appointments-components";
+
 import { AppointmentQueryParamSchema } from "server/schemas";
+import { AppointmentFormType } from "./appointments-components/AppointmentForm";
 
 const initialQueryParamsState: AppointmentQueryParamSchema = {
     searchBy: "address",

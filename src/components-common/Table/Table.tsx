@@ -1,5 +1,11 @@
 import clsx from "clsx";
-import { TableDataProps, TableHeaderProps, TableProps } from "./types";
+import {
+    TableBodyProps,
+    TableDataProps,
+    TableHeaderProps,
+    TableProps,
+} from "./types";
+import { Loading } from "..";
 
 export const Table = (props: TableProps) => {
     const { children } = props;
@@ -37,16 +43,15 @@ const TableHeader = (props: TableHeaderProps) => {
     );
 };
 
-const TableBody = (props: { children: React.ReactNode }) => {
+const TableBody = (props: TableBodyProps) => {
+    const { children } = props;
     return (
-        <tbody className="divide-y divide-gray-300 bg-white">
-            {props.children}
-        </tbody>
+        <tbody className="divide-y divide-gray-200 bg-white">{children}</tbody>
     );
 };
 
 const TableRow = (props: { children: React.ReactNode }) => {
-    return <tr>{props.children}</tr>;
+    return <tr className="hover:bg-gray-50">{props.children}</tr>;
 };
 
 const TableData = (props: TableDataProps) => {

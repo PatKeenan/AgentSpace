@@ -1,4 +1,7 @@
-import { MapViewAppointmentCard } from "./appointments-components";
+import {
+    MapViewAppointmentCard,
+    useAppointmentFormStore,
+} from "./appointments-components";
 import { Loading, NoData, Button, Calendar } from "components-common";
 import { TruckIcon } from "@heroicons/react/24/outline";
 import { useAppointmentsUI } from "./useAppointmentsUI";
@@ -24,28 +27,37 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
     const appointments = useAppointments();
     const workspace = useWorkspace();
     const { setModal, modal } = useAppointmentsUI();
+    const { setCallback } = useAppointmentFormStore();
     const utils = trpc.useContext();
 
     const [selectedDate, setSelectedDate] = React.useState<Date>(
         () => new Date()
     );
-    /*  const { selectedDate, setSelectedDate, activeMonth, setActiveMonth } =
-        useSelectedDate(new Date()); */
 
     const [activeMonth, setActiveMonth] = React.useState<Date>(
         () => new Date()
     );
 
-    const invalidate = (date?: Date) =>
-        utils.appointment.getByDate.invalidate({
-            date: dateUtils.transform(date || selectedDate).isoDateOnly,
-            workspaceId: workspace.id as string,
-        });
+    const invalidate = React.useCallback(
+        (date?: Date) => {
+            utils.appointment.getByDate.invalidate({
+                date: dateUtils.transform(date || selectedDate).isoDateOnly,
+                workspaceId: workspace.id as string,
+            });
+        },
+        [selectedDate, utils.appointment.getByDate, workspace.id]
+    );
+
+    // Set the callback for the appointment form when the selected date changes
+    React.useEffect(() => {
+        setCallback(invalidate);
+        return () => setCallback(undefined);
+    }, [selectedDate]);
 
     const appointmentsQuery = appointments.getByDate(
         {
             workspaceId: workspace.id as string,
-            date: dateUtils.transform(selectedDate).isoDateOnly,
+            date: formatDate(selectedDate, "YYYY-MM-DD"),
         },
         {
             refetchOnWindowFocus: false,
@@ -87,6 +99,8 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
         setModal({
             selectedDate: dateUtils.transform(selectedDate).isoDateOnly,
         });
+        return () =>
+            setModal({ selectedDate: undefined, defaultData: undefined });
     }, [selectedDate, setModal, modal.state]);
 
     return (

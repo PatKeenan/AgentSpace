@@ -14,9 +14,10 @@ export const formatDate = (
     if (!date) throw new Error("Expected a date");
 
     const baseDate = new Date(date);
-    const year = baseDate.getUTCFullYear();
-    const month = baseDate.getUTCMonth() + 1;
-    const day = baseDate.getUTCDate();
+
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth() + 1;
+    const day = baseDate.getDate();
     const dateFormats: FormatOptions = {
         M: month,
         D: day,
@@ -42,4 +43,16 @@ export const formatStringToDate = (stringDate: string): Date | null => {
     }
 
     return null;
+};
+
+// Function that returns different format options for a javascript date object
+export const getFormattedDate = (date: Date, format: string) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return format
+        .replace("YYYY", year.toString())
+        .replace("MM", month <= 9 ? "0" + month : month.toString())
+        .replace("DD", day <= 9 ? "0" + day : day.toString());
 };

@@ -19,7 +19,8 @@ function getMonth(month: Date) {
 }
 
 function transform(date: Date | string) {
-    const formattedDate = new Date(date);
+    const formattedDate = typeof date == "string" ? new Date(date) : date;
+
     return {
         isoDateOnly:
             formattedDate.toISOString().split("T")[0] ||

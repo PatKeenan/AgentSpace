@@ -1,5 +1,3 @@
-import clsx from "clsx";
-import React from "react";
 import { Button } from "./Button";
 
 type PaginationProps = {
@@ -28,8 +26,8 @@ export const Pagination = ({
         >
             <div className="hidden sm:block">
                 <p className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{showingFrom}</span>{" "}
-                    to <span className="font-medium">{showingTo}</span> of{" "}
+                    Showing <span className="font-medium">{showingFrom}</span> -{" "}
+                    <span className="font-medium">{showingTo}</span> of{" "}
                     <span className="font-medium">{totalItems}</span>
                 </p>
             </div>

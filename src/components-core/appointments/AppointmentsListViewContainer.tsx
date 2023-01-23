@@ -29,6 +29,8 @@ import { statusColorsLight, statusDisplay } from "./appointments-utils";
 import { format } from "date-fns";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import { ColumnHeader, Table } from "components-common/Table";
+import { trpc } from "utils/trpc";
+import { useAppointmentFormStore } from "./appointments-components";
 
 type FiltersType = {
     name: keyof Omit<
@@ -66,19 +68,33 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
         queryParamReducer,
         initialQueryParamsState
     );
-
+    const { setCallback } = useAppointmentFormStore();
     const [mobileFiltersOpen, setMobileFiltersOpen] = React.useState(false);
 
     const searchQuery = useDebounceState("", 500);
-
+    const utils = trpc.useContext();
     const { getAll } = useAppointments();
     const { id } = useWorkspace();
 
-    const { data } = getAll({
+    const { data, isLoading } = getAll({
         workspaceId: id as string,
         ...queryParamsState,
         searchQuery: searchQuery.debounced,
     });
+
+    const invalidate = React.useCallback(() => {
+        utils.appointment.getAll.invalidate({
+            workspaceId: id as string,
+            ...queryParamsState,
+            searchQuery: searchQuery.debounced,
+        });
+    }, [id, queryParamsState, searchQuery.debounced]);
+
+    // Update the callback function that runs in the form to invalidate the query based on the current query params
+    React.useEffect(() => {
+        setCallback(invalidate);
+        return () => setCallback(undefined);
+    }, [id, queryParamsState, searchQuery.debounced]);
 
     const appointments = data && data.length == 2 ? data[0] : [];
     const totalAppointments = data && data.length == 2 ? data[1] : 0;
@@ -189,7 +205,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
         { value: "Date" },
         { value: "Address" },
         { value: "Time" },
-        { value: "Clients" },
+        { value: "Contacts" },
         { value: "View", className: "sr-only" },
     ];
 
@@ -440,7 +456,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                     <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                         <Table>
                             <Table.Header columnHeaders={tableColumnHeaders} />
-                            <Table.Body>
+                            <Table.Body isLoading={isLoading}>
                                 {appointments.map((appointment) => (
                                     <Table.Row key={appointment.id}>
                                         <Table.Data className="px-3 py-4 pl-4">

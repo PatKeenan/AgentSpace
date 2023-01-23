@@ -9,6 +9,32 @@ import { paginationSchema } from "server/schemas/pagination";
 const { appointmentSchemas } = AppointmentSingleton;
 
 export const appointmentRouter = t.router({
+    getOne: authedProcedure.input(idSchema).query(async ({ ctx, input }) => {
+        return await ctx.prisma.appointment.findUnique({
+            where: {
+                id: input.id,
+            },
+            include: {
+                contacts: {
+                    select: {
+                        id: true,
+                        contact: {
+                            select: {
+                                id: true,
+                                name: true,
+                            },
+                        },
+                        profile: {
+                            select: {
+                                id: true,
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }),
     getAll: authedProcedure
         .input(
             z

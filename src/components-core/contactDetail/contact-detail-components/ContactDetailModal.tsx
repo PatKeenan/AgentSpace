@@ -6,20 +6,16 @@ import { Suspense } from "react";
 
 const AddProfileForm = dynamic(() => import("./AddProfileForm"), {
     suspense: true,
-    ssr: false,
 });
 const EditContactForm = dynamic(() => import("./EditContactForm"), {
     suspense: true,
-    ssr: false,
 });
 const SubContactForm = dynamic(() => import("./SubContactForm"), {
     suspense: true,
-    ssr: false,
 });
 
 const EditGeneralInfoForm = dynamic(() => import("./EditGeneralInfoForm"), {
     suspense: true,
-    ssr: false,
 });
 
 export const ContactDetailModal = () => {
