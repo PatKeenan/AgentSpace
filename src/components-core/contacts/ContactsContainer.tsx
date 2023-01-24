@@ -571,11 +571,27 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                             </FormFieldTitle>
                                                                         </div>
                                                                         <div>
-                                                                            <p>
-                                                                                {
-                                                                                    field.value
-                                                                                }
-                                                                            </p>
+                                                                            {field.label ===
+                                                                                "Profiles" &&
+                                                                            field.value !==
+                                                                                "--" ? (
+                                                                                <Link
+                                                                                    href={`/workspace/${workspace.id}/contacts/${contact.id}/profiles`}
+                                                                                    passHref
+                                                                                >
+                                                                                    <a className="hover:text-indigo-600">
+                                                                                        {
+                                                                                            field.value
+                                                                                        }
+                                                                                    </a>
+                                                                                </Link>
+                                                                            ) : (
+                                                                                <p>
+                                                                                    {
+                                                                                        field.value
+                                                                                    }
+                                                                                </p>
+                                                                            )}
                                                                         </div>
                                                                     </div>
                                                                 )
@@ -612,9 +628,21 @@ export const ContactsContainer: NextPageExtended = () => {
                                         {contact?.phoneNumber || "---"}
                                     </Table.Data>
                                     <Table.Data>
-                                        {contact._count.appointmentsMeta
-                                            ? contact._count.appointmentsMeta
-                                            : "---"}
+                                        {contact._count.appointmentsMeta ? (
+                                            <Link
+                                                href={`/workspace/${workspace.id}/contacts/${contact.id}/appointments`}
+                                                passHref
+                                            >
+                                                <a className="text-indigo-600">
+                                                    {
+                                                        contact._count
+                                                            .appointmentsMeta
+                                                    }
+                                                </a>
+                                            </Link>
+                                        ) : (
+                                            "---"
+                                        )}
                                     </Table.Data>
                                     <Table.Data>
                                         {contact.subContacts
@@ -622,7 +650,18 @@ export const ContactsContainer: NextPageExtended = () => {
                                             .join(", ")}
                                     </Table.Data>
                                     <Table.Data>
-                                        {contact.profiles?.length || "--"}
+                                        {contact.profiles?.length > 0 ? (
+                                            <Link
+                                                href={`/workspace/${workspace.id}/contacts/${contact.id}/appointments`}
+                                                passHref
+                                            >
+                                                <a className="text-indigo-600">
+                                                    {contact.profiles?.length}
+                                                </a>
+                                            </Link>
+                                        ) : (
+                                            "--"
+                                        )}
                                     </Table.Data>
                                     <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
                                         <NextLink

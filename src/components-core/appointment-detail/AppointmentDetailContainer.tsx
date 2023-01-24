@@ -7,42 +7,29 @@ import {
     SectionHeading,
     PageBody,
     Tag,
-    NextLink,
     Modal,
-    ModalTitle,
-    FieldGroup,
-    NewInputGroup,
 } from "components-common";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { AppointmentDetailList } from "./appointment-detail-components";
 import dynamic from "next/dynamic";
-import type { AppointmentFormState } from "./types";
 import { useAppointments } from "hooks/useAppointments";
 import { GridSectionTitle } from "components-core/contactDetail";
-
-const AppointmentsMap = dynamic(
-    () => import("../appointments/appointments-components/AppointmentsMap"),
-    {
-        ssr: false,
-    }
-);
 import { AppointmentSingleton, type AppointmentSingletonType } from "lib";
 import { format } from "date-fns";
 import { formatStringToDate } from "utils/formatDate";
 import { formatTime } from "utils/formatTime";
+import {
+    AppointmentForm,
+    AppointmentFormType,
+} from "components-core/appointments/appointments-components/AppointmentForm";
 import {
     statusColorsLight,
     statusDisplay,
 } from "components-core/appointments/appointments-utils";
 import clsx from "clsx";
 import Link from "next/link";
-import { FormSections } from "types/index";
-import {
-    AppointmentForm,
-    AppointmentFormType,
-} from "components-core/appointments/appointments-components/AppointmentForm";
 import { trpc } from "utils/trpc";
+
 import { useAppointmentFormStore } from "components-core/appointments/appointments-components";
 
 const { appointmentFormFields } = AppointmentSingleton;
@@ -60,6 +47,13 @@ const fields = [
     endTime,
     note,
 ];
+
+const AppointmentsMap = dynamic(
+    () => import("../appointments/appointments-components/AppointmentsMap"),
+    {
+        ssr: false,
+    }
+);
 
 export const AppointmentDetailContainer = () => {
     const [modalOpen, setModalOpen] = React.useState(false);
