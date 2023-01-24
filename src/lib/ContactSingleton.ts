@@ -1,3 +1,4 @@
+import { paginationSchema } from "server/schemas/pagination";
 import { z } from "zod";
 
 export type ContactSingletonType = {
@@ -7,6 +8,8 @@ export type ContactSingletonType = {
         create: z.infer<typeof createContactSchema>;
         update: z.infer<typeof updateContactSchema>;
         updateWithoutName: z.infer<typeof updateContactWithoutNameSchema>;
+        search: z.infer<typeof contactSearchSchema>;
+        sort: z.infer<typeof contactSortSchema>;
     };
     subContactSchema: {
         base: z.infer<typeof subContactSchema>;
@@ -22,6 +25,44 @@ function errMsg(
 ) {
     return `${formFields[fieldName].label} must be ${option} than ${value} characters.`;
 }
+
+// Sort and filter options
+
+const contactSortFields = z
+    .enum(["name", "createdAt", "updatedAt", "appointmentsMeta", "profiles"])
+    .optional();
+
+const contactSortOrder = z.enum(["asc", "desc"]).optional();
+
+const contactSortSchema = z.object({
+    field: contactSortFields,
+    order: contactSortOrder,
+});
+
+const contactSearchSchema = z
+    .object({
+        searchBy: z.enum([
+            "name",
+            "email",
+            "phoneNumber",
+            "subContacts",
+            "firstName",
+            "lastName",
+        ]),
+        searchQuery: z.string().optional(),
+        profileFilters: z.object({
+            AGENT: z.boolean(),
+            BUYER: z.boolean(),
+            SELLER: z.boolean(),
+            RENTER: z.boolean(),
+            RENTEE: z.boolean(),
+            VENDOR: z.boolean(),
+            OTHER: z.boolean(),
+        }),
+        sortBy: contactSortFields,
+        sortOrder: contactSortOrder,
+    })
+    .merge(paginationSchema);
 
 const formFields = {
     name: { name: "name", label: "Full Name" },
@@ -107,6 +148,8 @@ export const ContactSingleton = {
         create: createContactSchema,
         update: updateContactSchema,
         updateWithoutName: updateContactWithoutNameSchema,
+        sort: contactSortSchema,
+        search: contactSearchSchema,
     },
     subContactSchema: {
         base: subContactSchema,

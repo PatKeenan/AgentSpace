@@ -4,6 +4,7 @@ import { useAppointmentsUI } from "components-core/appointments";
 import { Button } from "components-common/Button";
 import { useRouter } from "next/router";
 import React from "react";
+import clsx from "clsx";
 
 export const AppointmentsLayout = ({
     children,
@@ -28,9 +29,7 @@ export const AppointmentsLayout = ({
                 fullHeight={
                     router.pathname == "/workspace/[workspaceId]/appointments"
                 }
-                noMaxWidth
                 noPadding
-                extraClassName="max-w-7xl"
             >
                 <div className="hidden lg:block">
                     <SectionHeading>

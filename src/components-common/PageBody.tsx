@@ -33,7 +33,8 @@ export const PageBody = (props: {
                 fullHeight && "h-full lg:h-[calc(100vh-3.5rem)]",
                 noMaxWidth ? "w-full" : "max-w-7xl ",
                 noPadding ? "px-0" : "px-4 sm:px-4",
-                "relative mx-auto"
+                "relative mx-auto",
+                extraClassName
             )}
         >
             <div

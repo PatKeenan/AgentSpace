@@ -31,6 +31,7 @@ import { FunnelIcon } from "@heroicons/react/24/outline";
 import { ColumnHeader, Table } from "components-common/Table";
 import { trpc } from "utils/trpc";
 import { useAppointmentFormStore } from "./appointments-components";
+import Link from "next/link";
 
 type FiltersType = {
     name: keyof Omit<
@@ -172,7 +173,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
         },
         {
             name: "sortOrder",
-            label: "Order By",
+            label: "Sort Order",
             options: sortOrderOptions,
         },
         {
@@ -201,8 +202,8 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
     }, [queryParamsState.page]);
 
     const tableColumnHeaders: ColumnHeader[] = [
-        { value: "Status" },
         { value: "Date" },
+        { value: "Status" },
         { value: "Address" },
         { value: "Time" },
         { value: "Contacts" },
@@ -266,6 +267,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                             as="div"
                                             className="border-t border-gray-200 pt-4 pb-4"
                                             key={section.name}
+                                            defaultOpen={true}
                                         >
                                             {({ open }) => (
                                                 <fieldset>
@@ -336,7 +338,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                                                         />
                                                                         <label
                                                                             htmlFor={`${section.name}-${optionIdx}-mobile`}
-                                                                            className="ml-3 text-sm capitalize text-gray-500"
+                                                                            className="ml-3 text-sm capitalize text-gray-700"
                                                                         >
                                                                             {
                                                                                 option.label
@@ -424,102 +426,103 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                 <ul className="block w-full space-y-2 pb-4 md:hidden">
                     {appointments?.map((i) => (
                         <li key={i.id} className="">
-                            <NextLink
-                                href={"/"}
-                                className="block rounded-md border border-gray-200  hover:bg-gray-50"
+                            <Link
+                                href={`/workspace/${i.workspaceId}/appointments/${i.id}`}
+                                passHref
                             >
-                                <ListViewAppointmentCard
-                                    key={i.id}
-                                    address={i.address}
-                                    date={i.date}
-                                    time={timeDisplay(i.startTime, i.endTime)}
-                                    status={i.status}
-                                    contacts={i.contacts
-                                        .flatMap((p) =>
-                                            p.profile
-                                                ? `${p.contact.name} - ${p.profile.name}`
-                                                : `${p.contact.name}`
-                                        )
-                                        .join(", ")}
-                                    notes={i.note || ""}
-                                    address_2={i.address_2 || ""}
-                                    createdAt={formatDate(
-                                        i.createdAt,
-                                        "MM/DD/YYYY"
-                                    )}
-                                />
-                            </NextLink>
+                                <a>
+                                    <ListViewAppointmentCard
+                                        key={i.id}
+                                        address={i.address}
+                                        date={i.date}
+                                        time={timeDisplay(
+                                            i.startTime,
+                                            i.endTime
+                                        )}
+                                        status={i.status}
+                                        contacts={i.contacts
+                                            .flatMap((p) =>
+                                                p.profile
+                                                    ? `${p.contact.name} - ${p.profile.name}`
+                                                    : `${p.contact.name}`
+                                            )
+                                            .join(", ")}
+                                        notes={i.note || ""}
+                                        address_2={i.address_2 || ""}
+                                        createdAt={formatDate(
+                                            i.createdAt,
+                                            "MM/DD/YYYY"
+                                        )}
+                                    />
+                                </a>
+                            </Link>
                         </li>
                     ))}
                 </ul>
                 <div className="hidden flex-col md:flex">
-                    <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <Table>
-                            <Table.Header columnHeaders={tableColumnHeaders} />
-                            <Table.Body isLoading={isLoading}>
-                                {appointments.map((appointment) => (
-                                    <Table.Row key={appointment.id}>
-                                        <Table.Data className="px-3 py-4 pl-4">
-                                            <p
-                                                className={clsx(
-                                                    appointment.status &&
-                                                        statusColorsLight[
-                                                            appointment.status
-                                                        ],
-                                                    "order-1 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize md:-ml-2"
-                                                )}
-                                            >
-                                                {statusDisplay(
-                                                    appointment.status
-                                                )}
-                                            </p>
-                                        </Table.Data>
-                                        <Table.Data>
-                                            {appointment.date
-                                                ? format(
-                                                      formatStringToDate(
-                                                          appointment.date
-                                                      ) || new Date(),
-                                                      "PP"
-                                                  )
-                                                : "--"}
-                                        </Table.Data>
-                                        <Table.Data>
-                                            <div className="max-w-sm">
-                                                {appointment.address || "--"}
-                                            </div>
-                                        </Table.Data>
-                                        <Table.Data>
-                                            {timeDisplay(
-                                                appointment.startTime,
-                                                appointment.endTime
-                                            ) || "--"}
-                                        </Table.Data>
-                                        <Table.Data>
-                                            <p>
-                                                {appointment.contacts
-                                                    .flatMap((p) =>
-                                                        p.profile
-                                                            ? `${p.contact.name} - ${p.profile.name}`
-                                                            : `${p.contact.name}`
-                                                    )
-                                                    .join(", ") || "--"}
-                                            </p>
-                                        </Table.Data>
-                                        <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
-                                            <NextLink
-                                                href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
-                                                className="flex items-center justify-end text-sm font-medium text-indigo-400 hover:text-indigo-600"
-                                            >
-                                                <span>View</span>
-                                                <ChevronRightIcon className="ml-1 h-4 w-4" />
-                                            </NextLink>
-                                        </Table.Data>
-                                    </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table>
-                    </div>
+                    <Table>
+                        <Table.Header columnHeaders={tableColumnHeaders} />
+                        <Table.Body isLoading={isLoading}>
+                            {appointments.map((appointment) => (
+                                <Table.Row key={appointment.id}>
+                                    <Table.Data className="px-3 py-4 pl-4">
+                                        {appointment.date
+                                            ? format(
+                                                  formatStringToDate(
+                                                      appointment.date
+                                                  ) || new Date(),
+                                                  "PP"
+                                              )
+                                            : "--"}
+                                    </Table.Data>
+                                    <Table.Data>
+                                        <p
+                                            className={clsx(
+                                                appointment.status &&
+                                                    statusColorsLight[
+                                                        appointment.status
+                                                    ],
+                                                "order-1 inline-flex items-center truncate rounded-md px-2 py-1 text-xs font-medium capitalize md:-ml-2"
+                                            )}
+                                        >
+                                            {statusDisplay(appointment.status)}
+                                        </p>
+                                    </Table.Data>
+                                    <Table.Data>
+                                        <div className="max-w-sm">
+                                            {appointment.address || "--"}
+                                        </div>
+                                    </Table.Data>
+                                    <Table.Data>
+                                        {timeDisplay(
+                                            appointment.startTime,
+                                            appointment.endTime
+                                        ) || "--"}
+                                    </Table.Data>
+                                    <Table.Data>
+                                        <p>
+                                            {appointment.contacts
+                                                .flatMap((p) =>
+                                                    p.profile
+                                                        ? `${p.contact.name} - ${p.profile.name}`
+                                                        : `${p.contact.name}`
+                                                )
+                                                .join(", ") || "--"}
+                                        </p>
+                                    </Table.Data>
+                                    <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
+                                        <NextLink
+                                            href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
+                                            className="flex items-center justify-end text-sm font-medium text-indigo-400 hover:text-indigo-600"
+                                        >
+                                            <span>View</span>
+                                            <ChevronRightIcon className="ml-1 h-4 w-4" />
+                                        </NextLink>
+                                    </Table.Data>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </div>
                 <Pagination
                     onPaginate={(page) => setQueryParamsState({ page })}

@@ -3,35 +3,216 @@ import { inferRouterOutputs } from "@trpc/server";
 import { authedProcedure, t } from "../trpc";
 import { ContactSingleton } from "lib";
 import { z } from "zod";
+import { paginationSchema } from "server/schemas/pagination";
+import { PROFILE_TYPES } from "@prisma/client";
 
 const { contactSchemas, subContactSchema } = ContactSingleton;
 
 export const contactsRouter = t.router({
     getAll: authedProcedure
         .input(
-            z.object({
-                workspaceId: z.string(),
-            })
+            z
+                .object({
+                    workspaceId: z.string(),
+                })
+                .merge(contactSchemas.search)
+                .merge(paginationSchema)
         )
         .query(async ({ ctx, input }) => {
-            return await ctx.prisma.contact.findMany({
-                where: {
-                    workspaceId: input.workspaceId,
-                    deleted: false,
-                },
-                include: {
-                    subContacts: {
-                        where: {
-                            deleted: false,
+            const {
+                workspaceId,
+                searchBy,
+                searchQuery,
+                profileFilters,
+                sortBy = "name",
+                sortOrder = "asc",
+                page = 0,
+                take = 10,
+            } = input;
+
+            const profileFilterKeys = Object.keys(
+                profileFilters
+            ) as PROFILE_TYPES[];
+
+            const activeProfileTypes = profileFilterKeys.filter(
+                (key) => profileFilters[key]
+            );
+
+            return await ctx.prisma.$transaction([
+                ctx.prisma.contact.findMany({
+                    where: {
+                        workspaceId: workspaceId,
+                        deleted: false,
+
+                        name:
+                            searchBy == "name"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        email:
+                            searchBy == "email"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        phoneNumber:
+                            searchBy == "phoneNumber"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        firstName:
+                            searchBy == "firstName"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        lastName:
+                            searchBy == "lastName"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        profiles:
+                            activeProfileTypes.length > 0
+                                ? {
+                                      some: {
+                                          type: {
+                                              in: activeProfileTypes,
+                                          },
+                                          deleted: false,
+                                      },
+                                  }
+                                : undefined,
+                        subContacts:
+                            searchBy == "subContacts"
+                                ? {
+                                      some: {
+                                          OR: [
+                                              {
+                                                  firstName: {
+                                                      contains: searchQuery,
+                                                  },
+                                                  deleted: false,
+                                              },
+                                              {
+                                                  lastName: {
+                                                      contains: searchQuery,
+                                                  },
+                                                  deleted: false,
+                                              },
+                                          ],
+                                      },
+                                  }
+                                : undefined,
+                    },
+                    skip: take * (page - 1),
+                    take: take,
+                    include: {
+                        profiles: {
+                            where: {
+                                deleted: false,
+                            },
+                            select: {
+                                id: true,
+                            },
+                        },
+                        subContacts: {
+                            where: {
+                                deleted: false,
+                            },
+                            select: {
+                                firstName: true,
+                            },
+                        },
+                        _count: {
+                            select: {
+                                appointmentsMeta: true,
+                            },
                         },
                     },
-                    _count: {
-                        select: {
-                            appointmentsMeta: true,
-                        },
+                    orderBy:
+                        sortBy == "appointmentsMeta" || sortBy == "profiles"
+                            ? {
+                                  [sortBy]: {
+                                      _count: sortOrder,
+                                  },
+                              }
+                            : {
+                                  [sortBy]: sortOrder,
+                              },
+                }),
+                ctx.prisma.contact.count({
+                    where: {
+                        workspaceId: workspaceId,
+                        deleted: false,
+
+                        name:
+                            searchBy == "name"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        email:
+                            searchBy == "email"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        phoneNumber:
+                            searchBy == "phoneNumber"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        firstName:
+                            searchBy == "firstName"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        lastName:
+                            searchBy == "lastName"
+                                ? {
+                                      contains: searchQuery,
+                                  }
+                                : undefined,
+                        profiles:
+                            activeProfileTypes.length > 0
+                                ? {
+                                      some: {
+                                          type: {
+                                              in: activeProfileTypes,
+                                          },
+                                          deleted: false,
+                                      },
+                                  }
+                                : undefined,
+                        subContacts:
+                            searchBy == "subContacts"
+                                ? {
+                                      some: {
+                                          OR: [
+                                              {
+                                                  firstName: {
+                                                      contains: searchQuery,
+                                                  },
+                                                  deleted: false,
+                                              },
+                                              {
+                                                  lastName: {
+                                                      contains: searchQuery,
+                                                  },
+                                                  deleted: false,
+                                              },
+                                          ],
+                                      },
+                                  }
+                                : undefined,
                     },
-                },
-            });
+                }),
+            ]);
         }),
     search: authedProcedure
         .input(

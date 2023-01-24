@@ -7,6 +7,7 @@ import { formatStringToDate } from "utils/formatDate";
 import { statusColorsLight, statusDisplay } from "../appointments-utils";
 import { AppointmentSingleton } from "lib";
 import { format } from "date-fns";
+import { Card } from "components-common/Card";
 
 function thisOrThat<T, U>(arg1: T, arg2: U) {
     if (!arg1) return arg2;
@@ -38,12 +39,11 @@ export const ListViewAppointmentCard = ({
     createdAt?: string;
 }) => {
     return (
-        <div
+        <Card
             className={clsx(
                 createdAt
                     ? "mt-3 px-3 pb-4 md:px-6 md:pt-6 md:pb-8 lg:pb-6"
-                    : "p-3 md:p-6",
-                "group relative block text-gray-500 hover:text-gray-800"
+                    : '"p-3 md:p-6"'
             )}
         >
             <div className="flex flex-1">
@@ -139,7 +139,7 @@ export const ListViewAppointmentCard = ({
                     Created {createdAt}
                 </p>
             )}
-        </div>
+        </Card>
     );
 };
 const ResponsiveGroup = ({
