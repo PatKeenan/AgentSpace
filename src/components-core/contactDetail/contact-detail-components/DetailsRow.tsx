@@ -59,7 +59,7 @@ export const DetailsRow = (
                 className={clsx(
                     colSpan[valueSpan],
                     rawText
-                        ? "-ml-2  max-h-[150px] overflow-auto whitespace-pre-line rounded-md border border-gray-200 p-2 shadow-inner"
+                        ? "-ml-2  max-h-[150px] overflow-auto whitespace-pre-line rounded-md p-2 "
                         : "truncate",
                     "text-gray-600"
                 )}

@@ -137,8 +137,6 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                                     subContacts={contactQuery?.subContacts}
                                 />
                             )}
-
-                            {/*    <ContactProfilesList className="mt-5 pt-5" /> */}
                         </div>
                     </div>
                     {/* Sidebar */}

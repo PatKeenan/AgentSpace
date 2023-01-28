@@ -1,6 +1,4 @@
-import { useWorkspace } from "hooks";
 import { useAppointmentsUI } from "../useAppointmentsUI";
-import { trpc } from "utils/trpc";
 
 import { Modal } from "components-common";
 

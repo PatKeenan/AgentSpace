@@ -1,7 +1,11 @@
 import {
     ChevronDownIcon,
     ChevronRightIcon,
+    EnvelopeIcon,
+    HomeIcon,
     MagnifyingGlassIcon,
+    PhoneIcon,
+    UserGroupIcon,
     XMarkIcon,
 } from "@heroicons/react/20/solid";
 
@@ -275,7 +279,7 @@ export const ContactsContainer: NextPageExtended = () => {
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>Contacts</SectionHeading.Title>
-                        <p className="mt-2 text-sm text-gray-700">
+                        <p className="mt-2 hidden text-sm text-gray-700 md:flex">
                             A list of all the contacts in your workspace
                             including their name, email and phone number.
                         </p>
@@ -444,7 +448,7 @@ export const ContactsContainer: NextPageExtended = () => {
                         <label htmlFor="search" className="sr-only">
                             Search
                         </label>
-                        <div className=" relative flex w-full max-w-md flex-grow items-center rounded-md border border-gray-300 text-gray-700 shadow focus-within:text-gray-600">
+                        <div className="relative flex w-full max-w-md flex-grow items-center rounded-md border border-gray-300 text-gray-700 shadow ring-1 ring-transparent focus-within:border-indigo-500  focus-within:text-gray-600 focus-within:outline-none focus-within:ring-indigo-500">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                 <MagnifyingGlassIcon
                                     className="h-5 w-5"
@@ -500,48 +504,6 @@ export const ContactsContainer: NextPageExtended = () => {
                 <div>
                     <ul className="block w-full space-y-2 pb-4 md:hidden">
                         {contactsQuery?.map((contact) => {
-                            const sections = [
-                                [
-                                    { label: "Full Name", value: contact.name },
-                                    {
-                                        label: "Sub Contacts",
-                                        value:
-                                            contact.subContacts.length || "--",
-                                    },
-                                ],
-                                [
-                                    {
-                                        label: "First Name",
-                                        value: contact.firstName,
-                                    },
-                                    {
-                                        label: "Last Name",
-                                        value: contact.lastName || "--",
-                                    },
-                                ],
-                                [
-                                    {
-                                        label: "Email",
-                                        value: contact.email || "--",
-                                    },
-                                    {
-                                        label: "Phone Number",
-                                        value: contact.phoneNumber || "--",
-                                    },
-                                ],
-                                [
-                                    {
-                                        label: "Appointments",
-                                        value:
-                                            contact._count.appointmentsMeta ||
-                                            "--",
-                                    },
-                                    {
-                                        label: "Profiles",
-                                        value: contact.profiles.length || "--",
-                                    },
-                                ],
-                            ];
                             return (
                                 <li key={contact.id}>
                                     <Link
@@ -549,56 +511,62 @@ export const ContactsContainer: NextPageExtended = () => {
                                         passHref
                                     >
                                         <a>
-                                            <Card className="space-y-4 pl-6 pt-4 pb-4 text-sm">
-                                                {sections.map(
-                                                    (section, sectionIdx) => (
-                                                        <div
-                                                            className="grid grid-cols-2"
-                                                            key={sectionIdx}
-                                                        >
-                                                            {section.map(
-                                                                (field) => (
-                                                                    <div
-                                                                        key={
-                                                                            field.label
-                                                                        }
-                                                                    >
-                                                                        <div>
-                                                                            <FormFieldTitle>
-                                                                                {
-                                                                                    field.label
-                                                                                }
-                                                                            </FormFieldTitle>
-                                                                        </div>
-                                                                        <div>
-                                                                            {field.label ===
-                                                                                "Profiles" &&
-                                                                            field.value !==
-                                                                                "--" ? (
-                                                                                <Link
-                                                                                    href={`/workspace/${workspace.id}/contacts/${contact.id}/profiles`}
-                                                                                    passHref
-                                                                                >
-                                                                                    <a className="hover:text-indigo-600">
-                                                                                        {
-                                                                                            field.value
-                                                                                        }
-                                                                                    </a>
-                                                                                </Link>
-                                                                            ) : (
-                                                                                <p>
-                                                                                    {
-                                                                                        field.value
-                                                                                    }
-                                                                                </p>
-                                                                            )}
-                                                                        </div>
-                                                                    </div>
-                                                                )
+                                            <Card className=" pl-6 pt-4 pb-4 text-sm">
+                                                <div className="flex flex-auto">
+                                                    <div className="flex-grow space-y-1">
+                                                        <h3 className="text-md font-semibold text-gray-600">
+                                                            {contact.name}
+                                                        </h3>
+                                                        {contact.email && (
+                                                            <div className="flex items-center text-gray-500">
+                                                                <EnvelopeIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                {contact.email}
+                                                            </div>
+                                                        )}
+                                                        {contact.phoneNumber && (
+                                                            <div className="flex items-center text-gray-500">
+                                                                <PhoneIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                {
+                                                                    contact.phoneNumber
+                                                                }
+                                                            </div>
+                                                        )}
+                                                        {contact.subContacts &&
+                                                            contact.subContacts
+                                                                .length > 0 && (
+                                                                <div className="flex items-center text-gray-500">
+                                                                    <UserGroupIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                    {contact.subContacts
+                                                                        .map(
+                                                                            (
+                                                                                i
+                                                                            ) =>
+                                                                                i.firstName
+                                                                        )
+                                                                        .join(
+                                                                            ", "
+                                                                        )}
+                                                                </div>
                                                             )}
-                                                        </div>
-                                                    )
-                                                )}
+                                                        {contact._count
+                                                            .appointmentsMeta >
+                                                            0 && (
+                                                            <div className="flex items-center text-gray-500">
+                                                                <HomeIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                {
+                                                                    contact
+                                                                        ._count
+                                                                        .appointmentsMeta
+                                                                }
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex  flex-shrink-0 items-center">
+                                                        <button>
+                                                            <ChevronRightIcon className="h-4 w-4 text-gray-500" />
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </Card>
                                         </a>
                                     </Link>
@@ -652,7 +620,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                     <Table.Data>
                                         {contact.profiles?.length > 0 ? (
                                             <Link
-                                                href={`/workspace/${workspace.id}/contacts/${contact.id}/appointments`}
+                                                href={`/workspace/${workspace.id}/contacts/${contact.id}/profiles`}
                                                 passHref
                                             >
                                                 <a className="text-indigo-600">

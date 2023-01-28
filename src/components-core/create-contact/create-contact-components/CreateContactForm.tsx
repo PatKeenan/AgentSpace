@@ -53,6 +53,17 @@ const formSections: FormSections<CreateContactFormType>[] = [
     [{ field: notes }],
 ];
 
+const subFormSections: FormSections<
+    Pick<
+        CreateContactFormType,
+        "firstName" | "lastName" | "email" | "notes" | "phoneNumber"
+    >
+>[] = [
+    [{ field: firstName, required: true }, { field: lastName }],
+    [{ field: email }, { field: phoneNumber }],
+    [{ field: notes }],
+];
+
 export const CreateContactForm = () => {
     const [subContactFields, setMetaFields] = React.useState<
         CreateContactFormType["subContactFields"]
@@ -253,7 +264,60 @@ export const CreateContactForm = () => {
                             </button>
                         }
                     >
-                        <div className="space-y-6">
+                        {subFormSections.map((section, subContactidx) => (
+                            <FieldGroup
+                                key={subContactidx}
+                                className="lg:max-w-3xl"
+                            >
+                                {section.map(({ field, required }) => (
+                                    <NewInputGroup
+                                        key={field.name}
+                                        isRequired={required}
+                                        isInvalid={
+                                            errors.subContactFields &&
+                                            errors.subContactFields[idx]?.[
+                                                `${field.name}`
+                                            ]
+                                                ? true
+                                                : false
+                                        }
+                                    >
+                                        <NewInputGroup.Label
+                                            htmlFor={field.name}
+                                        >
+                                            {field.label}
+                                        </NewInputGroup.Label>
+
+                                        {field.name == "notes" ? (
+                                            <NewInputGroup.TextArea
+                                                placeholder={field.label}
+                                                rows={5}
+                                                {...register(
+                                                    `subContactFields.${idx}.${field.name}`
+                                                )}
+                                            />
+                                        ) : (
+                                            <NewInputGroup.Input
+                                                placeholder={field.label}
+                                                {...register(
+                                                    `subContactFields.${idx}.${field.name}`
+                                                )}
+                                            />
+                                        )}
+                                        <NewInputGroup.Error>
+                                            {errors.subContactFields &&
+                                                errors.subContactFields[idx]?.[
+                                                    `${field.name}`
+                                                ] &&
+                                                errors.subContactFields[idx]?.[
+                                                    `${field.name}`
+                                                ]?.message}
+                                        </NewInputGroup.Error>
+                                    </NewInputGroup>
+                                ))}
+                            </FieldGroup>
+                        ))}
+                        {/*  <div className="space-y-6">
                             <ContactFormInput
                                 label={contactFormFields.firstName.label}
                                 {...register(
@@ -313,7 +377,7 @@ export const CreateContactForm = () => {
                                 {...register(`subContactFields.${idx}.notes`)}
                                 rows={3}
                             />
-                        </div>
+                        </div> */}
                     </Accordion>
                 ))}
 

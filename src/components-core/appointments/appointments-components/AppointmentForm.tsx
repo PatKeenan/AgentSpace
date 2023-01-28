@@ -25,8 +25,6 @@ import {
 import { v4 } from "uuid";
 import { dateUtils } from "utils/dateUtils";
 
-import { devtools } from "zustand/middleware";
-import create from "zustand/react";
 import { useAppointmentFormStore } from "./appointmentFormStore";
 
 export type AppointmentFormData = Omit<
@@ -77,7 +75,9 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
         }
     );
 
-    const [addContactFormOpen, setAddContactFormOpen] = React.useState(false);
+    const [addContactFormOpen, setAddContactFormOpen] = React.useState(
+        () => false
+    );
     const contactInputRef = React.useRef<HTMLInputElement>(null);
 
     const { id: workspaceId } = useWorkspace();
@@ -86,7 +86,7 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
     const { create, update } = useAppointments();
 
     const contactInput = useDebounceState("", 300);
-    const addressInput = useDebounceState("");
+    const addressInput = useDebounceState("", 300);
 
     const sharedQueryOptions = { refetchOnWindowFocus: false };
 
@@ -153,6 +153,7 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
     const { mutate: updateAppointmentMutation } = update();
     const onSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         if (workspaceId && !defaultData) {
             createAppointmentMutation(
                 {
@@ -239,6 +240,7 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
             latitude: undefined,
             longitude: undefined,
         });
+
         return addressInput.setState(undefined);
     };
 

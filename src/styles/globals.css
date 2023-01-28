@@ -26,7 +26,7 @@
         @apply relative w-full rounded-md shadow-sm;
     }
     .input-field {
-        @apply block w-full rounded-md pl-2 pt-2 pb-2 pr-10 focus:outline-none disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm;
+        @apply block w-full rounded-md pl-2 pt-2 pb-2 pr-10 ring ring-transparent focus:outline-none disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm;
     }
     .input-field__invalid {
         @apply border-red-500 text-red-600 placeholder-red-500 focus:border-red-500 focus:ring-red-500;

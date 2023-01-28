@@ -7,7 +7,10 @@ export const SectionHeading = ({
     ...props
 }: ChildrenPropsObj & React.ComponentProps<"div">) => (
     <div
-        className={clsx("mb-4 flex items-center justify-between", className)}
+        className={clsx(
+            "mt-2 mb-4 flex items-center justify-between lg:mt-0",
+            className
+        )}
         {...props}
     />
 );

@@ -32,7 +32,7 @@ export const PageBody = (props: {
             className={clsx(
                 fullHeight && "h-full lg:h-[calc(100vh-3.5rem)]",
                 noMaxWidth ? "w-full" : "max-w-7xl ",
-                noPadding ? "px-0" : "px-4 sm:px-4",
+                noPadding ? "px-0" : "sm:px-4",
                 "relative mx-auto",
                 extraClassName
             )}
@@ -41,7 +41,7 @@ export const PageBody = (props: {
                 className={clsx(
                     fullHeight &&
                         "flex-1 flex-col overflow-auto lg:flex lg:h-full",
-                    "pt-0 pb-4  lg:mx-8 lg:pt-8 "
+                    "px-2 pt-0 pb-4 lg:mx-6 lg:pt-8 "
                 )}
                 {...rest}
             />

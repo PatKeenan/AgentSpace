@@ -1,5 +1,6 @@
 import { ChevronRightIcon, HomeIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import { useWorkspace } from "hooks/useWorkspace";
 import Link from "next/link";
 
 export type BreadcrumbItem = {
@@ -23,6 +24,8 @@ export const Breadcrumb = (
         return false;
     };
 
+    const { id: workspaceId } = useWorkspace();
+
     return (
         <nav
             className={clsx(
@@ -35,7 +38,11 @@ export const Breadcrumb = (
             <ol role="list" className="flex items-center space-x-4">
                 <li>
                     <div>
-                        <Link href={`/`}>
+                        <Link
+                            href={
+                                workspaceId ? `/workspace/${workspaceId}` : "/"
+                            }
+                        >
                             <a className="text-gray-400 hover:text-gray-500">
                                 <HomeIcon
                                     className="h-5 w-5 flex-shrink-0"

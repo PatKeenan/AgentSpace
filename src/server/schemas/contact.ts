@@ -24,7 +24,7 @@ export const contactSchema = () => {
     const base = z
         .object({
             name: z.string().trim().min(2, errMsg("Name", "greater", 2)),
-            notes: z.string().trim().optional().or(z.literal("")),
+            notes: z.string().optional(),
         })
         .merge(sharedContactDetailsSchema.partial());
     const baseBooleans = z.object({

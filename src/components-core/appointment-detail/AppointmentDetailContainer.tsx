@@ -1,5 +1,3 @@
-import { CalendarIcon, MapPinIcon } from "@heroicons/react/20/solid";
-import { PencilIcon } from "@heroicons/react/24/outline";
 import { useWorkspace } from "hooks/useWorkspace";
 import {
     Button,
@@ -161,28 +159,22 @@ export const AppointmentDetailContainer = () => {
                             Appointment Details
                         </SectionHeading.Title>
                     </SectionHeading.TitleContainer>
+                    <SectionHeading.Actions>
+                        <Button
+                            variant="outlined"
+                            type="button"
+                            onClick={() => setModalOpen(true)}
+                            actionIcon="edit"
+                        >
+                            Edit
+                        </Button>
+                    </SectionHeading.Actions>
                 </SectionHeading>
 
-                <div className="flex flex-grow flex-col-reverse p-1  pb-8 lg:mt-4 lg:grid lg:grid-cols-12 lg:gap-x-4">
-                    <div className=" mt-4 h-2/3 lg:col-span-7 lg:h-full">
-                        <div className="">
-                            <div className="w-full">
-                                <GridSectionTitle
-                                    title="Appointment Details"
-                                    subTitle="People that are associated with each other."
-                                    actions={
-                                        <Button
-                                            variant="outlined"
-                                            type="button"
-                                            onClick={() => setModalOpen(true)}
-                                            actionIcon="edit"
-                                        >
-                                            Edit
-                                        </Button>
-                                    }
-                                />
-                            </div>
-                            <dl className="divide-y divide-gray-200">
+                <div className="flex flex-col lg:mt-3 lg:grid lg:h-full lg:grid-cols-12 lg:gap-x-8 lg:overflow-hidden">
+                    <div className="order-2 flex h-full flex-1 flex-col overflow-hidden pr-2 pl-2 lg:order-1 lg:col-span-6 lg:pl-0">
+                        <div className="flex flex-grow flex-col overflow-hidden">
+                            <dl className="divide-y divide-gray-200 border-t border-t-gray-200">
                                 {appointment &&
                                     fields.map((field) => (
                                         <div
@@ -212,7 +204,7 @@ export const AppointmentDetailContainer = () => {
                                                         ] || "--"
                                                     )}
                                                 {field.name === "contacts" && (
-                                                    <ul className="h-full space-y-4 overflow-auto pb-4 text-sm leading-6">
+                                                    <ul className="flex h-full flex-wrap gap-y-1 overflow-auto pb-4 text-sm leading-6">
                                                         {appointment?.contacts.map(
                                                             ({
                                                                 id,
@@ -250,10 +242,12 @@ export const AppointmentDetailContainer = () => {
                             </dl>
                         </div>
                     </div>
-                    <div className="relative mt-4 h-1/3 lg:col-start-8 lg:col-end-13 lg:h-full">
-                        <AppointmentsMap
-                            appointments={appointment ? [appointment] : []}
-                        />
+                    <div className="order-1 mt-4 flex flex-shrink-0 flex-col sm:mt-0 lg:order-2 lg:col-span-6">
+                        <div className=" h-[200px] w-full md:h-[300px] lg:h-full">
+                            <AppointmentsMap
+                                appointments={appointment ? [appointment] : []}
+                            />
+                        </div>
                     </div>
                 </div>
             </PageBody>
@@ -274,7 +268,7 @@ const EditAppointmentModal = (props: EditAppointmentModalProps) => {
 
     return (
         <Modal open={isOpen} onClose={onClose}>
-            <AppointmentForm defaultData={appointmentData} />
+            <AppointmentForm defaultData={appointmentData} onCancel={onClose} />
         </Modal>
     );
 };

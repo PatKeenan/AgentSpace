@@ -1,14 +1,10 @@
-import { PlusIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import { IconButton } from "components-common/Button";
 import { useProfile } from "hooks/useProfile";
 import { useWorkspace } from "hooks/useWorkspace";
-import { useContactDetailUi } from "../useContactDetailUi";
 import { SidebarList } from "./SidebarList";
 
 export const ProfilesList = ({ contactId }: { contactId: string }) => {
     const { getManyForContact } = useProfile();
-    const { setModal } = useContactDetailUi();
 
     const { data: profiles } = getManyForContact(
         { contactId: contactId as string, take: 3 },
@@ -22,23 +18,26 @@ export const ProfilesList = ({ contactId }: { contactId: string }) => {
             href={`/workspace/${id}/contacts/${contactId}/profiles`}
             data={profiles}
             renderItem={(i) => (
-                <div className="block">
-                    <div className="flex items-center space-x-2 truncate text-sm">
-                        <p className="font-medium capitalize text-gray-600">
-                            {i.type.toLowerCase()}:
-                        </p>
-                        <div className="flex items-center">
-                            <span
+                <div>
+                    <div className="flex space-x-2">
+                        <div className="flex items-center overflow-hidden">
+                            <h4 className="truncate text-sm font-semibold capitalize text-gray-800">
+                                {i.name}
+                            </h4>
+                            <div
                                 className={clsx(
-                                    i.active ? "bg-green-400" : "bg-gray-200",
-                                    "mr-1 h-1 w-1 rounded-full"
+                                    i.active ? "bg-green-400" : "bg-gray-400",
+                                    "my-auto ml-2 h-1.5 w-1.5 rounded-full"
                                 )}
                             />
-                            <span className="ml-.5 truncate text-gray-600">
-                                {i.name}
-                            </span>
                         </div>
+                        <span className="flex-shrink-0 text-sm capitalize text-gray-500/80">
+                            ({i.type.toLowerCase()})
+                        </span>
                     </div>
+                    <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                        {i.notes}
+                    </p>
                 </div>
             )}
             buttonTitle={"View All"}

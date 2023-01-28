@@ -1,4 +1,9 @@
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import {
+    ChevronRightIcon,
+    ClockIcon,
+    HomeIcon,
+    UserGroupIcon,
+} from "@heroicons/react/20/solid";
 import { AppointmentStatus } from "@prisma/client";
 import clsx from "clsx";
 import { IconButton } from "components-common/Button";
@@ -42,11 +47,80 @@ export const ListViewAppointmentCard = ({
         <Card
             className={clsx(
                 createdAt
-                    ? "mt-3 px-3 pb-4 md:px-6 md:pt-6 md:pb-8 lg:pb-6"
-                    : '"p-3 md:p-6"'
+                    ? "mt-3 px-2 pb-4 md:px-6 md:pt-6 md:pb-8 lg:pb-6"
+                    : "p-3 md:p-6",
+                "text-sm"
             )}
         >
-            <div className="flex flex-1">
+            <div className="flex flex-auto p-1 md:hidden">
+                <div className="relative max-w-md flex-grow space-y-2 overflow-hidden">
+                    <div className="relative pb-2">
+                        <h3 className="text-md font-semibold text-gray-600">
+                            {date
+                                ? format(
+                                      formatStringToDate(date) || new Date(),
+                                      "PP"
+                                  )
+                                : "--"}
+                        </h3>
+                        <span
+                            className={clsx(
+                                status && statusColorsLight[status],
+                                "capitalize",
+                                "absolute top-0 right-0 rounded-md px-2 py-1 text-xs"
+                            )}
+                        >
+                            {statusDisplay(status)}
+                        </span>
+                    </div>
+
+                    {time && (
+                        <div className="flex items-center  text-gray-500">
+                            <ClockIcon className="mr-2 h-4 w-4 text-gray-400" />
+                            <span className="truncate">
+                                {thisOrThat(time, "--")}
+                            </span>
+                        </div>
+                    )}
+
+                    {address && (
+                        <div className="flex space-x-2">
+                            <div className="flex flex-grow  items-center overflow-hidden text-gray-500">
+                                <HomeIcon className="mr-2 h-4 w-4 flex-shrink-0 text-gray-400" />
+                                <span className="overflow-ellipsis line-clamp-2">
+                                    {thisOrThat(address, "--")}
+                                </span>
+                            </div>
+                            {address_2 && (
+                                <div className="block border-l border-l-gray-300 pl-4 md:flex md:border-0">
+                                    <h4 className=" pb-2 font-medium text-gray-600">
+                                        Apt/Bldg.
+                                    </h4>
+                                    <span className="">
+                                        {thisOrThat(address_2, "")}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    {contacts && contacts.length > 0 && (
+                        <div className="flex items-center  text-gray-500">
+                            <UserGroupIcon className="mr-2 h-4 w-4 text-gray-400" />
+                            <span className="truncate">
+                                {thisOrThat(contacts, "--")}
+                            </span>
+                        </div>
+                    )}
+                </div>
+                <div className="ml-auto flex flex-shrink-0 items-center px-4">
+                    <button>
+                        <ChevronRightIcon className="h-4 w-4 text-gray-500" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Larger Screens */}
+            <div className="hidden flex-1 md:flex">
                 <div className="flex-grow">
                     <div className="mb-3 flex w-full items-center justify-end md:-mt-2.5 md:justify-start">
                         <p

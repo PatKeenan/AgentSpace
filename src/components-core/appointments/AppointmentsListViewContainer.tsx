@@ -1,4 +1,4 @@
-import { NextLink, Button, TextDropDownMenu } from "components-common";
+import { NextLink, Button, TextDropDownMenu, Tag } from "components-common";
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { useAppointments } from "hooks/useAppointments";
 import { useDebounceState } from "hooks/useDebounce";
@@ -500,15 +500,26 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                         ) || "--"}
                                     </Table.Data>
                                     <Table.Data>
-                                        <p>
-                                            {appointment.contacts
-                                                .flatMap((p) =>
-                                                    p.profile
-                                                        ? `${p.contact.name} - ${p.profile.name}`
-                                                        : `${p.contact.name}`
+                                        <div className="flex flex-wrap gap-y-1">
+                                            {appointment?.contacts?.map(
+                                                (p, pIndex) => (
+                                                    <Tag
+                                                        size="sm"
+                                                        href={`/workspace/${appointment.workspaceId}/contacts/${p.contact.id}/profiles`}
+                                                        className="mr-1.5"
+                                                        key={
+                                                            p.contact.id +
+                                                            pIndex
+                                                        }
+                                                    >
+                                                        {p.contact.name}
+                                                        {p.profile
+                                                            ? ` ${p.contact.name} - ${p.profile.name}`
+                                                            : p.contact.name}
+                                                    </Tag>
                                                 )
-                                                .join(", ") || "--"}
-                                        </p>
+                                            )}
+                                        </div>
                                     </Table.Data>
                                     <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
                                         <NextLink

@@ -94,7 +94,11 @@ const contactObj = {
         .email()
         .optional()
         .or(z.literal("")),
-    notes: z.string().trim().max(2000, errMsg("notes", "less", 2000)),
+    notes: z
+        .string()
+        .trim()
+        .max(2000, errMsg("notes", "less", 2000))
+        .optional(),
 } as const;
 
 const baseContactSchema = z.object(contactObj);

@@ -97,11 +97,12 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
 
     React.useEffect(() => {
         setModal({
+            ...modal,
             selectedDate: dateUtils.transform(selectedDate).isoDateOnly,
         });
         return () =>
             setModal({ selectedDate: undefined, defaultData: undefined });
-    }, [selectedDate, setModal, modal.state]);
+    }, [selectedDate, modal.state]);
 
     return (
         <AppointmentsNestedLayout activeTab="View By Day">
