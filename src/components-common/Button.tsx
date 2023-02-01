@@ -22,6 +22,10 @@ const iconSizeOptions = {
     md: "h-4 w-4",
     lg: "h-5 w-5",
 };
+const buttonSize = {
+    sm: "px-2.5 py-1.5 text-xs",
+    md: "px-4 py-2 text-sm",
+};
 
 const actionIcons = {
     delete: TrashIcon,
@@ -37,6 +41,7 @@ type ButtonProps = {
     iconSize?: keyof typeof iconSizeOptions;
     iconPosition?: "left" | "right";
     hideChildrenOnMobile?: boolean;
+    size?: keyof typeof buttonSize;
 } & React.ComponentProps<"button">;
 
 export const Button = (props: ButtonProps) => {
@@ -49,6 +54,7 @@ export const Button = (props: ButtonProps) => {
         iconPosition = "left",
         type = "button",
         hideChildrenOnMobile = true,
+        size = "md",
         ...htmlProps
     } = props;
 
@@ -59,9 +65,10 @@ export const Button = (props: ButtonProps) => {
             className={clsx(
                 className,
                 variantStyles[variant],
-                "rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2",
+                "rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2",
                 ["primary", "outlined"].includes(variant) &&
-                    "inline-flex items-center border px-4 py-2 shadow-sm"
+                    "inline-flex items-center border shadow-sm",
+                buttonSize[size]
             )}
             {...htmlProps}
         >
