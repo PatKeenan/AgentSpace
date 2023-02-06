@@ -5,3 +5,4 @@ export * from "./useDebounce";
 export * from "./useCalendar";
 export * from "./useAppointments";
 export * from "./useSubContacts";
+export * from "./useTasks";

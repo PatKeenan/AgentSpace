@@ -10,6 +10,22 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Task {
+    id          String      @id @default(cuid())
+    createdAt   DateTime    @default(now())
+    createdBy   User        @relation(fields: [createdById], references: [id], onDelete: Cascade)
+    createdById String
+    updatedAt   DateTime    @updatedAt
+    status      TASK_STATUS @default(TO_DO)
+    task        String
+    archived    Boolean?    @default(false)
+    order       Float
+    deleted     Boolean?    @default(false)
+    deletedAt   DateTime?
+    workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    workspaceId String
+}
+
 model Notification {
     id        String    @id @default(cuid())
     createdAt DateTime  @default(now())
@@ -176,6 +192,7 @@ model Workspace {
     appointments     Appointment[]
     subscription     SubscriptionOnWorkspace?
     profiles         Profile[]
+    tasks            Task[]
 }
 
 model SubscriptionOnWorkspace {
@@ -242,6 +259,7 @@ model User {
     image                 String?
     stripeCustomerId      String?                   @unique
     contactOnAppointments ContactOnAppointment[]
+    tasks                 Task[]
 }
 
 model VerificationToken {
@@ -288,4 +306,11 @@ enum PROFILE_TYPES {
     AGENT
     VENDOR
     OTHER
+}
+
+enum TASK_STATUS {
+    TO_DO
+    IN_PROGRESS
+    DONE
+    ARCHIVED
 }
