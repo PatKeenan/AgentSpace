@@ -79,22 +79,32 @@ export const tasksRouter = t.router({
                 },
             });
         }),
-    updateMany: authedProcedure
+    updateManyTasks: authedProcedure
         .input(
             z.object({
-                tasks: z.array(taskSchemas.updateSchema),
+                tasks: z.array(
+                    z.object({
+                        id: z.string(),
+                        order: z.number(),
+                        status: z.nativeEnum(TASK_STATUS),
+                    })
+                ),
             })
         )
         .mutation(async ({ ctx, input }) => {
-            const taskIds = input.tasks.map((task) => task.id);
-            return await ctx.prisma.task.updateMany({
-                where: {
-                    id: {
-                        in: taskIds,
-                    },
-                },
-                data: input.tasks,
-            });
+            return await Promise.all(
+                input.tasks.map((task) =>
+                    ctx.prisma.task.update({
+                        where: {
+                            id: task.id,
+                        },
+                        data: {
+                            order: task.order,
+                            status: task.status,
+                        },
+                    })
+                )
+            );
         }),
     deleteHard: authedProcedure
         .input(z.object({ id: z.string() }))

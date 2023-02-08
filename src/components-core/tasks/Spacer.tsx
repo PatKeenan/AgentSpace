@@ -13,7 +13,7 @@ export const Spacer = (props: { isVisible: boolean; delay?: boolean }) => {
                         delay: delay ? 0.1 : 0,
                         type: "tween",
                     }}
-                    className="mb-3 mt-1 h-[2.5rem] rounded-md bg-gray-300 shadow-md"
+                    className="mb-4 mt-1 h-[2.5rem] rounded-md bg-gray-300 shadow-md"
                 />
             )}
         </AnimatePresence>

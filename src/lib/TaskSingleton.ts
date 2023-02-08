@@ -27,7 +27,7 @@ const taskObj = {
     task: z
         .string()
         .min(4, errMsg("task", "greater", 4))
-        .max(100, errMsg("task", "less", 100)),
+        .max(300, errMsg("task", "less", 300)),
     order: z.number().min(0.00004).max(2147483647, "Too many cards in list"),
     archived: z.boolean().optional(),
     status: z.nativeEnum(TASK_STATUS),

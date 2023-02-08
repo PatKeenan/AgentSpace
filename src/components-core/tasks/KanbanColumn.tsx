@@ -16,6 +16,21 @@ export type KabanColumnType = {
     status: TASK_STATUS;
 };
 
+function checkIfOrderIsValid(order: number) {
+    const numberArr = order.toString().split(".");
+
+    if (numberArr.length == 1) return true;
+    if (numberArr.length == 2 && numberArr[1]) {
+        // 0.00004
+        const isGreaterThanMin = numberArr[1] ? numberArr[1].length <= 4 : true;
+        if (isGreaterThanMin) return true;
+        if (numberArr[1].length > 5) return false;
+        if (numberArr[1].length == 5 && Number(numberArr[1][5]) <= 4)
+            return true;
+        return false;
+    }
+}
+
 export const KabanColumn = ({
     tasks,
     column,
@@ -37,7 +52,12 @@ export const KabanColumn = ({
     } = useKanbanStore();
 
     const gap = 1024;
-    const { delete: deleteTask, create, updateStatusOrOrder } = useTasks();
+    const {
+        delete: deleteTask,
+        create,
+        updateStatusOrOrder,
+        updateManyTasks,
+    } = useTasks();
 
     const { mutate: updateStatusOrOrderMutation } = updateStatusOrOrder({
         onSettled: () =>
@@ -80,7 +100,7 @@ export const KabanColumn = ({
         e.preventDefault();
 
         const task = findTask(e.currentTarget.id, tasks) || undefined;
-
+        if (task?.id === activeDragItem) return;
         if (task) {
             dispatch({
                 type: "setActiveDragOverItem",
@@ -91,7 +111,7 @@ export const KabanColumn = ({
             });
         }
     };
-
+    const { mutate: UpdateManyMutation } = updateManyTasks();
     const { mutate: createTaskMutation } = create({
         onMutate: (newTask) => {
             const previousTasks = utils.task.getAll.getData({
@@ -162,6 +182,9 @@ export const KabanColumn = ({
         const isOnlyItemInCol = tasks?.length === 1;
 
         if (isOnlyItemInCol) return;
+        if (activeDragOverItem == activeDragItem) return;
+        if (activeDragItem && !activeDragOverItem && tasks && tasks?.length > 1)
+            return; // Do nothing if there is no activeDragOverItem and there are other items in the column.
 
         if (!activeDragOverItem) {
             // No dragged over item? Then add the task to the end of the column
@@ -187,17 +210,36 @@ export const KabanColumn = ({
 
         if (draggedOverTaskIndex == 0) {
             // If the dragged over item is the first item in the column, then set the order to the dragged over item order / 2
-            const newOrder = Math.round(draggedOverTask?.order || gap) / 2;
+            const newOrder = (draggedOverTask?.order || gap) / 2;
 
-            if (newOrder < 0.00004) {
-                //handleReorderColumn
-            }
+            const isValidOrder = checkIfOrderIsValid(newOrder);
+
             taskCopy = {
                 ...task,
                 order: newOrder,
             };
             const oldTasks = tasks ? tasks?.filter((i) => i.id != task.id) : [];
             oldTasks.unshift(taskCopy);
+
+            if (!isValidOrder) {
+                let incrementor = 0;
+                const newTasks = oldTasks.map((i) => {
+                    const taskCopy = { ...i, order: incrementor + gap };
+                    incrementor = incrementor + gap;
+                    return taskCopy;
+                });
+                setTasks(newTasks, column.taskStoreState);
+                console.log({ invalid: true, newTasks });
+                UpdateManyMutation({
+                    tasks: newTasks.map((i) => ({
+                        id: i.id,
+                        order: i.order,
+                        status: i.status,
+                    })),
+                });
+                return dispatch({ type: "resetKanban" });
+            }
+
             setTasks(oldTasks, column.taskStoreState);
             updateStatusOrOrderMutation({
                 id: taskCopy.id,
@@ -221,7 +263,10 @@ export const KabanColumn = ({
             ((taskBeforeDraggedOverTask?.order || gap) +
                 (draggedOverTask?.order || gap)) /
             2;
-        setTasks(
+
+        const isValidOrder = checkIfOrderIsValid(newOrder);
+
+        const newTasks =
             draggedOverTaskIndexWithoutDraggedTask && oldTasks
                 ? [
                       ...oldTasks?.slice(
@@ -233,9 +278,25 @@ export const KabanColumn = ({
                           draggedOverTaskIndexWithoutDraggedTask
                       ),
                   ]
-                : [{ ...taskCopy, order: newOrder }],
-            column.taskStoreState
-        );
+                : [{ ...taskCopy, order: newOrder }];
+        if (!isValidOrder) {
+            let incrementor = 0;
+            const newTasksReordered = newTasks.map((i) => {
+                const taskCopy = { ...i, order: incrementor + gap };
+                incrementor = incrementor + gap;
+                return taskCopy;
+            });
+            setTasks(newTasksReordered, column.taskStoreState);
+            UpdateManyMutation({
+                tasks: newTasksReordered.map((i) => ({
+                    id: i.id,
+                    order: i.order,
+                    status: i.status,
+                })),
+            });
+            return dispatch({ type: "resetKanban" });
+        }
+        setTasks(newTasks, column.taskStoreState);
         updateStatusOrOrderMutation({
             id: taskCopy.id,
             status: taskCopy.status,
@@ -367,10 +428,39 @@ export const KabanColumn = ({
                 order: newOrder,
                 status: column.status,
             };
+
             setTasks(
                 oldTasks.filter((i) => i.id !== newTask.id),
                 draggedTask.status
             );
+
+            // Check order
+
+            const isValidOrder = checkIfOrderIsValid(newTask.order);
+            if (!isValidOrder) {
+                const newTasks = [
+                    ...tasks.slice(0, draggedOverTaskIndex),
+                    newTask,
+                    ...tasks.slice(draggedOverTaskIndex),
+                ];
+                let orderIncrement = 0;
+                const newTasksWithCorrectOrder = newTasks.map((task) => {
+                    const newTask = { ...task, order: orderIncrement + gap };
+                    orderIncrement = orderIncrement + gap;
+                    return newTask;
+                });
+                const updateArr = newTasksWithCorrectOrder.map((task) => ({
+                    id: task.id,
+                    order: task.order,
+                    status: task.status as TASK_STATUS,
+                }));
+                if (updateArr.length > 0) {
+                }
+                UpdateManyMutation({ tasks: updateArr });
+                setTasks(newTasksWithCorrectOrder, column.taskStoreState);
+                return dispatch({ type: "resetKanban" });
+            }
+
             updateStatusOrOrderMutation({
                 id: newTask.id,
                 status: newTask.status,
@@ -436,9 +526,9 @@ export const KabanColumn = ({
             <ul
                 className={clsx(
                     activeDragOverColumn == column.taskStoreState
-                        ? "bg-gray-200"
-                        : "bg-white",
-                    "mt-4 h-full space-y-3 overflow-auto"
+                        ? "border-gray-200 bg-gray-50"
+                        : "border-transparent bg-transparent",
+                    "-mx-4 mt-4 h-full space-y-4 overflow-auto rounded-md border p-4"
                 )}
             >
                 {tasks &&

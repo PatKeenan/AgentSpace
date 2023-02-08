@@ -143,14 +143,18 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                             )}
                         </div>
                         {editMode ? (
-                            <form onSubmit={onSubmit}>
-                                <NewInputGroup isInvalid={false} isRequired>
+                            <form onSubmit={onSubmit} className="flex">
+                                <NewInputGroup
+                                    isInvalid={Boolean(errors && errors.task)}
+                                    isRequired
+                                >
                                     <NewInputGroup.Label htmlFor="">
                                         {task ? "Task" : "New Task"}
                                     </NewInputGroup.Label>
                                     <NewInputGroup.TextArea
                                         autoFocus
                                         defaultValue={task?.task || ""}
+                                        rows={3}
                                         {...register("task")}
                                     />
                                     <NewInputGroup.Error>

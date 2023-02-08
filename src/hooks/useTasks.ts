@@ -6,7 +6,7 @@ export const useTasks = () => {
         getAll: task.getAll.useQuery,
         create: task.create.useMutation,
         update: task.update.useMutation,
-        updateMany: task.updateMany.useMutation,
+        updateManyTasks: task.updateManyTasks.useMutation,
         updateStatusOrOrder: task.updateStatusOrOrder.useMutation,
         delete:
             process.env.NODE_ENV == "development"
