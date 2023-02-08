@@ -94,6 +94,11 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
             }
         });
 
+        const handleOnCancel = () => {
+            setEditMode(false);
+            onCancel?.();
+        };
+
         return (
             <div
                 ref={forwardedRed}
@@ -113,11 +118,11 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                         exit={{ opacity: 0 }}
                         className={clsx(
                             className,
-                            "relative rounded-md px-4 py-2 shadow"
+                            "relative flex flex-1 rounded-md px-4 py-2 shadow"
                         )}
                     >
-                        <div className="absolute right-2">
-                            {!editMode && (
+                        {!editMode && (
+                            <div className="order-2 ml-auto flex w-12 shrink-0 justify-end">
                                 <ToggleMenu
                                     items={[
                                         {
@@ -140,10 +145,13 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                                         },
                                     ]}
                                 />
-                            )}
-                        </div>
+                            </div>
+                        )}
                         {editMode ? (
-                            <form onSubmit={onSubmit} className="flex">
+                            <form
+                                onSubmit={onSubmit}
+                                className="flex flex-grow flex-col"
+                            >
                                 <NewInputGroup
                                     isInvalid={Boolean(errors && errors.task)}
                                     isRequired
@@ -166,7 +174,7 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                                 <div className="flex w-full justify-between">
                                     <Button
                                         variant="outlined"
-                                        onClick={onCancel}
+                                        onClick={handleOnCancel}
                                         type="button"
                                     >
                                         Cancel

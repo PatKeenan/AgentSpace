@@ -183,12 +183,17 @@ export const KabanColumn = ({
 
         if (isOnlyItemInCol) return;
         if (activeDragOverItem == activeDragItem) return;
-        if (activeDragItem && !activeDragOverItem && tasks && tasks?.length > 1)
+        if (
+            activeDragItem &&
+            !activeDragOverItem &&
+            tasks &&
+            tasks?.length <= 1
+        )
             return; // Do nothing if there is no activeDragOverItem and there are other items in the column.
 
         if (!activeDragOverItem) {
             // No dragged over item? Then add the task to the end of the column
-            const lastTask = tasks?.[tasks?.length - 1];
+            const lastTask = tasks?.at(-1);
             taskCopy = {
                 ...task,
                 order: Math.round(lastTask?.order || gap) + gap,
@@ -200,7 +205,7 @@ export const KabanColumn = ({
                 status: taskCopy.status,
                 order: taskCopy.order,
             });
-            return;
+            return dispatch({ type: "resetKanban" });
         }
 
         const draggedOverTask = findTask(activeDragOverItem, tasks);
