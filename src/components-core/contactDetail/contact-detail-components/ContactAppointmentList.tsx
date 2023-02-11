@@ -3,6 +3,12 @@ import { useAppointments } from "hooks/useAppointments";
 import { useWorkspace } from "hooks/useWorkspace";
 
 import { SidebarList } from "./SidebarList";
+import Link from "next/link";
+import {
+    statusColorsLight,
+    statusDisplay,
+} from "components-core/appointments/appointments-utils";
+import clsx from "clsx";
 
 export const ContactAppointmentList = ({
     contactId,
@@ -30,23 +36,36 @@ export const ContactAppointmentList = ({
                         rawDate.getUTCMonth(),
                         rawDate.getUTCDate()
                     ),
-                    "PPPP"
+                    "MM/dd/yyyy"
                 );
                 return (
-                    <div className="relative focus-within:ring-2 focus-within:ring-cyan-500">
-                        <h3 className="text-sm font-semibold text-gray-800">
-                            <a className="hover:underline focus:outline-none">
-                                <span
-                                    className="absolute inset-0"
-                                    aria-hidden="true"
-                                />
-                                {formattedDate}
-                            </a>
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                            {i.appointment.address}
-                        </p>
-                    </div>
+                    <Link
+                        href={`/workspace/${i.appointment.workspaceId}/appointments/${i.appointmentId}`}
+                        passHref
+                    >
+                        <a>
+                            <div className="relative focus-within:ring-2 focus-within:ring-cyan-500 hover:underline">
+                                <h3 className="text-sm font-semibold text-gray-800">
+                                    {formattedDate}
+                                    <span
+                                        className={clsx(
+                                            i.appointment.status &&
+                                                statusColorsLight[
+                                                    i.appointment.status
+                                                ],
+                                            "capitalize",
+                                            "top-0 right-0 rounded-md px-2 py-1 text-xs md:absolute"
+                                        )}
+                                    >
+                                        {statusDisplay(i.appointment.status)}
+                                    </span>
+                                </h3>
+                                <p className="mt-3 text-sm text-gray-600 line-clamp-2">
+                                    {i.appointment.address}
+                                </p>
+                            </div>
+                        </a>
+                    </Link>
                 );
             }}
         />

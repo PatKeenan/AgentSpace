@@ -119,7 +119,7 @@ export const ContactsContainer: NextPageExtended = () => {
             current: queryParamsState.searchBy === "phoneNumber",
         },
         {
-            name: "Sub Contacts",
+            name: "Secondary Contacts",
             value: "subContacts",
             onClick: () =>
                 setQueryParamsState({ searchBy: "subContacts", page: 1 }),
@@ -260,7 +260,7 @@ export const ContactsContainer: NextPageExtended = () => {
         { value: "Email" },
         { value: "Phone" },
         { value: "Appointments" },
-        { value: "Sub Contacts" },
+        { value: "Secondary Contacts" },
         { value: "Profiles" },
         { value: "View", className: "sr-only" },
     ];

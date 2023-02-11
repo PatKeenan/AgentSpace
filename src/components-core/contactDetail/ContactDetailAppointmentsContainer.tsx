@@ -45,30 +45,45 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
     const sortOptions = [
         {
             name: "Created At",
-            onClick: () => setSort({ field: "createdAt", order: "desc" }),
+            onClick: () => {
+                setPage(1);
+                setSort({ field: "createdAt", order: "desc" });
+            },
             current: sort.field == "createdAt",
         },
         {
             name: "Updated At",
-            onClick: () => setSort({ field: "updatedAt", order: "desc" }),
+            onClick: () => {
+                setPage(1);
+                setSort({ field: "updatedAt", order: "desc" });
+            },
             current: sort.field == "updatedAt",
         },
 
         {
             name: "Date",
-            onClick: () => setSort({ field: "date", order: "desc" }),
+            onClick: () => {
+                setPage(1);
+                setSort({ field: "date", order: "desc" });
+            },
             current: sort.field == "date",
         },
     ];
     const orderOptions = [
         {
             name: "Descending",
-            onClick: () => setSort({ ...sort, order: "desc" }),
+            onClick: () => {
+                setPage(1);
+                setSort({ ...sort, order: "desc" });
+            },
             current: sort.order == "desc",
         },
         {
             name: "Ascending",
-            onClick: () => setSort({ ...sort, order: "asc" }),
+            onClick: () => {
+                setPage(1);
+                setSort({ ...sort, order: "asc" });
+            },
             current: sort.order == "asc",
         },
     ];

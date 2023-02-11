@@ -10,6 +10,7 @@ import { GridCard } from "./GridCard";
 
 import type { SubContact } from "@prisma/client";
 import { trpc } from "utils/trpc";
+import { NoData } from "components-common/NoData";
 
 export const SubContactList = ({
     subContacts,
@@ -78,74 +79,84 @@ export const SubContactList = ({
                                 }
                                 actionIcon="add"
                             >
-                                Add
+                                Add New
                             </Button>
                         }
                     />
 
-                    <div className="mt-4 py-5 sm:p-0">
-                        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {subContacts?.map((i, idx) => (
-                                <GridCard key={i.id}>
-                                    <div className="mb-4 grid grid-cols-2 gap-2">
-                                        <div className="inline-flex space-x-2">
-                                            <h4 className="flex-shrink-0 font-medium">
-                                                {`Contact ${idx + 1}`}
-                                            </h4>
+                    {subContacts && subContacts.length > 0 ? (
+                        <div className="mt-4 py-5 sm:p-0">
+                            <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                {subContacts?.map((i, idx) => (
+                                    <GridCard key={i.id}>
+                                        <div className="mb-4 grid grid-cols-2 gap-2">
+                                            <div className="inline-flex space-x-2">
+                                                <h4 className="flex-shrink-0 font-medium">
+                                                    {`Contact ${idx + 1}`}
+                                                </h4>
+                                            </div>
+                                            <ToggleMenu
+                                                items={[
+                                                    {
+                                                        text: "Edit",
+                                                        onClick: () =>
+                                                            handleClick(i),
+                                                    },
+                                                    {
+                                                        text: (
+                                                            <div className="flex items-center text-sm text-red-600">
+                                                                <TrashIcon
+                                                                    className="mr-2 h-4 w-4"
+                                                                    aria-hidden="true"
+                                                                />
+                                                                <span>
+                                                                    Delete
+                                                                </span>
+                                                            </div>
+                                                        ),
+                                                        extraClasses:
+                                                            "border-t border-gray-200",
+                                                        onClick: () =>
+                                                            handleDeleteMeta(
+                                                                i.id
+                                                            ),
+                                                    },
+                                                ]}
+                                            />
                                         </div>
-                                        <ToggleMenu
-                                            items={[
-                                                {
-                                                    text: "Edit",
-                                                    onClick: () =>
-                                                        handleClick(i),
-                                                },
-                                                {
-                                                    text: (
-                                                        <div className="flex items-center text-sm text-red-600">
-                                                            <TrashIcon
-                                                                className="mr-2 h-4 w-4"
-                                                                aria-hidden="true"
-                                                            />
-                                                            <span>Delete</span>
-                                                        </div>
-                                                    ),
-                                                    extraClasses:
-                                                        "border-t border-gray-200",
-                                                    onClick: () =>
-                                                        handleDeleteMeta(i.id),
-                                                },
-                                            ]}
-                                        />
-                                    </div>
-                                    <dl className="space-y-1 ">
-                                        <DetailsRow
-                                            title="Name:"
-                                            value={
-                                                i?.firstName && i?.lastName
-                                                    ? `${i.firstName} ${i.lastName}`
-                                                    : i?.firstName
-                                                    ? i.firstName
-                                                    : undefined
-                                            }
-                                            valueSpan={3}
-                                        />
+                                        <dl className="space-y-1 ">
+                                            <DetailsRow
+                                                title="Name:"
+                                                value={
+                                                    i?.firstName && i?.lastName
+                                                        ? `${i.firstName} ${i.lastName}`
+                                                        : i?.firstName
+                                                        ? i.firstName
+                                                        : undefined
+                                                }
+                                                valueSpan={3}
+                                            />
 
-                                        <DetailsRow
-                                            title="Email:"
-                                            value={i?.email}
-                                            valueSpan={3}
-                                        />
-                                        <DetailsRow
-                                            title="Phone:"
-                                            value={i?.phoneNumber}
-                                            valueSpan={3}
-                                        />
-                                    </dl>
-                                </GridCard>
-                            ))}
-                        </dl>
-                    </div>
+                                            <DetailsRow
+                                                title="Email:"
+                                                value={i?.email}
+                                                valueSpan={3}
+                                            />
+                                            <DetailsRow
+                                                title="Phone:"
+                                                value={i?.phoneNumber}
+                                                valueSpan={3}
+                                            />
+                                        </dl>
+                                    </GridCard>
+                                ))}
+                            </dl>
+                        </div>
+                    ) : (
+                        <p className="mt-8 text-center text-sm text-gray-500">
+                            No Secondary Contacts
+                        </p>
+                    )}
                 </div>
             </div>
         </section>

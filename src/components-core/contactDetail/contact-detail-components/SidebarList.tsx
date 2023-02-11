@@ -52,7 +52,9 @@ export function SidebarList<T extends { id: string }>(
             ) : noDataMessage ? (
                 noDataMessage
             ) : (
-                <p className="py-2 text-sm">{noDataMessage ?? `No ${title}`}</p>
+                <p className="py-2 text-sm  text-gray-500">
+                    {noDataMessage ?? `No ${title}`}
+                </p>
             )}
 
             {href ? (
