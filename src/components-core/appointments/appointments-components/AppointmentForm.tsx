@@ -40,6 +40,7 @@ type AppointmentFormProps = {
     onSuccess?: (date: string) => void;
     onCancel?: () => void;
     selectedDate?: string;
+    defaultContact?: AppointmentSingletonType["appointmentSchemas"]["extendedContactOnAppointmentSchema"];
 };
 
 export type AppointmentFormType = Omit<AppointmentFormData, "id">;
@@ -63,7 +64,8 @@ const appointmentReducer = (
 
 export const AppointmentForm = (props: AppointmentFormProps) => {
     const { callback } = useAppointmentFormStore();
-    const { defaultData, selectedDate, onSuccess, onCancel } = props;
+    const { defaultData, selectedDate, onSuccess, onCancel, defaultContact } =
+        props;
 
     const [state, setState] = React.useReducer(
         appointmentReducer,
@@ -72,6 +74,7 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
             date: selectedDate
                 ? selectedDate
                 : dateUtils.transform(new Date()).isoDateOnly,
+            contacts: defaultContact ? [defaultContact] : [],
         }
     );
 
@@ -136,7 +139,6 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
 
         return setState({ contacts: filteredContacts });
     };
-
     const { data: contactOptions, isFetched } = search(
         { query: contactInput.debounced, workspaceId: workspaceId as string },
         {
@@ -484,7 +486,6 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
                                                     }
                                                 >
                                                     <span>{i.name}</span>
-
                                                     {i.selectedProfileId && (
                                                         <span className="ml-1">
                                                             - {}
@@ -522,21 +523,6 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
                         />
                     </div>
                     <div className="col-span-6 lg:col-span-2 ">
-                        {/*  <Select
-                                    {...appointmentFormFields.status}
-                                    direction="column"
-                                    displayField="display"
-                                    selected={appointmentStatusOptions.find(
-                                        (i) => i.value == state.status
-                                    )}
-                                    setSelected={(i) =>
-                                        setState({
-                                            status: i.value,
-                                        })
-                                    }
-                                    className="max-h-[140px] capitalize"
-                                    options={appointmentStatusOptions}
-                                /> */}
                         <Select
                             {...appointmentFormFields.status}
                             displayField="display"
