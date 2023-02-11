@@ -1,9 +1,10 @@
 //This is a layout for the contact components. See the other layout in components-layouts from the contact page layouts
-import React from "react";
+import React, { Suspense } from "react";
 import { Tabs } from "components-common";
 
 import { useRouter } from "next/router";
 import { useWorkspace } from "hooks";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 export const ContactDetailLayout = ({
     children,
@@ -41,7 +42,9 @@ export const ContactDetailLayout = ({
                     tabs={tabs}
                 />
             </div>
-            {children}
+            <ErrorBoundary>
+                <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+            </ErrorBoundary>
         </>
     );
 };

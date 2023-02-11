@@ -509,7 +509,7 @@ export const KabanColumn = ({
 
     return (
         <div
-            className="h-full w-1/3 min-w-[300px] flex-1 flex-grow odd:px-8"
+            className="min-h-[85vh] w-1/3 min-w-[300px] flex-1 flex-grow px-8 even:border-x even:px-8 md:h-full"
             onDragEnter={handleDragEnterColumn}
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}

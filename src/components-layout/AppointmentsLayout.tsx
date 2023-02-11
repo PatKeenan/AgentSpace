@@ -3,8 +3,9 @@ import { Breadcrumb, PageBody, SectionHeading } from "components-common";
 import { useAppointmentsUI } from "components-core/appointments";
 import { Button } from "components-common/Button";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { Suspense } from "react";
 import clsx from "clsx";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 export const AppointmentsLayout = ({
     children,
@@ -54,7 +55,9 @@ export const AppointmentsLayout = ({
                         </SectionHeading.Actions>
                     </SectionHeading>
                 </div>
-                {children}
+                <ErrorBoundary>
+                    <Suspense>{children}</Suspense>
+                </ErrorBoundary>
             </PageBody>
         </>
     );

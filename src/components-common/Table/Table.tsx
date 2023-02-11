@@ -54,11 +54,17 @@ const TableRow = (props: { children: React.ReactNode }) => {
 };
 
 const TableData = (props: TableDataProps) => {
-    const { className, fontColor = "text-gray-500", ...htmlProps } = props;
+    const {
+        className,
+        fontColor = "text-gray-500",
+        padding,
+        ...htmlProps
+    } = props;
     return (
         <td
             className={clsx(
-                "px-3 py-4 text-sm font-medium",
+                padding ? padding : "px-3 py-4",
+                "text-sm font-medium",
                 fontColor,
                 className
             )}

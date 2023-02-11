@@ -1,5 +1,6 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Button } from "./Button";
+import clsx from "clsx";
 
 type NoDataBaseProps = {
     buttonText?: never;
@@ -13,14 +14,27 @@ type NoDataExtendedProps = {
 export const NoData = (
     props: {
         title: string;
-        message: string;
-        icon: React.ElementType;
+        message?: string;
+        icon?: React.ElementType;
+        className?: string;
     } & (NoDataBaseProps | NoDataExtendedProps)
 ) => {
-    const { title, message, onClick, buttonText, icon: Icon } = props;
+    const {
+        title,
+        message,
+        onClick,
+        buttonText,
+        icon: Icon,
+        className,
+    } = props;
 
     return (
-        <div className="grid h-full w-full place-items-center p-8 text-center">
+        <div
+            className={clsx(
+                "grid h-full w-full place-items-center p-8 text-center",
+                className
+            )}
+        >
             <div>
                 {Icon ? (
                     <Icon className="mx-auto h-12 w-12 text-gray-400" />

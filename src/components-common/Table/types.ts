@@ -15,6 +15,7 @@ export type TableDataProps = {
     children: React.ReactNode;
     fontColor?: string;
     className?: string;
+    padding?: string;
 };
 
 export type TableBodyProps = {

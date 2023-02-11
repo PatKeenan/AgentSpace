@@ -28,6 +28,7 @@ SectionHeading.Title = (
                     icon && "mr-2",
                     "text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"
                 )}
+                onBlur={(e) => console.log(e.target.outerText)}
                 {...rest}
             />
             {icon ? <>{icon}</> : null}

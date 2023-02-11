@@ -54,7 +54,7 @@ export const ListViewAppointmentCard = ({
         >
             <div className="flex flex-auto p-1 md:hidden">
                 <div className="relative max-w-md flex-grow space-y-2 overflow-hidden">
-                    <div className="relative pb-2">
+                    <div className="relative flex items-center space-x-4 pb-2">
                         <h3 className="text-md font-semibold text-gray-600">
                             {date
                                 ? format(
@@ -67,7 +67,7 @@ export const ListViewAppointmentCard = ({
                             className={clsx(
                                 status && statusColorsLight[status],
                                 "capitalize",
-                                "absolute top-0 right-0 rounded-md px-2 py-1 text-xs"
+                                "top-0 right-0 rounded-md px-2 py-1 text-xs md:absolute"
                             )}
                         >
                             {statusDisplay(status)}

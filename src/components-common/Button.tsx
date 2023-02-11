@@ -79,14 +79,20 @@ export const Button = (props: ButtonProps) => {
                         hideChildrenOnMobile
                             ? "lg:-ml-1 lg:mr-2"
                             : "-ml-1 mr-2",
-                        variant == "primary" ? "text-white" : "text-gray-400"
+                        variant == "primary" &&
+                            actionIcon !== "delete" &&
+                            "text-white",
+                        actionIcon == "delete"
+                            ? "text-red-400"
+                            : "text-gray-400"
                     )}
                     aria-hidden
                 />
             )}
             <span
                 className={clsx(
-                    Icon && hideChildrenOnMobile && "hidden lg:block"
+                    Icon && hideChildrenOnMobile && "hidden lg:block",
+                    actionIcon == "delete" && "text-red-400"
                 )}
             >
                 {children}
@@ -98,7 +104,12 @@ export const Button = (props: ButtonProps) => {
                         hideChildrenOnMobile
                             ? "lg:-mr-1 lg:ml-2"
                             : "-mr-1 ml-2",
-                        variant == "primary" ? "text-white" : "text-gray-400"
+                        variant == "primary" &&
+                            actionIcon !== "delete" &&
+                            "text-white",
+                        actionIcon == "delete"
+                            ? "text-red-400"
+                            : "text-gray-400"
                     )}
                     aria-hidden
                 />

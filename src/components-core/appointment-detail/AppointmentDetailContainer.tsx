@@ -29,6 +29,7 @@ import Link from "next/link";
 import { trpc } from "utils/trpc";
 
 import { useAppointmentFormStore } from "components-core/appointments/appointments-components";
+import { useAppointmentsUI } from "components-core/appointments";
 
 const { appointmentFormFields } = AppointmentSingleton;
 
@@ -58,7 +59,7 @@ export const AppointmentDetailContainer = () => {
     const { setCallback } = useAppointmentFormStore();
     const router = useRouter();
 
-    const { getOne } = useAppointments();
+    const { getOne, deleteHard } = useAppointments();
     const utils = trpc.useContext();
     const { data: appointment } = getOne(
         { id: router.query.appointmentId as string },
@@ -144,6 +145,24 @@ export const AppointmentDetailContainer = () => {
         status: appointment?.status,
     };
 
+    const { mutate } = deleteHard();
+    const { queryParams } = useAppointmentsUI();
+
+    const handleDelete = () => {
+        mutate(
+            { appointmentId: appointmentData.id },
+            {
+                onSettled: () => {
+                    utils.appointment.getAll.invalidate({
+                        workspaceId: workspace.id as string,
+                        ...queryParams,
+                    });
+                    router.push(`/workspace/${workspace.id}/appointments`);
+                },
+            }
+        );
+    };
+
     return (
         <>
             <EditAppointmentModal
@@ -167,6 +186,15 @@ export const AppointmentDetailContainer = () => {
                             actionIcon="edit"
                         >
                             Edit
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            type="button"
+                            onClick={handleDelete}
+                            actionIcon="delete"
+                            className="ml-4"
+                        >
+                            Delete
                         </Button>
                     </SectionHeading.Actions>
                 </SectionHeading>
