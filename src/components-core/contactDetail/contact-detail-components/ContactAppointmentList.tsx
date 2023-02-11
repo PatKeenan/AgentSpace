@@ -10,10 +10,11 @@ export const ContactAppointmentList = ({
     contactId: string | undefined;
 }) => {
     const { getAllForContact } = useAppointments();
-    const { data: appointments } = getAllForContact(
-        { contactId: contactId as string, take: 3 },
+    const { data } = getAllForContact(
+        { contactId: contactId as string, take: 3, page: 1 },
         { enabled: typeof contactId == "string" }
     );
+    const appointments = data && data[0];
     const workspace = useWorkspace();
 
     return (

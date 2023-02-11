@@ -659,7 +659,8 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                 (sub) =>
                                                                     sub.firstName
                                                             )
-                                                            .join(", ")}
+                                                            .join(", ") ||
+                                                            "---"}
                                                     </Table.Data>
                                                     <Table.Data>
                                                         {contact.profiles

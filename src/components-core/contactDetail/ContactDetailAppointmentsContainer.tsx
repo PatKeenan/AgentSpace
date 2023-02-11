@@ -2,7 +2,7 @@ import { NextPageExtended } from "types/index";
 import { TextDropDownMenu } from "components-common/TextDropDownMenu";
 import { formatDate } from "utils/formatDate";
 import { AppointmentSortSchema } from "server/schemas";
-import { Button, ButtonLink } from "components-common/Button";
+import { Button } from "components-common/Button";
 import { useAppointments } from "hooks/useAppointments";
 import { useRouter } from "next/router";
 import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
@@ -14,13 +14,22 @@ import { Modal } from "components-common/Modal";
 import { AppointmentForm } from "components-core/appointments/appointments-components/AppointmentForm";
 import SelectProfileForm from "./contact-detail-components/SelectProfileForm";
 import { trpc } from "utils/trpc";
-import { AppointmentSingletonType } from "lib";
+
+import { TruckIcon } from "@heroicons/react/20/solid";
+import { NoData } from "components-common/NoData";
+import { isEmpty } from "utils/isEmpty";
+
+import type { AppointmentSingletonType } from "lib";
+import { GridSectionTitle } from "./contact-detail-components";
+import { Pagination } from "components-common/Pagination";
 
 export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
+    const take = 10;
     const [sort, setSort] = React.useState<AppointmentSortSchema>({
         field: "createdAt",
         order: "desc",
     });
+    const [page, setPage] = React.useState(1);
     const [modalOpen, setModalOpen] = React.useState(false);
 
     const utils = trpc.useContext();
@@ -67,19 +76,24 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
     const router = useRouter();
     const contactId = router.query.contactId;
     const { getAllForContact } = useAppointments();
+
     const contactName = utils.contacts.getName.getData({
         id: contactId as string,
     });
 
-    const { data: appointments } = getAllForContact(
+    const { data, isLoading } = getAllForContact(
         {
             contactId: contactId as string,
-            take: 20,
+            page: page,
+            take: take,
             order: sort.order,
             field: sort.field,
         },
         { enabled: typeof contactId == "string" }
     );
+    const appointments = data && data.length == 2 ? data[0] : [];
+    const totalAppointments = data && data.length == 2 ? data[1] : 0;
+
     const handleClose = () => {
         setModalOpen(false);
         setForm({ name: "selectProfile" });
@@ -94,7 +108,8 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
     const handleSuccess = () => {
         utils.appointment.getAllForContact.invalidate({
             contactId: contactId as string,
-            take: 20,
+            take,
+            page: page,
             order: sort.order,
             field: sort.field,
         });
@@ -122,9 +137,33 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
             </Modal>
             <ContactDetailLayout activeTab="Appointments">
                 <div>
-                    <div className="mb-4 flex items-center">
-                        {/* Sort/Status */}
-                        <div className="flex-grow space-x-8">
+                    <GridSectionTitle
+                        titleIcon={
+                            appointments ? (
+                                <div className="flex h-5 w-5 justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600">
+                                    <span className="my-auto">
+                                        {totalAppointments}
+                                    </span>
+                                </div>
+                            ) : null
+                        }
+                        title="Appointments"
+                        subTitle="Personal details and application."
+                        actions={
+                            <Button
+                                variant="primary"
+                                onClick={() => setModalOpen(true)}
+                                actionIcon="add"
+                                type="button"
+                            >
+                                Add New
+                            </Button>
+                        }
+                    />
+
+                    {/* Sort/Status */}
+                    {appointments && appointments.length > 0 ? (
+                        <div className="mb-4 flex-grow space-x-8">
                             <TextDropDownMenu
                                 options={sortOptions}
                                 displayField="name"
@@ -136,22 +175,19 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
                                 title="Order"
                             />
                         </div>
+                    ) : null}
 
-                        <div className="ml-auto">
-                            <Button
-                                variant="primary"
-                                onClick={() => setModalOpen(true)}
-                                actionIcon="add"
-                                type="button"
-                            >
-                                Add New
-                            </Button>
-                        </div>
-                    </div>
-                    {appointments && appointments.length > 0 ? (
+                    {!isLoading && isEmpty(appointments) ? (
+                        <NoData
+                            icon={TruckIcon}
+                            className="h-[60vh]"
+                            title="No Appointments"
+                            message="Start by adding an appointment."
+                        />
+                    ) : (
                         <>
                             <ul className="pb-2">
-                                {appointments.map(({ appointment }) => (
+                                {appointments?.map(({ appointment }) => (
                                     <li key={appointment.id} className="">
                                         <Link
                                             href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
@@ -193,32 +229,19 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <nav
-                                className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-                                aria-label="Pagination"
-                            >
-                                <div className="hidden sm:block">
-                                    <p className="text-sm text-gray-700">
-                                        Showing{" "}
-                                        <span className="font-medium">1</span>{" "}
-                                        to{" "}
-                                        <span className="font-medium">
-                                            {appointments.length}
-                                        </span>{" "}
-                                        of{" "}
-                                        <span className="font-medium">
-                                            {appointments.length}
-                                        </span>{" "}
-                                        results
-                                    </p>
-                                </div>
-                                <div className="flex flex-1 justify-between space-x-2 sm:justify-end">
-                                    <Button variant="outlined">Previous</Button>
-                                    <Button variant="outlined">Next</Button>
-                                </div>
-                            </nav>
+                            {appointments && appointments.length > 0 ? (
+                                <Pagination
+                                    onPaginate={(newPage) => setPage(newPage)}
+                                    totalItems={totalAppointments}
+                                    currentPage={page || 1}
+                                    itemsPerPage={take}
+                                    currentResultsLength={
+                                        appointments?.length || 0
+                                    }
+                                />
+                            ) : null}
                         </>
-                    ) : null}
+                    )}
                 </div>
             </ContactDetailLayout>
         </>

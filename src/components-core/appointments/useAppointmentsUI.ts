@@ -39,11 +39,11 @@ export type AppointmentsUiType = {
     setQueryParams: (data: Partial<AppointmentQueryParamSchema>) => void;
 };
 
-const appointmentTabOptions = ["View By Day", "View All"] as const;
+const appointmentTabOptions = ["View All", "View By Day"] as const;
 
 export const useAppointmentsUI = create<AppointmentsUiType>()(
     devtools((set) => ({
-        activeTab: "View By Day",
+        activeTab: "View All",
         setActiveTab: (newTab) => set({ activeTab: newTab }),
         modal: { state: false },
         setModal: (opts) =>

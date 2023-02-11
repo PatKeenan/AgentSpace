@@ -259,10 +259,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                     </div>
                     {/* Sidebar component, swap this element with another sidebar if you like */}
                     <div className="mt-6 flex h-0 flex-1 flex-grow flex-col overflow-y-auto">
-                        {/* User account dropdown */}
-
-                        {/* Sidebar Search */}
-                        <div className="mt-5 px-3">
+                        {/* <div className="mt-5 px-3">
                             <label htmlFor="search" className="sr-only">
                                 Search
                             </label>
@@ -284,7 +281,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                     placeholder="Search"
                                 />
                             </div>
-                        </div>
+                        </div> */}
                         {/* Navigation */}
                         <nav className="mt-6 px-3">
                             <div className="space-y-1">

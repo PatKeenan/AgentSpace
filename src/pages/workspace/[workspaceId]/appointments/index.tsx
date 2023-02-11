@@ -1,1 +1,1 @@
-export { AppointmentsMapViewContainer as default } from "components-core/appointments";
+export { AppointmentsListViewContainer as default } from "components-core/appointments";

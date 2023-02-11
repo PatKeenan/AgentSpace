@@ -162,46 +162,65 @@ export const appointmentRouter = t.router({
     getAllForContact: authedProcedure
         .input(
             z
-                .object({ contactId: z.string(), take: z.number().optional() })
+                .object({
+                    contactId: z.string(),
+                    take: z.number(),
+                    page: z.number(),
+                })
                 .merge(appointmentSchemas.sort)
         )
         .query(async ({ ctx, input }) => {
-            const { order = "desc", field = "createdAt" } = input;
-            return await ctx.prisma.contactOnAppointment.findMany({
-                where: {
-                    contactId: input.contactId,
-                    deleted: false,
-                },
-                include: {
-                    appointment: {
-                        include: {
-                            contacts: {
-                                select: {
-                                    id: true,
-                                    contact: {
-                                        select: {
-                                            id: true,
-                                            name: true,
+            const {
+                order = "desc",
+                field = "createdAt",
+                take,
+                page,
+                contactId,
+            } = input;
+            return await ctx.prisma.$transaction([
+                ctx.prisma.contactOnAppointment.findMany({
+                    where: {
+                        contactId: contactId,
+                        deleted: false,
+                    },
+                    include: {
+                        appointment: {
+                            include: {
+                                contacts: {
+                                    select: {
+                                        id: true,
+                                        contact: {
+                                            select: {
+                                                id: true,
+                                                name: true,
+                                            },
                                         },
-                                    },
-                                    profile: {
-                                        select: {
-                                            id: true,
-                                            name: true,
+                                        profile: {
+                                            select: {
+                                                id: true,
+                                                name: true,
+                                            },
                                         },
                                     },
                                 },
                             },
                         },
                     },
-                },
-                orderBy: {
-                    appointment: {
-                        [field]: order,
+                    orderBy: {
+                        appointment: {
+                            [field]: order,
+                        },
                     },
-                },
-                take: input.take,
-            });
+                    skip: take * (page - 1),
+                    take: input.take,
+                }),
+                ctx.prisma.contactOnAppointment.count({
+                    where: {
+                        contactId: contactId,
+                        deleted: false,
+                    },
+                }),
+            ]);
         }),
     getIndicators: authedProcedure
         .input(

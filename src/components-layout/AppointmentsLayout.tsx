@@ -4,7 +4,7 @@ import { useAppointmentsUI } from "components-core/appointments";
 import { Button } from "components-common/Button";
 import { useRouter } from "next/router";
 import React, { Suspense } from "react";
-import clsx from "clsx";
+
 import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 export const AppointmentsLayout = ({
@@ -28,7 +28,8 @@ export const AppointmentsLayout = ({
 
             <PageBody
                 fullHeight={
-                    router.pathname == "/workspace/[workspaceId]/appointments"
+                    router.pathname ==
+                    "/workspace/[workspaceId]/appointments/view-by-day"
                 }
                 noPadding
             >

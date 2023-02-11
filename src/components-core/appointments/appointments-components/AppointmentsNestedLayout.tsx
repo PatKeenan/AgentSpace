@@ -16,12 +16,12 @@ export const AppointmentsNestedLayout = ({
 
     const tabs: { title: typeof activeTab; href: string }[] = [
         {
-            title: "View By Day",
+            title: "View All",
             href: `/workspace/${router.query.workspaceId}/appointments`,
         },
         {
-            title: "View All",
-            href: `/workspace/${router.query.workspaceId}/appointments/view-all`,
+            title: "View By Day",
+            href: `/workspace/${router.query.workspaceId}/appointments/view-by-day`,
         },
     ];
 
