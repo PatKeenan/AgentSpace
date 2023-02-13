@@ -272,9 +272,9 @@ export const AppointmentDetailContainer = () => {
                     </div>
                     <div className="order-1 mt-4 flex flex-shrink-0 flex-col sm:mt-0 lg:order-2 lg:col-span-6">
                         <div className=" h-[200px] w-full md:h-[300px] lg:h-full">
-                            {/*   <AppointmentsMap
+                            <AppointmentsMap
                                 appointments={appointment ? [appointment] : []}
-                            /> */}
+                            />
                         </div>
                     </div>
                 </div>
