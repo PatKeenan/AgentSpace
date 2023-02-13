@@ -65,7 +65,7 @@ const contactSearchSchema = z
     .merge(paginationSchema);
 
 const formFields = {
-    name: { name: "name", label: "Full Name" },
+    name: { name: "name", label: "Display Name" },
     firstName: { name: "firstName", label: "First Name" },
     lastName: { name: "lastName", label: "Last Name" },
     email: { name: "email", label: "Email" },

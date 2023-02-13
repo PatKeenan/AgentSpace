@@ -519,7 +519,7 @@ export const ContactsContainer: NextPageExtended = () => {
                         </div>
                     </div>
                     {isLoading ? (
-                        <div className="h-[70vh] flex-grow">
+                        <div className="flex h-[70vh]">
                             <Loading />
                         </div>
                     ) : isEmpty(contactsQuery) ? (

@@ -488,14 +488,22 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                     {appointments.map((appointment) => (
                                         <Table.Row key={appointment.id}>
                                             <Table.Data className="px-3 py-4 pl-4">
-                                                {appointment.date
-                                                    ? format(
-                                                          formatStringToDate(
-                                                              appointment.date
-                                                          ) || new Date(),
-                                                          "MM/dd/yyyy"
-                                                      )
-                                                    : "--"}
+                                                <Link
+                                                    href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
+                                                    passHref
+                                                >
+                                                    <a className="hover:text-indigo-600">
+                                                        {appointment.date
+                                                            ? format(
+                                                                  formatStringToDate(
+                                                                      appointment.date
+                                                                  ) ||
+                                                                      new Date(),
+                                                                  "MM/dd/yyyy"
+                                                              )
+                                                            : "--"}
+                                                    </a>
+                                                </Link>
                                             </Table.Data>
                                             <Table.Data>
                                                 <p
@@ -515,8 +523,15 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                             </Table.Data>
                                             <Table.Data>
                                                 <div className="max-w-sm">
-                                                    {appointment.address ||
-                                                        "--"}
+                                                    <Link
+                                                        href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
+                                                        passHref
+                                                    >
+                                                        <a className="hover:text-indigo-600">
+                                                            {appointment.address ||
+                                                                "--"}
+                                                        </a>
+                                                    </Link>
                                                 </div>
                                             </Table.Data>
                                             <Table.Data>
@@ -539,7 +554,6 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                                                     pIndex
                                                                 }
                                                             >
-                                                                {p.contact.name}
                                                                 {p.profile
                                                                     ? ` ${p.contact.name} - ${p.profile.name}`
                                                                     : p.contact

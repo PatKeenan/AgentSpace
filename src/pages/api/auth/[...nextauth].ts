@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 
 const allowedUsers = [
+    "morgan.cullers@gmail.com",
     "patkeenan316@gmail.com",
     "patkeenan.dev@gmail.com",
     "ford.dave7@gmail.com",

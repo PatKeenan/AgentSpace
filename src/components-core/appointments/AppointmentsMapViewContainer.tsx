@@ -15,6 +15,7 @@ import * as React from "react";
 import { formatDate } from "utils/formatDate";
 import { NextPageExtended } from "types/index";
 import { AppointmentsNestedLayout } from "./appointments-components";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 const AppointmentsMap = dynamic(
     () => import("./appointments-components/AppointmentsMap"),
@@ -180,7 +181,13 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
                         />
                     </div>
                     <div className=" h-[200px] w-full md:h-[300px] lg:h-2/3">
-                        <AppointmentsMap appointments={sortedByTime()} />
+                        <ErrorBoundary>
+                            <React.Suspense fallback={<p>Loading...</p>}>
+                                <AppointmentsMap
+                                    appointments={sortedByTime()}
+                                />
+                            </React.Suspense>
+                        </ErrorBoundary>
                     </div>
                 </div>
             </div>
