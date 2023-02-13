@@ -25,7 +25,7 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
 
     const workspace = useWorkspace();
 
-    const { getName } = useContacts();
+    const { getName, hardDelete } = useContacts();
 
     const { data: contact } = getName(
         { id: router.query.contactId as string },
@@ -33,7 +33,17 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
             enabled: exists(id),
         }
     );
+    const { mutate } = hardDelete({
+        onSettled: () => {
+            router.push(`/workspace/${workspace.id}/contacts`);
+        },
+    });
 
+    const handleDelete = () => {
+        if (id && typeof id === "string") {
+            mutate({ contactId: id });
+        }
+    };
     return (
         <>
             <Breadcrumb
@@ -56,9 +66,10 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title
                             icon={
-                                <IconButton
-                                    title="Edit"
-                                    icon={PencilIcon}
+                                <Button
+                                    actionIcon="edit"
+                                    variant="text"
+                                    iconSize="md"
                                     onClick={() =>
                                         setModal({
                                             state: true,
@@ -68,7 +79,10 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
                                             form: "generalInfo",
                                         })
                                     }
-                                />
+                                    className="ml-2 flex items-center"
+                                >
+                                    Edit
+                                </Button>
                             }
                         >
                             {contact?.name ?? "Contact Details"}
@@ -80,6 +94,7 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
                                 variant="outlined"
                                 type="button"
                                 actionIcon="delete"
+                                onClick={handleDelete}
                             >
                                 Delete
                             </Button>

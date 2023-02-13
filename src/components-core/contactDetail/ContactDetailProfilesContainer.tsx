@@ -135,9 +135,7 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
                                             </div>
                                             {i.notes && (
                                                 <div className="flex items-center  text-gray-500">
-                                                    <span className="truncate">
-                                                        {i.notes}
-                                                    </span>
+                                                    <span>{i.notes}</span>
                                                 </div>
                                             )}
                                         </Card>

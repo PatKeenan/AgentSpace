@@ -1,6 +1,5 @@
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { MinusCircleIcon } from "@heroicons/react/24/outline";
-import { ContactFormTextArea } from "./ContactFormTextArea";
 import { Accordion } from "components-common/Accordion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactFormInput } from "./ContactFormInput";
@@ -193,7 +192,7 @@ export const CreateContactForm = () => {
                     ))}
                 </Accordion>
             </div>
-            <div>
+            {/* <div>
                 <Accordion
                     defaultOpen={true}
                     label="Mailing Address"
@@ -224,7 +223,7 @@ export const CreateContactForm = () => {
                         />
                     </div>
                 </Accordion>
-            </div>
+            </div> */}
             <div className="divide-y divide-gray-200">
                 {subContactFields?.map((_, idx) => (
                     <Accordion

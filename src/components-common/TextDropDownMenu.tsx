@@ -3,6 +3,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { Fragment, SVGProps } from "react";
 import { NextLink } from "./NextLink";
+import Link from "next/link";
 
 type OptionBase = {
     icon?: (
@@ -78,35 +79,36 @@ export function TextDropDownMenu<
                             <Menu.Item key={`${option.id || optionIdx}`}>
                                 {({ active }) => {
                                     return option.href ? (
-                                        <NextLink
-                                            href={option.href}
-                                            className={clsx(
-                                                option.current
-                                                    ? "font-medium text-gray-900"
-                                                    : "text-gray-500",
-                                                active && "bg-gray-100",
-                                                "block px-4 py-2 text-sm"
-                                            )}
-                                        >
-                                            <div className="flex items-center">
-                                                {option.icon &&
-                                                    (!option.iconPosition ||
-                                                        option.iconPosition ==
-                                                            "left") && (
-                                                        <option.icon className="mr-2 h-4 w-4 flex-shrink-0" />
-                                                    )}
-                                                <span>
-                                                    {option[displayField]}
-                                                </span>
-                                                {(option.icon &&
-                                                    !option.iconPosition) ||
-                                                    (option.icon &&
-                                                        option.iconPosition ==
-                                                            "right" && (
-                                                            <option.icon className="ml-2 h-4 w-4 flex-shrink-0 " />
-                                                        ))}
-                                            </div>
-                                        </NextLink>
+                                        <Link href={option.href} passHref>
+                                            <a
+                                                className={clsx(
+                                                    option.current
+                                                        ? "font-medium text-gray-900"
+                                                        : "text-gray-500",
+                                                    active && "bg-gray-100",
+                                                    "block px-4 py-2 text-sm"
+                                                )}
+                                            >
+                                                <div className="flex items-center ">
+                                                    {option.icon &&
+                                                        (!option.iconPosition ||
+                                                            option.iconPosition ==
+                                                                "left") && (
+                                                            <option.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                                                        )}
+                                                    <span>
+                                                        {option[displayField]}
+                                                    </span>
+                                                    {(option.icon &&
+                                                        !option.iconPosition) ||
+                                                        (option.icon &&
+                                                            option.iconPosition ==
+                                                                "right" && (
+                                                                <option.icon className="ml-2 h-4 w-4 flex-shrink-0 " />
+                                                            ))}
+                                                </div>
+                                            </a>
+                                        </Link>
                                     ) : (
                                         <button
                                             className={clsx(
@@ -114,7 +116,7 @@ export function TextDropDownMenu<
                                                     ? "font-medium text-gray-900"
                                                     : "text-gray-500",
                                                 active && "bg-gray-100",
-                                                "block w-full px-4 py-2 text-sm"
+                                                "block w-full px-4 py-2 text-left text-sm"
                                             )}
                                             onClick={
                                                 option.onClick

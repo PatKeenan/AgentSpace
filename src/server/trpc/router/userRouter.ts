@@ -3,6 +3,16 @@ import { z } from "zod";
 import { authedProcedure, t } from "../trpc";
 
 export const userRouter = t.router({
+    getUserInfo: authedProcedure.query(async ({ ctx }) => {
+        return await ctx.prisma.user.findUnique({
+            where: {
+                id: ctx.session.user.id,
+            },
+            select: {
+                name: true,
+            },
+        });
+    }),
     getWorkspaces: authedProcedure.query(async ({ ctx }) => {
         return ctx.prisma.userOnWorkspace.findMany({
             where: {
@@ -25,6 +35,8 @@ export const userRouter = t.router({
                 id: ctx.session.user.id,
             },
             select: {
+                name: true,
+                email: true,
                 workspaceMeta: {
                     include: {
                         workspace: {
@@ -39,6 +51,18 @@ export const userRouter = t.router({
             },
         });
     }),
+    updateName: authedProcedure
+        .input(z.object({ name: z.string().min(2) }))
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.prisma.user.update({
+                where: {
+                    id: ctx.session.user.id,
+                },
+                data: {
+                    name: input.name,
+                },
+            });
+        }),
     setDefaultWorkspace: authedProcedure
         .input(
             z.object({

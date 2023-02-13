@@ -10,11 +10,11 @@ import { SVGProps } from "react";
 import { NextLink } from "./NextLink";
 
 export const variantStyles = {
-    text: "bg-white text-purple-600 hover:text-purple-500 focus:ring-purple-500",
+    text: "bg-white text-indigo-600 hover:text-indigo-500 focus:ring-indigo-500",
     outlined:
-        "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-purple-500 disabled:hover:bg-white disabled:focus:ring-none disabled:cursor-not-allowed disabled:opacity-40",
+        "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-indigo-500 disabled:hover:bg-white disabled:focus:ring-none disabled:cursor-not-allowed disabled:opacity-40",
     primary:
-        "border-transparent bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+        "border-transparent bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 disabled:hover:bg-indigo-600 disabled:focus:ring-none disabled:cursor-not-allowed disabled:opacity-40",
 };
 
 const iconSizeOptions = {

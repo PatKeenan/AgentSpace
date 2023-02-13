@@ -1,132 +1,74 @@
-import { ButtonLink, PageBody, SectionHeading } from "components-common";
+import { Breadcrumb, PageBody, SectionHeading } from "components-common";
 import { useWorkspace } from "hooks/useWorkspace";
 import { classNames } from "utils/classNames";
 import { useSession } from "next-auth/react";
 import { exists } from "utils/helpers";
-import {
-    AcademicCapIcon,
-    BanknotesIcon,
-    CheckBadgeIcon,
-    ClockIcon,
-    ReceiptRefundIcon,
-    UsersIcon,
-} from "@heroicons/react/24/outline";
 
 import type { NextPageExtended } from "types/index";
-
-const actions = [
-    {
-        icon: ClockIcon,
-        name: "Request time off",
-        href: "#",
-        iconForeground: "text-teal-700",
-        iconBackground: "bg-teal-50",
-    },
-    {
-        icon: CheckBadgeIcon,
-        name: "Benefits",
-        href: "#",
-        iconForeground: "text-purple-700",
-        iconBackground: "bg-purple-50",
-    },
-    {
-        icon: UsersIcon,
-        name: "Schedule a one-on-one",
-        href: "#",
-        iconForeground: "text-sky-700",
-        iconBackground: "bg-sky-50",
-    },
-    {
-        icon: BanknotesIcon,
-        name: "Payroll",
-        href: "#",
-        iconForeground: "text-yellow-700",
-        iconBackground: "bg-yellow-50",
-    },
-    {
-        icon: ReceiptRefundIcon,
-        name: "Submit an expense",
-        href: "#",
-        iconForeground: "text-rose-700",
-        iconBackground: "bg-rose-50",
-    },
-    {
-        icon: AcademicCapIcon,
-        name: "Training",
-        href: "#",
-        iconForeground: "text-indigo-700",
-        iconBackground: "bg-indigo-50",
-    },
-];
-const recentHires = [
-    {
-        name: "Leonard Krasner",
-        handle: "leonardkrasner",
-        imageUrl:
-            "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        href: "#",
-    },
-    {
-        name: "Floyd Miles",
-        handle: "floydmiles",
-        imageUrl:
-            "https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        href: "#",
-    },
-    {
-        name: "Emily Selman",
-        handle: "emilyselman",
-        imageUrl:
-            "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        href: "#",
-    },
-    {
-        name: "Kristin Watson",
-        handle: "kristinwatson",
-        imageUrl:
-            "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-        href: "#",
-    },
-];
-const announcements = [
-    {
-        id: 1,
-        title: "Office closed on July 2nd",
-        href: "#",
-        preview:
-            "Cum qui rem deleniti. Suscipit in dolor veritatis sequi aut. Vero ut earum quis deleniti. Ut a sunt eum cum ut repudiandae possimus. Nihil ex tempora neque cum consectetur dolores.",
-    },
-    {
-        id: 2,
-        title: "New password policy",
-        href: "#",
-        preview:
-            "Alias inventore ut autem optio voluptas et repellendus. Facere totam quaerat quam quo laudantium cumque eaque excepturi vel. Accusamus maxime ipsam reprehenderit rerum id repellendus rerum. Culpa cum vel natus. Est sit autem mollitia.",
-    },
-    {
-        id: 3,
-        title: "Office closed on July 2nd",
-        href: "#",
-        preview:
-            "Tenetur libero voluptatem rerum occaecati qui est molestiae exercitationem. Voluptate quisquam iure assumenda consequatur ex et recusandae. Alias consectetur voluptatibus. Accusamus a ab dicta et. Consequatur quis dignissimos voluptatem nisi.",
-    },
-];
+import Link from "next/link";
+import {
+    Cog6ToothIcon,
+    TruckIcon,
+    UserGroupIcon,
+    ViewColumnsIcon,
+} from "@heroicons/react/20/solid";
+import { SidebarList } from "components-core/contactDetail/contact-detail-components/SidebarList";
+import { useAppointments } from "hooks/useAppointments";
+import { format } from "date-fns";
+import clsx from "clsx";
+import {
+    statusColorsLight,
+    statusDisplay,
+} from "components-core/appointments/appointments-utils";
+import { trpc } from "utils/trpc";
 
 export const HomeContainer: NextPageExtended = () => {
     const workspace = useWorkspace();
-    const { data: session } = useSession();
 
+    const { data: user } = trpc.user.getUserInfo.useQuery();
     const { data } = workspace.getDashboard(
         { workspaceId: workspace.id as string },
         { enabled: exists(workspace.id) }
     );
+    const actions = [
+        {
+            icon: UserGroupIcon,
+            name: "Contacts",
+            href: `/workspace/${workspace.id}/contacts`,
+            iconForeground: "text-teal-700",
+            iconBackground: "bg-teal-50",
+        },
+        {
+            icon: TruckIcon,
+            name: "Appointments",
+            href: `/workspace/${workspace.id}/appointments`,
+            iconForeground: "text-purple-700",
+            iconBackground: "bg-purple-50",
+        },
+
+        {
+            icon: ViewColumnsIcon,
+            name: "Tasks",
+            href: `/workspace/${workspace.id}/tasks`,
+            iconForeground: "text-yellow-700",
+            iconBackground: "bg-yellow-50",
+        },
+        {
+            icon: Cog6ToothIcon,
+            name: "Settings",
+            href: `/settings`,
+            iconForeground: "text-sky-700",
+            iconBackground: "bg-sky-50",
+        },
+    ];
+
     return (
         <>
-            <PageBody
-                fullHeight
-                fullWidth
-                extraClassName="max-w-7xl mx-auto px-8"
-            >
+            <Breadcrumb
+                isHome
+                items={[{ title: "Home", href: `/workspace/${workspace.id}` }]}
+            />
+            <PageBody>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
                         <SectionHeading.Title>Dashboard</SectionHeading.Title>
@@ -137,7 +79,10 @@ export const HomeContainer: NextPageExtended = () => {
                     <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                         <div className="grid grid-cols-1 gap-4 lg:col-span-2">
                             <section aria-labelledby="dashboard-overview-title">
-                                <div className="overflow-hidden rounded-lg bg-white shadow">
+                                <div
+                                    className="relative overflow-hidden rounded-md border border-gray-200  bg-white 
+                                shadow "
+                                >
                                     <h2
                                         className="sr-only"
                                         id="dashboard-overview-title"
@@ -151,8 +96,7 @@ export const HomeContainer: NextPageExtended = () => {
                                                     Welcome,
                                                 </p>
                                                 <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                                                    {session?.user?.name ??
-                                                        "User"}
+                                                    {user?.name ?? "User"}
                                                 </p>
                                             </div>
                                         </div>
@@ -176,17 +120,20 @@ export const HomeContainer: NextPageExtended = () => {
                                         </div>
                                         <div className="px-6 py-5 text-center text-sm font-medium">
                                             <span className="text-gray-900">
-                                                0
+                                                {data?._count.tasks}
                                             </span>{" "}
                                             <span className="text-gray-600">
-                                                Projects
+                                                Tasks
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </section>
                             <section aria-labelledby="quick-links-title">
-                                <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-gray-200 shadow sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0">
+                                <div
+                                    className="divide-y divide-gray-200 overflow-hidden rounded-md border border-gray-200 bg-gray-200 shadow  sm:grid sm:grid-cols-2  sm:gap-px 
+                                sm:divide-y-0 "
+                                >
                                     <h2
                                         className="sr-only"
                                         id="quick-links-title"
@@ -209,7 +156,7 @@ export const HomeContainer: NextPageExtended = () => {
                                                 actionIdx === actions.length - 1
                                                     ? "rounded-bl-lg rounded-br-lg sm:rounded-bl-none"
                                                     : "",
-                                                "group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-cyan-500"
+                                                "group relative bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 "
                                             )}
                                         >
                                             <div>
@@ -228,17 +175,19 @@ export const HomeContainer: NextPageExtended = () => {
                                             </div>
                                             <div className="mt-8">
                                                 <h3 className="text-lg font-medium">
-                                                    <a
+                                                    <Link
                                                         href={action.href}
-                                                        className="focus:outline-none"
+                                                        passHref
                                                     >
-                                                        {/* Extend touch target to entire panel */}
-                                                        <span
-                                                            className="absolute inset-0"
-                                                            aria-hidden="true"
-                                                        />
-                                                        {action.name}
-                                                    </a>
+                                                        <a className="focus:outline-none">
+                                                            {/* Extend touch target to entire panel */}
+                                                            <span
+                                                                className="absolute inset-0"
+                                                                aria-hidden="true"
+                                                            />
+                                                            {action.name}
+                                                        </a>
+                                                    </Link>
                                                 </h3>
                                                 <p className="mt-2 text-sm text-gray-500">
                                                     Doloribus dolores nostrum
@@ -269,132 +218,70 @@ export const HomeContainer: NextPageExtended = () => {
                     </div>
                     {/* Right side */}
                     <div className="grid grid-cols-1 gap-4">
-                        {/* Announcements */}
-                        <section aria-labelledby="announcements-title">
-                            <div className="overflow-hidden rounded-lg bg-white shadow">
-                                <div className="p-6">
-                                    <h2
-                                        className="text-base font-medium text-gray-900"
-                                        id="announcements-title"
+                        <SidebarList
+                            title="Upcoming Appointments"
+                            data={data?.appointments}
+                            href={`/workspace/${workspace.id}/appointments`}
+                            renderItem={(i) => {
+                                const rawDate = new Date(i.date);
+                                const formattedDate = format(
+                                    new Date(
+                                        rawDate.getUTCFullYear(),
+                                        rawDate.getUTCMonth(),
+                                        rawDate.getUTCDate()
+                                    ),
+                                    "MM/dd/yyyy"
+                                );
+                                return (
+                                    <Link
+                                        href={`/workspace/${workspace.id}/appointments/${i.id}`}
+                                        passHref
                                     >
-                                        Notifications
-                                    </h2>
-                                    <div className="mt-6 flow-root">
-                                        <ul
-                                            role="list"
-                                            className="-my-5 divide-y divide-gray-200"
-                                        >
-                                            {announcements.map(
-                                                (announcement) => (
-                                                    <li
-                                                        key={announcement.id}
-                                                        className="py-5"
+                                        <a>
+                                            <div className="relative focus-within:ring-2 focus-within:ring-cyan-500 hover:underline">
+                                                <h3 className="text-sm font-semibold text-gray-800">
+                                                    {formattedDate}
+                                                    <span
+                                                        className={clsx(
+                                                            i.status &&
+                                                                statusColorsLight[
+                                                                    i.status
+                                                                ],
+                                                            "capitalize",
+                                                            "top-0 right-0 rounded-md px-2 py-1 text-xs md:absolute"
+                                                        )}
                                                     >
-                                                        <div className="relative focus-within:ring-2 focus-within:ring-cyan-500">
-                                                            <h3 className="text-sm font-semibold text-gray-800">
-                                                                <a
-                                                                    href={
-                                                                        announcement.href
-                                                                    }
-                                                                    className="hover:underline focus:outline-none"
-                                                                >
-                                                                    {/* Extend touch target to entire panel */}
-                                                                    <span
-                                                                        className="absolute inset-0"
-                                                                        aria-hidden="true"
-                                                                    />
-                                                                    {
-                                                                        announcement.title
-                                                                    }
-                                                                </a>
-                                                            </h3>
-                                                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                                                                {
-                                                                    announcement.preview
-                                                                }
-                                                            </p>
-                                                        </div>
-                                                    </li>
-                                                )
-                                            )}
-                                        </ul>
-                                    </div>
-                                    <div className="mt-6">
-                                        <a
-                                            href="#"
-                                            className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-                                        >
-                                            View all
+                                                        {statusDisplay(
+                                                            i.status
+                                                        )}
+                                                    </span>
+                                                </h3>
+                                                <p className="mt-3 text-sm text-gray-600 line-clamp-2">
+                                                    {i.address}
+                                                </p>
+                                            </div>
                                         </a>
-                                    </div>
+                                    </Link>
+                                );
+                            }}
+                        />
+                        <SidebarList
+                            title="Tasks"
+                            data={data?.tasks}
+                            href={`/workspace/${workspace.id}/tasks`}
+                            renderItem={(i) => (
+                                <div key={i.id} className="relative">
+                                    <p className=" text-sm font-medium capitalize text-gray-800">
+                                        {i.status
+                                            .toLowerCase()
+                                            .replace("_", " ")}
+                                    </p>
+                                    <p className="text-sm text-gray-600 line-clamp-2">
+                                        {i.task}
+                                    </p>
                                 </div>
-                            </div>
-                        </section>
-                        <section aria-labelledby="recent-hires-title">
-                            <div className="overflow-hidden rounded-lg bg-white shadow">
-                                <div className="p-6">
-                                    <h2
-                                        className="text-base font-medium text-gray-900"
-                                        id="recent-hires-title"
-                                    >
-                                        Tasks
-                                    </h2>
-                                    <div className="mt-6 flow-root">
-                                        <ul
-                                            role="list"
-                                            className="-my-5 divide-y divide-gray-200"
-                                        >
-                                            {recentHires.map((person) => (
-                                                <li
-                                                    key={person.handle}
-                                                    className="py-4"
-                                                >
-                                                    <div className="flex items-center space-x-4">
-                                                        <div className="flex-shrink-0">
-                                                            <img
-                                                                className="h-8 w-8 rounded-full"
-                                                                src={
-                                                                    person.imageUrl
-                                                                }
-                                                                alt=""
-                                                            />
-                                                        </div>
-                                                        <div className="min-w-0 flex-1">
-                                                            <p className="truncate text-sm font-medium text-gray-900">
-                                                                {person.name}
-                                                            </p>
-                                                            <p className="truncate text-sm text-gray-500">
-                                                                {"@" +
-                                                                    person.handle}
-                                                            </p>
-                                                        </div>
-                                                        <div>
-                                                            <a
-                                                                href={
-                                                                    person.href
-                                                                }
-                                                                className="inline-flex items-center rounded-full border border-gray-300 bg-white px-2.5 py-0.5 text-sm font-medium leading-5 text-gray-700 shadow-sm hover:bg-gray-50"
-                                                            >
-                                                                View
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className="mt-6">
-                                        <ButtonLink
-                                            variant="outlined"
-                                            href="#"
-                                            className="w-full justify-center"
-                                        >
-                                            View all
-                                        </ButtonLink>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+                            )}
+                        />
                     </div>
                 </div>
             </PageBody>

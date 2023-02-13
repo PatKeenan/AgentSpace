@@ -11,7 +11,7 @@ import { useWorkspace } from "hooks/useWorkspace";
 import { trpc } from "utils/trpc";
 
 export type KabanColumnType = {
-    display: "Todo" | "In Progress" | "Done";
+    display: "To Do" | "In Progress" | "Done";
     taskStoreState: keyof TaskStoreState;
     status: TASK_STATUS;
 };

@@ -56,6 +56,7 @@ const AppointmentsMap = dynamic(
 
 export const AppointmentDetailContainer = () => {
     const [modalOpen, setModalOpen] = React.useState(false);
+    const [showMap, setShowMap] = React.useState(false);
     const { setCallback } = useAppointmentFormStore();
     const router = useRouter();
 

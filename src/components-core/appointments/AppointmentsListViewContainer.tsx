@@ -4,6 +4,7 @@ import {
     TextDropDownMenu,
     Tag,
     NoData,
+    Loading,
 } from "components-common";
 import { Dialog, Disclosure, Transition } from "@headlessui/react";
 import { useAppointments } from "hooks/useAppointments";
@@ -220,234 +221,228 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
 
     return (
         <AppointmentsNestedLayout activeTab="View All">
-            {!isLoading && isEmpty(appointments) ? (
-                <NoData
-                    icon={TruckIcon}
-                    className="h-[60vh]"
-                    title="No Appointments"
-                    message="Start by adding an appointment."
-                />
-            ) : (
-                <>
-                    <Transition.Root
-                        show={mobileFiltersOpen}
+            <Transition.Root show={mobileFiltersOpen} as={React.Fragment}>
+                <Dialog
+                    as="div"
+                    className="relative z-40"
+                    onClose={setMobileFiltersOpen}
+                >
+                    <Transition.Child
                         as={React.Fragment}
+                        enter="transition-opacity ease-linear duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-linear duration-300"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
                     >
-                        <Dialog
-                            as="div"
-                            className="relative z-40"
-                            onClose={setMobileFiltersOpen}
+                        <div className=" fixed inset-0 top-0 bg-black bg-opacity-25" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 z-40 flex">
+                        <Transition.Child
+                            as={React.Fragment}
+                            enter="transition ease-in-out duration-300 transform"
+                            enterFrom="translate-x-full"
+                            enterTo="translate-x-0"
+                            leave="transition ease-in-out duration-300 transform"
+                            leaveFrom="translate-x-0"
+                            leaveTo="translate-x-full"
                         >
-                            <Transition.Child
-                                as={React.Fragment}
-                                enter="transition-opacity ease-linear duration-300"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="transition-opacity ease-linear duration-300"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                            >
-                                <div className=" fixed inset-0 top-0 bg-black bg-opacity-25" />
-                            </Transition.Child>
-                            <div className="fixed inset-0 z-40 flex">
-                                <Transition.Child
-                                    as={React.Fragment}
-                                    enter="transition ease-in-out duration-300 transform"
-                                    enterFrom="translate-x-full"
-                                    enterTo="translate-x-0"
-                                    leave="transition ease-in-out duration-300 transform"
-                                    leaveFrom="translate-x-0"
-                                    leaveTo="translate-x-full"
-                                >
-                                    <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-6 shadow-xl md:max-w-lg">
-                                        <div className="flex items-center justify-between px-4">
-                                            <h2 className="text-lg font-medium text-gray-900">
-                                                Sort & Filter Options
-                                            </h2>
-                                            <button
-                                                type="button"
-                                                className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
-                                                onClick={() =>
-                                                    setMobileFiltersOpen(false)
-                                                }
-                                            >
-                                                <span className="sr-only">
-                                                    Close menu
-                                                </span>
-                                                <XMarkIcon
-                                                    className="h-6 w-6"
-                                                    aria-hidden="true"
-                                                />
-                                            </button>
-                                        </div>
-                                        {/* Filters */}
-                                        <div>
-                                            {filters.map((section) => (
-                                                <Disclosure
-                                                    as="div"
-                                                    className="border-t border-gray-200 pt-4 pb-4"
-                                                    key={section.name}
-                                                    defaultOpen={true}
-                                                >
-                                                    {({ open }) => (
-                                                        <fieldset>
-                                                            <legend className="w-full px-2">
-                                                                <Disclosure.Button className="flex w-full items-center justify-between p-2 text-gray-400 hover:text-gray-500">
-                                                                    <span className="text-sm font-medium text-gray-900">
-                                                                        {
-                                                                            section.label
-                                                                        }
-                                                                    </span>
-                                                                    <span className="ml-6 flex h-7 items-center">
-                                                                        <ChevronDownIcon
-                                                                            className={clsx(
-                                                                                open
-                                                                                    ? "-rotate-180"
-                                                                                    : "rotate-0",
-                                                                                "h-5 w-5 transform"
-                                                                            )}
-                                                                            aria-hidden="true"
-                                                                        />
-                                                                    </span>
-                                                                </Disclosure.Button>
-                                                            </legend>
-                                                            <Disclosure.Panel className="px-4 pt-4 pb-2">
-                                                                <div className="space-y-6">
-                                                                    {section.options.map(
-                                                                        (
-                                                                            option,
-                                                                            optionIdx
-                                                                        ) => (
-                                                                            <div
-                                                                                key={
-                                                                                    option.value
-                                                                                }
-                                                                                className="flex items-center"
-                                                                            >
-                                                                                <input
-                                                                                    id={`${section.name}-${optionIdx}-mobile`}
-                                                                                    name={
-                                                                                        section.name
-                                                                                    }
-                                                                                    onChange={() =>
-                                                                                        setQueryParamsState(
-                                                                                            section.name ==
-                                                                                                "statusFilters"
-                                                                                                ? {
-                                                                                                      page: 1,
-                                                                                                      statusFilters:
-                                                                                                          {
-                                                                                                              ...queryParamsState.statusFilters,
-                                                                                                              [option.value]:
-                                                                                                                  !queryParamsState
-                                                                                                                      .statusFilters[
-                                                                                                                      option.value as AppointmentStatus
-                                                                                                                  ],
-                                                                                                          },
-                                                                                                  }
-                                                                                                : {
-                                                                                                      page: 1,
-                                                                                                      [section.name]:
-                                                                                                          option.value,
-                                                                                                  }
-                                                                                        )
-                                                                                    }
-                                                                                    checked={
-                                                                                        option.current
-                                                                                    }
-                                                                                    type="checkbox"
-                                                                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                                                />
-                                                                                <label
-                                                                                    htmlFor={`${section.name}-${optionIdx}-mobile`}
-                                                                                    className="ml-3 text-sm capitalize text-gray-700"
-                                                                                >
-                                                                                    {
-                                                                                        option.label
-                                                                                    }
-                                                                                </label>
-                                                                            </div>
-                                                                        )
-                                                                    )}
-                                                                </div>
-                                                            </Disclosure.Panel>
-                                                        </fieldset>
-                                                    )}
-                                                </Disclosure>
-                                            ))}
-                                        </div>
-                                    </Dialog.Panel>
-                                </Transition.Child>
-                            </div>
-                        </Dialog>
-                    </Transition.Root>
-                    <div className="px-2">
-                        {/* Search */}
-                        <div className="my-4 flex w-full items-center">
-                            <div className="flex flex-grow">
-                                <label htmlFor="search" className="sr-only">
-                                    Search
-                                </label>
-                                <div className=" relative flex w-full max-w-md flex-grow items-center rounded-md border border-gray-300 text-gray-700 shadow focus-within:text-gray-600">
-                                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                        <MagnifyingGlassIcon
-                                            className="h-5 w-5"
-                                            aria-hidden="true"
-                                        />
-                                    </div>
-                                    <input
-                                        id="search"
-                                        className="flex flex-grow rounded-md border border-transparent bg-white bg-opacity-20 py-2 pl-10 pr-3 leading-5 text-gray-900 placeholder-gray-400 focus:border-transparent focus:bg-opacity-100 focus:placeholder-gray-500 focus:outline-none focus:ring-0 sm:text-sm"
-                                        placeholder="Search"
-                                        name="search"
-                                        autoComplete="off"
-                                        value={searchQuery.state}
-                                        onChange={(e) => {
-                                            setQueryParamsState({ page: 1 });
-                                            searchQuery.setState(
-                                                e.target.value
-                                            );
-                                        }}
-                                    />
-                                    <div className="absolute right-3">
-                                        <TextDropDownMenu
-                                            title={queryParamsState.searchBy}
-                                            options={searchByOptions}
-                                            displayField="name"
-                                            menuPosition="left"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="ml-4 flex items-center">
+                            <Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 pb-6 shadow-xl md:max-w-lg">
+                                <div className="flex items-center justify-between px-4">
+                                    <h2 className="text-lg font-medium text-gray-900">
+                                        Sort & Filter Options
+                                    </h2>
                                     <button
-                                        className="inline-flex items-center justify-center rounded-md border border-transparent px-2 py-1 text-sm text-gray-700  hover:border-gray-300"
+                                        type="button"
+                                        className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
                                         onClick={() =>
-                                            setMobileFiltersOpen(
-                                                !mobileFiltersOpen
-                                            )
+                                            setMobileFiltersOpen(false)
                                         }
                                     >
-                                        <span>Filter</span>
-                                        <FunnelIcon
-                                            className="ml-2 h-5 w-5 "
+                                        <span className="sr-only">
+                                            Close menu
+                                        </span>
+                                        <XMarkIcon
+                                            className="h-6 w-6"
                                             aria-hidden="true"
                                         />
                                     </button>
-                                    <div className="ml-4 flex">
-                                        {showResetButton && (
-                                            <Button
-                                                variant="text"
-                                                className="my-auto text-xs"
-                                                onClick={handleResetSort}
-                                            >
-                                                (Reset)
-                                            </Button>
-                                        )}
-                                    </div>
                                 </div>
+                                {/* Filters */}
+                                <div>
+                                    {filters.map((section) => (
+                                        <Disclosure
+                                            as="div"
+                                            className="border-t border-gray-200 pt-4 pb-4"
+                                            key={section.name}
+                                            defaultOpen={true}
+                                        >
+                                            {({ open }) => (
+                                                <fieldset>
+                                                    <legend className="w-full px-2">
+                                                        <Disclosure.Button className="flex w-full items-center justify-between p-2 text-gray-400 hover:text-gray-500">
+                                                            <span className="text-sm font-medium text-gray-900">
+                                                                {section.label}
+                                                            </span>
+                                                            <span className="ml-6 flex h-7 items-center">
+                                                                <ChevronDownIcon
+                                                                    className={clsx(
+                                                                        open
+                                                                            ? "-rotate-180"
+                                                                            : "rotate-0",
+                                                                        "h-5 w-5 transform"
+                                                                    )}
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </span>
+                                                        </Disclosure.Button>
+                                                    </legend>
+                                                    <Disclosure.Panel className="px-4 pt-4 pb-2">
+                                                        <div className="space-y-6">
+                                                            {section.options.map(
+                                                                (
+                                                                    option,
+                                                                    optionIdx
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            option.value
+                                                                        }
+                                                                        className="flex items-center"
+                                                                    >
+                                                                        <input
+                                                                            id={`${section.name}-${optionIdx}-mobile`}
+                                                                            name={
+                                                                                section.name
+                                                                            }
+                                                                            onChange={() =>
+                                                                                setQueryParamsState(
+                                                                                    section.name ==
+                                                                                        "statusFilters"
+                                                                                        ? {
+                                                                                              page: 1,
+                                                                                              statusFilters:
+                                                                                                  {
+                                                                                                      ...queryParamsState.statusFilters,
+                                                                                                      [option.value]:
+                                                                                                          !queryParamsState
+                                                                                                              .statusFilters[
+                                                                                                              option.value as AppointmentStatus
+                                                                                                          ],
+                                                                                                  },
+                                                                                          }
+                                                                                        : {
+                                                                                              page: 1,
+                                                                                              [section.name]:
+                                                                                                  option.value,
+                                                                                          }
+                                                                                )
+                                                                            }
+                                                                            checked={
+                                                                                option.current
+                                                                            }
+                                                                            type="checkbox"
+                                                                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                                        />
+                                                                        <label
+                                                                            htmlFor={`${section.name}-${optionIdx}-mobile`}
+                                                                            className="ml-3 text-sm capitalize text-gray-700"
+                                                                        >
+                                                                            {
+                                                                                option.label
+                                                                            }
+                                                                        </label>
+                                                                    </div>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </Disclosure.Panel>
+                                                </fieldset>
+                                            )}
+                                        </Disclosure>
+                                    ))}
+                                </div>
+                            </Dialog.Panel>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition.Root>
+            <div className="px-2">
+                {/* Search */}
+                <div className="my-4 flex w-full items-center">
+                    <div className="flex flex-grow">
+                        <label htmlFor="search" className="sr-only">
+                            Search
+                        </label>
+                        <div className=" relative flex w-full max-w-md flex-grow items-center rounded-md border border-gray-300 text-gray-700 shadow focus-within:text-gray-600">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <MagnifyingGlassIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                />
+                            </div>
+                            <input
+                                id="search"
+                                className="flex flex-grow rounded-md border border-transparent bg-white bg-opacity-20 py-2 pl-10 pr-3 leading-5 text-gray-900 placeholder-gray-400 focus:border-transparent focus:bg-opacity-100 focus:placeholder-gray-500 focus:outline-none focus:ring-0 sm:text-sm"
+                                placeholder="Search"
+                                name="search"
+                                autoComplete="off"
+                                value={searchQuery.state}
+                                onChange={(e) => {
+                                    setQueryParamsState({ page: 1 });
+                                    searchQuery.setState(e.target.value);
+                                }}
+                            />
+                            <div className="absolute right-3">
+                                <TextDropDownMenu
+                                    title={queryParamsState.searchBy}
+                                    options={searchByOptions}
+                                    displayField="name"
+                                    menuPosition="left"
+                                />
                             </div>
                         </div>
-
+                        <div className="ml-4 flex items-center">
+                            <button
+                                className="inline-flex items-center justify-center rounded-md border border-transparent px-2 py-1 text-sm text-gray-700  hover:border-gray-300"
+                                onClick={() =>
+                                    setMobileFiltersOpen(!mobileFiltersOpen)
+                                }
+                            >
+                                <span>Filter</span>
+                                <FunnelIcon
+                                    className="ml-2 h-5 w-5 "
+                                    aria-hidden="true"
+                                />
+                            </button>
+                            <div className="ml-4 flex">
+                                {showResetButton && (
+                                    <Button
+                                        variant="text"
+                                        className="my-auto text-xs"
+                                        onClick={handleResetSort}
+                                    >
+                                        (Reset)
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {isLoading ? (
+                    <div className="h-[70vh] flex-grow">
+                        <Loading />
+                    </div>
+                ) : isEmpty(appointments) ? (
+                    <NoData
+                        icon={TruckIcon}
+                        className="h-[60vh]"
+                        title="No Appointments"
+                        message="Start by adding an appointment."
+                    />
+                ) : (
+                    <>
                         <ul className="block w-full space-y-2 pb-4 md:hidden">
                             {appointments?.map((i) => (
                                 <li key={i.id} className="">
@@ -575,9 +570,9 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                             itemsPerPage={queryParamsState.take || 10}
                             currentResultsLength={appointments.length}
                         />
-                    </div>
-                </>
-            )}
+                    </>
+                )}
+            </div>
         </AppointmentsNestedLayout>
     );
 };

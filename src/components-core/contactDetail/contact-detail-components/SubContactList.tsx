@@ -10,7 +10,6 @@ import { GridCard } from "./GridCard";
 
 import type { SubContact } from "@prisma/client";
 import { trpc } from "utils/trpc";
-import { NoData } from "components-common/NoData";
 
 export const SubContactList = ({
     subContacts,

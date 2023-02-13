@@ -40,19 +40,23 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
 
     const invalidate = React.useCallback(
         (date?: Date) => {
+            utils.appointment.getIndicators.invalidate({
+                workspaceId: workspace.id as string,
+                date: formatDate(activeMonth, "YYYY-MM"),
+            });
             utils.appointment.getByDate.invalidate({
                 date: dateUtils.transform(date || selectedDate).isoDateOnly,
                 workspaceId: workspace.id as string,
             });
         },
-        [selectedDate, utils.appointment.getByDate, workspace.id]
+        [
+            activeMonth,
+            selectedDate,
+            utils.appointment.getByDate,
+            utils.appointment.getIndicators,
+            workspace.id,
+        ]
     );
-
-    // Set the callback for the appointment form when the selected date changes
-    React.useEffect(() => {
-        setCallback(invalidate);
-        return () => setCallback(undefined);
-    }, [selectedDate]);
 
     const appointmentsQuery = appointments.getByDate(
         {
@@ -96,12 +100,15 @@ export const AppointmentsMapViewContainer: NextPageExtended = () => {
     }, [appointmentsQuery]);
 
     React.useEffect(() => {
+        setCallback(invalidate);
         setModal({
             ...modal,
             selectedDate: dateUtils.transform(selectedDate).isoDateOnly,
         });
-        return () =>
+        return () => {
+            setCallback(undefined);
             setModal({ selectedDate: undefined, defaultData: undefined });
+        };
     }, [selectedDate, modal.state]);
 
     return (

@@ -23,7 +23,7 @@ export const Kanban = ({ tasks }: { tasks?: Task[] | [] }) => {
                 <KabanColumn
                     tasks={todos}
                     column={{
-                        display: "Todo",
+                        display: "To Do",
                         status: "TO_DO",
                         taskStoreState: "TO_DO",
                     }}

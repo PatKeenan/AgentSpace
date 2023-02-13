@@ -76,7 +76,7 @@ export const Tabs = (props: TabProps) => {
                         {tabs.map((tab, idx) => {
                             const sharedContainerStyles = clsx(
                                 idx == active
-                                    ? "border-purple-500 text-purple-600"
+                                    ? "border-indigo-500 text-indigo-600"
                                     : "border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700",
                                 "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                             );
@@ -93,7 +93,7 @@ export const Tabs = (props: TabProps) => {
                                         <span
                                             className={clsx(
                                                 idx == active
-                                                    ? "bg-purple-100 text-purple-600"
+                                                    ? "bg-indigo-100 text-indigo-600"
                                                     : "bg-gray-100 text-gray-900",
                                                 "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                                             )}
@@ -113,7 +113,7 @@ export const Tabs = (props: TabProps) => {
                                         <span
                                             className={clsx(
                                                 idx == active
-                                                    ? "bg-purple-100 text-purple-600"
+                                                    ? "bg-indigo-100 text-indigo-600"
                                                     : "bg-gray-100 text-gray-900",
                                                 "ml-2 hidden rounded-full py-0.5 px-2.5 text-xs font-medium md:inline-block"
                                             )}

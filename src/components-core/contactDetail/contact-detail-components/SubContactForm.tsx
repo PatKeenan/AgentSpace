@@ -12,6 +12,7 @@ import * as React from "react";
 
 import type { FormSections } from "types/index";
 import type { ContactSingletonType } from "lib/ContactSingleton";
+import { trpc } from "utils/trpc";
 
 const { contactFormFields, subContactSchema } = ContactSingleton;
 const { firstName, lastName, email, phoneNumber } = contactFormFields;
@@ -39,10 +40,10 @@ export default function SubContactForm() {
 
     const {
         update: updateSubContact,
-        utils,
+
         create: createSubContact,
     } = useSubContacts();
-
+    const utils = trpc.useContext();
     const { id } = useWorkspace();
 
     const { mutate: updateSubContactMutation } = updateSubContact();
@@ -71,10 +72,8 @@ export default function SubContactForm() {
                 },
                 {
                     onSuccess: (data) => {
-                        utils.getAllForContact
-                            .invalidate({
-                                contactId: data.contactId,
-                            })
+                        utils.contacts.getOne
+                            .invalidate({ id: data.contactId })
                             .then(() => resetModal());
                     },
                 }
@@ -85,12 +84,11 @@ export default function SubContactForm() {
             createSubContactMutation(
                 { ...data, contactId: router.query.contactId as string },
                 {
-                    onSuccess: (data) =>
-                        utils.getAllForContact
-                            .invalidate({
-                                contactId: data.contactId,
-                            })
-                            .then(() => resetModal()),
+                    onSuccess: (data) => {
+                        utils.contacts.getOne
+                            .invalidate({ id: data.contactId })
+                            .then(() => resetModal());
+                    },
                 }
             );
         }

@@ -8,13 +8,7 @@ export const useTasks = () => {
         update: task.update.useMutation,
         updateManyTasks: task.updateManyTasks.useMutation,
         updateStatusOrOrder: task.updateStatusOrOrder.useMutation,
-        delete:
-            process.env.NODE_ENV == "development"
-                ? task.deleteHard.useMutation
-                : task.deleteSoft.useMutation,
-        deleteMany:
-            process.env.NODE_ENV == "development"
-                ? task.deleteManyHard.useMutation
-                : task.deleteManySoft.useMutation,
+        delete: task.deleteHard.useMutation,
+        deleteMany: task.deleteManyHard.useMutation,
     };
 };

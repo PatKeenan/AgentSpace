@@ -15,6 +15,8 @@ import Link from "next/link";
 import { AppointmentSingleton } from "lib";
 import { NewInputGroup } from "components-common/NewInputGroup";
 import { AppointmentFormType } from "./AppointmentForm";
+import { trpc } from "utils/trpc";
+import { dateUtils } from "utils/dateUtils";
 
 const { appointmentFormFields, appointmentStatusOptions } =
     AppointmentSingleton;
@@ -86,15 +88,17 @@ export const MapViewAppointmentCard = (props: {
             defaultData: defaultModalData,
         });
     };
+    const utils = trpc.useContext();
 
-    const { mutate } = deleteHard();
+    const { mutate } = deleteHard({
+        onSuccess: () => {
+            invalidate?.();
+        },
+    });
     const { mutate: update } = quickUpdate();
 
     const handleDelete = () => {
-        mutate(
-            { appointmentId: appointment.id },
-            { onSuccess: invalidate ? () => invalidate() : undefined }
-        );
+        mutate({ appointmentId: appointment.id });
     };
 
     const handleChangeStatus = (i: typeof appointmentStatusOptions[number]) => {
@@ -182,6 +186,10 @@ export const MapViewAppointmentCard = (props: {
                                 {
                                     text: "Edit",
                                     onClick: handleEdit,
+                                },
+                                {
+                                    text: "View",
+                                    href: `/workspace/${appointment.workspaceId}/appointments/${appointment.id}`,
                                 },
                                 {
                                     text: (

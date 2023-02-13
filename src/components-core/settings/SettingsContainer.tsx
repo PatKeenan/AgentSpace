@@ -1,66 +1,21 @@
 import { Tabs, PageBody, Breadcrumb, SectionHeading } from "components-common";
 import { useSettingsUI } from "./useSettingsUI";
-import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
 import type { NextPageExtended } from "types/index";
 import { SubRouter } from "components-common/SubRouter";
-
-const SettingsGeneral = dynamic(
-    () => import("./settings-components/SettingsGeneral"),
-    {
-        suspense: true,
-    }
-);
-const SettingsBilling = dynamic(
-    () => import("./settings-components/SettingsBilling"),
-    {
-        suspense: true,
-    }
-);
-const SettingsNotifications = dynamic(
-    () => import("./settings-components/SettingsNotifications"),
-    {
-        suspense: true,
-    }
-);
-const SettingsPassword = dynamic(
-    () => import("./settings-components/SettingsPassword"),
-    {
-        suspense: true,
-    }
-);
-const SettingsPlan = dynamic(
-    () => import("./settings-components/SettingsPlan"),
-    {
-        suspense: true,
-    }
-);
-const SettingsWorkspaces = dynamic(
-    () => import("./settings-components/SettingsWorkspaces"),
-    {
-        suspense: true,
-    }
-);
+import { SettingsGeneral } from "./settings-components";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 export const SettingsContainer: NextPageExtended = () => {
     const { activeTab, setActiveTab } = useSettingsUI();
 
     const settingsTabs: { title: typeof activeTab; count?: string }[] = [
-        /*         { title: "General" },
-                { title: "Password" },
-        { title: "Notifications" },
-        { title: "Billing" },
-        { title: "Plan" }, */
-        { title: "Workspaces" },
+        { title: "General" },
     ];
 
     const handleTabClick = (tabName: string) => {
         setActiveTab(tabName as typeof activeTab);
-    };
-
-    const isActive = (tab: typeof activeTab) => {
-        return activeTab == tab;
     };
 
     return (
@@ -81,28 +36,14 @@ export const SettingsContainer: NextPageExtended = () => {
                     />
 
                     <div className="mt-10 divide-y divide-gray-200">
-                        <Suspense fallback={"Loading..."}>
-                            <SubRouter
-                                component={<SettingsWorkspaces />}
-                                active={isActive("Workspaces")}
-                            />
-                            <SubRouter
-                                component={<SettingsGeneral />}
-                                active={isActive("General")}
-                            />
-                            <SubRouter
-                                component={<SettingsPassword />}
-                                active={isActive("Password")}
-                            />
-                            <SubRouter
-                                component={<SettingsNotifications />}
-                                active={isActive("Notifications")}
-                            />
-                            <SubRouter
-                                component={<SettingsNotifications />}
-                                active={isActive("Plan")}
-                            />
-                        </Suspense>
+                        <ErrorBoundary>
+                            <Suspense fallback={"Loading..."}>
+                                <SubRouter
+                                    component={<SettingsGeneral />}
+                                    active={true}
+                                />
+                            </Suspense>
+                        </ErrorBoundary>
                     </div>
                 </div>
             </PageBody>

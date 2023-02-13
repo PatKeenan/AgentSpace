@@ -11,12 +11,13 @@ import {
     TruckIcon,
     ViewColumnsIcon,
     QuestionMarkCircleIcon,
+    EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 
 import {
     ArrowLeftOnRectangleIcon,
     Cog6ToothIcon,
-    MagnifyingGlassIcon,
+    CurrencyDollarIcon,
 } from "@heroicons/react/20/solid";
 
 import * as React from "react";
@@ -60,11 +61,6 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
             href: `/workspace/${workspace.id}/appointments`,
             icon: TruckIcon,
         },
-        /*             {
-            name: "Projects",
-            href: `/workspace/${workspace.id}/projects`,
-            icon: RectangleGroupIcon,
-        }, */
         {
             name: "Tasks",
             href: `/workspace/${workspace.id}/tasks`,
@@ -74,7 +70,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
 
     const subNavigation = [
         { name: "Settings", href: "/settings", icon: Cog6ToothIcon },
-        { name: "Help", href: "/help", icon: QuestionMarkCircleIcon },
+        /*  { name: "Help", href: "/help", icon: QuestionMarkCircleIcon }, */
         {
             name: "Logout",
             href: "/api/auth/signout",
@@ -148,19 +144,16 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             </button>
                                         </div>
                                     </Transition.Child>
-                                    {/* <div className="flex flex-shrink-0 items-center px-4">
-                                        <img
-                                            className="h-8 w-auto"
-                                            src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
-                                            alt="Your Company"
-                                        />
-                                    </div> */}
+
                                     <div className="mt-5 flex h-full flex-1 flex-grow flex-col overflow-y-auto">
                                         <nav className="flex-shrink-0 px-2">
                                             <div className="space-y-1">
                                                 {navigation.map((item) => {
+                                                    const route =
+                                                        router.pathname;
+
                                                     const isActive =
-                                                        router.pathname.startsWith(
+                                                        route.startsWith(
                                                             `/workspace/[workspaceId]/${item.name.toLowerCase()}`
                                                         );
                                                     return (
@@ -253,35 +246,16 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                     <div className="flex flex-shrink-0 items-center px-6">
                         <img
                             className="h-8 w-auto"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
-                            alt="Your Company"
+                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                            alt="ReApp"
                         />
+                        <h4 className="ml-4 text-xl font-semibold text-gray-600">
+                            Re
+                            <span className=" text-indigo-600">App</span>
+                        </h4>
                     </div>
                     {/* Sidebar component, swap this element with another sidebar if you like */}
                     <div className="mt-6 flex h-0 flex-1 flex-grow flex-col overflow-y-auto">
-                        {/* <div className="mt-5 px-3">
-                            <label htmlFor="search" className="sr-only">
-                                Search
-                            </label>
-                            <div className="relative mt-1 rounded-md shadow-sm">
-                                <div
-                                    className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                                    aria-hidden="true"
-                                >
-                                    <MagnifyingGlassIcon
-                                        className="mr-3 h-4 w-4 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                </div>
-                                <input
-                                    type="text"
-                                    name="search"
-                                    id="search"
-                                    className="block w-full rounded-md border-gray-300 pl-9 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    placeholder="Search"
-                                />
-                            </div>
-                        </div> */}
                         {/* Navigation */}
                         <nav className="mt-6 px-3">
                             <div className="space-y-1">
@@ -290,9 +264,12 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                         key={item.name}
                                         href={item.href}
                                         className={clsx(
-                                            router.pathname.startsWith(
-                                                `/workspace/[workspaceId]/${item.name.toLowerCase()}`
-                                            )
+                                            (item.name == "Home" &&
+                                                router.pathname ==
+                                                    "/workspace/[workspaceId]") ||
+                                                router.pathname.startsWith(
+                                                    `/workspace/[workspaceId]/${item.name.toLowerCase()}`
+                                                )
                                                 ? "bg-gray-200 text-gray-900"
                                                 : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
                                             "group flex items-center rounded-md px-2 py-2 text-sm font-medium"
@@ -384,37 +361,6 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                 aria-hidden="true"
                             />
                         </button>
-                        {/* <div className="flex flex-1 justify-between px-4 sm:px-6 lg:px-8">
-                            <div className="flex flex-1">
-                                <form
-                                    className="flex w-full md:ml-0"
-                                    action="#"
-                                    method="GET"
-                                >
-                                    <label
-                                        htmlFor="search-field"
-                                        className="sr-only"
-                                    >
-                                        Search
-                                    </label>
-                                    <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                                            <MagnifyingGlassIcon
-                                                className="h-5 w-5"
-                                                aria-hidden="true"
-                                            />
-                                        </div>
-                                        <input
-                                            id="search-field"
-                                            name="search-field"
-                                            className="block h-full w-full border-transparent py-2 pl-8 pr-3 text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0 sm:text-sm"
-                                            placeholder="Search"
-                                            type="search"
-                                        />
-                                    </div>
-                                </form>
-                            </div>
-                        </div> */}
                     </div>
 
                     <main className="flex-1">{children}</main>

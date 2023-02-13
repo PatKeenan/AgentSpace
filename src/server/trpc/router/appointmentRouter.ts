@@ -5,6 +5,7 @@ import { AppointmentStatus } from "@prisma/client";
 import { authedProcedure, t } from "../trpc";
 import { z } from "zod";
 import { paginationSchema } from "server/schemas/pagination";
+import { dateUtils } from "utils/dateUtils";
 
 const { appointmentSchemas } = AppointmentSingleton;
 

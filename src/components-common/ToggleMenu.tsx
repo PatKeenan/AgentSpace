@@ -7,6 +7,7 @@ import {
     EllipsisHorizontalIcon,
     EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 interface ItemBase {
     text: string | React.ReactNode | React.ReactNode[];
@@ -65,7 +66,7 @@ export function ToggleMenu<T extends GenericToggleItem[]>(
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="py-1">
                         {items.map((item, idx) => (
-                            <Menu.Item key={idx}>
+                            <Menu.Item key={idx} as="div">
                                 {({ active }) => {
                                     const {
                                         extraClasses,
@@ -92,12 +93,11 @@ export function ToggleMenu<T extends GenericToggleItem[]>(
                                             {text}
                                         </button>
                                     ) : href && !onClick ? (
-                                        <NextLink
-                                            href={href}
-                                            className={sharedClasses}
-                                        >
-                                            {text}
-                                        </NextLink>
+                                        <Link href={href} passHref>
+                                            <a className={sharedClasses}>
+                                                {text}
+                                            </a>
+                                        </Link>
                                     ) : (
                                         <>{text}</>
                                     );

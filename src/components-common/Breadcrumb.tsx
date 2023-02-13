@@ -9,12 +9,13 @@ export type BreadcrumbItem = {
 };
 export type BreadcrumbType = {
     items: BreadcrumbItem[];
+    isHome?: boolean;
 };
 
 export const Breadcrumb = (
     props: BreadcrumbType & React.ComponentProps<"nav">
 ) => {
-    const { items, className, ...htmlProps } = props;
+    const { items, className, isHome, ...htmlProps } = props;
 
     const isActiveItem = (item: BreadcrumbItem) => {
         const lastItem = items[items.length - 1];
@@ -38,19 +39,31 @@ export const Breadcrumb = (
             <ol role="list" className="flex items-center space-x-4">
                 <li>
                     <div>
-                        <Link
-                            href={
-                                workspaceId ? `/workspace/${workspaceId}` : "/"
-                            }
-                        >
-                            <a className="text-gray-400 hover:text-gray-500">
+                        {isHome ? (
+                            <div className="text-gray-400">
                                 <HomeIcon
                                     className="h-5 w-5 flex-shrink-0"
                                     aria-hidden="true"
                                 />
                                 <span className="sr-only">Home</span>
-                            </a>
-                        </Link>
+                            </div>
+                        ) : (
+                            <Link
+                                href={
+                                    workspaceId
+                                        ? `/workspace/${workspaceId}`
+                                        : "/"
+                                }
+                            >
+                                <a className="text-gray-400 hover:text-gray-500">
+                                    <HomeIcon
+                                        className="h-5 w-5 flex-shrink-0"
+                                        aria-hidden="true"
+                                    />
+                                    <span className="sr-only">Home</span>
+                                </a>
+                            </Link>
+                        )}
                     </div>
                 </li>
                 {items.map((item, index) => (
