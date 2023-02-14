@@ -1,5 +1,5 @@
+export { reportWebVitals } from "next-axiom";
 import { ErrorBoundary } from "components-core/ErrorBoundary";
-
 import { SessionProvider } from "next-auth/react";
 import { AppProps } from "types/index";
 import { AppType } from "next/app";
