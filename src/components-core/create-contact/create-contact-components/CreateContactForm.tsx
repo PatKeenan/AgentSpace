@@ -181,6 +181,14 @@ export const CreateContactForm = () => {
                                             {...register(field.name)}
                                         />
                                     )}
+                                    {!errors[field.name] &&
+                                        field.name == "name" && (
+                                            <p>
+                                                Display Name is how the contact
+                                                and secondary contacts will be
+                                                displayed throughout the app
+                                            </p>
+                                        )}
                                     <NewInputGroup.Error>
                                         {errors &&
                                             errors[field.name] &&
