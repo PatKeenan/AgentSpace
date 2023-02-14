@@ -10,6 +10,7 @@ type SelectProps<T, K> = {
     className?: string;
     name?: string;
     ref?: React.ForwardedRef<HTMLSelectElement>;
+    optionalIndicator?: boolean;
 };
 
 export function Select<
@@ -17,8 +18,16 @@ export function Select<
     T extends { id: string } & Record<string, any>,
     K extends keyof T
 >(props: SelectProps<T, K>) {
-    const { label, options, displayField, selected, setSelected, name, ref } =
-        props;
+    const {
+        label,
+        options,
+        displayField,
+        selected,
+        setSelected,
+        name,
+        ref,
+        optionalIndicator,
+    } = props;
 
     const handleSelect = (value: string) => {
         const selected = options.find((i) => i[displayField] == value);
@@ -28,7 +37,10 @@ export function Select<
     return (
         <NewInputGroup>
             {label && (
-                <NewInputGroup.Label htmlFor={name || ""}>
+                <NewInputGroup.Label
+                    htmlFor={name || ""}
+                    optionalIndicator={optionalIndicator}
+                >
                     {label}
                 </NewInputGroup.Label>
             )}

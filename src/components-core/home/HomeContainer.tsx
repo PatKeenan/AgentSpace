@@ -107,7 +107,7 @@ export const HomeContainer: NextPageExtended = () => {
                                                 href={`/workspace/${workspace.id}/appointments`}
                                                 passHref
                                             >
-                                                <a>
+                                                <a className="hover:underline">
                                                     <span className="text-gray-900">
                                                         {
                                                             data?._count
@@ -137,7 +137,7 @@ export const HomeContainer: NextPageExtended = () => {
                                                 href={`/workspace/${workspace.id}/contacts`}
                                                 passHref
                                             >
-                                                <a>
+                                                <a className="hover:underline">
                                                     <span className="text-gray-900">
                                                         {data?._count.contacts}
                                                     </span>{" "}
@@ -164,7 +164,7 @@ export const HomeContainer: NextPageExtended = () => {
                                                 href={`/workspace/${workspace.id}/tasks`}
                                                 passHref
                                             >
-                                                <a>
+                                                <a className="hover:underline">
                                                     <span className="text-gray-900">
                                                         {data?._count.tasks}
                                                     </span>{" "}

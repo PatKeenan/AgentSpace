@@ -19,6 +19,7 @@ interface AutoCompleteProps<T>
     isLoading?: boolean;
     isFetched?: boolean;
     optionValue?: T;
+    optionalIndicator?: boolean;
 }
 
 export function Autocomplete<
@@ -39,6 +40,7 @@ export function Autocomplete<
         onClear,
         isFetched,
         optionValue,
+        optionalIndicator,
     } = props;
 
     return (
@@ -55,24 +57,27 @@ export function Autocomplete<
         >
             {({ open }) => (
                 <>
-                    <Combobox.Label
-                        className={clsx(
-                            "block text-sm font-medium text-gray-700"
-                        )}
-                    >
+                    <Combobox.Label className={clsx("input-label")}>
                         {label}
-                        {required && "*"}
+                        {required && (
+                            <span className="input-label__required">*</span>
+                        )}
+                        {!required && optionalIndicator && (
+                            <span className="input-label__optional">
+                                Optional
+                            </span>
+                        )}
                     </Combobox.Label>
                     <div
                         className={clsx(
                             direction == "row" ? "sm:col-span-2" : "col-span-3",
-                            "sm:mt-0, relative pt-1"
+                            "input-field__container"
                         )}
                     >
                         <Combobox.Input
                             required={required}
                             name={name}
-                            className="w-full rounded-md border border-gray-300 bg-white px-3 pr-10 pb-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+                            className="input-field w-full rounded-md border border-gray-300 bg-white px-3 pr-10 pb-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
                             onChange={(event) => setValue(event.target.value)}
                             autoComplete="off"
                             displayValue={renderValue}

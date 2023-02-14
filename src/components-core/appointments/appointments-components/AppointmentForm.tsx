@@ -335,12 +335,16 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
                         />
                     </div>
                     <div className="col-span-8  lg:col-span-2">
-                        <OldInputGroup
-                            {...appointmentFormFields.address_2}
-                            direction="column"
-                            value={state.address_2}
-                            onChange={handleChange}
-                        />
+                        <NewInputGroup>
+                            <NewInputGroup.Label htmlFor="startTime">
+                                {appointmentFormFields.address_2.label}
+                            </NewInputGroup.Label>
+                            <NewInputGroup.Input
+                                value={state.address_2}
+                                onChange={handleChange}
+                                name={appointmentFormFields.address_2.name}
+                            />
+                        </NewInputGroup>
                     </div>
                 </div>
                 {/* --- End Address ---  */}
@@ -356,8 +360,12 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
                     >
                         {({ open }) => (
                             <>
-                                <Combobox.Label className="block text-sm font-medium text-gray-700">
+                                <Combobox.Label className="input-label">
                                     {appointmentFormFields.contacts.label}
+
+                                    <span className="input-label__optional">
+                                        Optional
+                                    </span>
                                 </Combobox.Label>
                                 <div
                                     className="relative mt-1"
@@ -505,49 +513,68 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
                 {/* Time & Status*/}
                 <div className="mt-4 grid w-full grid-cols-6 gap-4">
                     <div className="col-span-3 lg:col-span-2">
-                        <OldInputGroup
-                            {...appointmentFormFields.startTime}
-                            type="time"
-                            value={state.startTime}
-                            onChange={handleChange}
-                            direction="column"
-                        />
+                        <NewInputGroup>
+                            <NewInputGroup.Label htmlFor="startTime">
+                                {appointmentFormFields.startTime.label}
+                            </NewInputGroup.Label>
+                            <NewInputGroup.Input
+                                type="time"
+                                value={state.startTime}
+                                onChange={handleChange}
+                                name={appointmentFormFields.startTime.name}
+                            />
+                        </NewInputGroup>
                     </div>
                     <div className="col-span-3 lg:col-span-2">
-                        <OldInputGroup
-                            {...appointmentFormFields.endTime}
-                            type="time"
-                            value={state.endTime}
-                            onChange={handleChange}
-                            direction="column"
-                        />
+                        <NewInputGroup>
+                            <NewInputGroup.Label htmlFor="endTime">
+                                {appointmentFormFields.endTime.label}
+                            </NewInputGroup.Label>
+                            <NewInputGroup.Input
+                                type="time"
+                                value={state.endTime}
+                                onChange={handleChange}
+                                name={appointmentFormFields.endTime.name}
+                            />
+                        </NewInputGroup>
                     </div>
-                    <div className="col-span-6 lg:col-span-2 ">
-                        <Select
-                            {...appointmentFormFields.status}
-                            displayField="display"
-                            selected={
-                                appointmentStatusOptions.find(
-                                    (i) => i.value == state.status
-                                ) as typeof appointmentStatusOptions[number]
-                            }
-                            setSelected={(i) =>
-                                setState({
-                                    status: i.value,
-                                })
-                            }
-                            className="max-h-[140px] capitalize"
-                            options={appointmentStatusOptions}
-                        />
+                    <div className="col-span-6  lg:col-span-2">
+                        <NewInputGroup>
+                            <NewInputGroup.Label htmlFor="startTime">
+                                {appointmentFormFields.status.label}
+                            </NewInputGroup.Label>
+                            <NewInputGroup.Select
+                                setSelected={(i) =>
+                                    setState({
+                                        status: i.value,
+                                    })
+                                }
+                                options={appointmentStatusOptions}
+                                name={appointmentFormFields.status.name}
+                                className="max-h-[140px] capitalize"
+                                displayField="display"
+                                selected={
+                                    appointmentStatusOptions.find(
+                                        (i) => i.value == state.status
+                                    ) as typeof appointmentStatusOptions[number]
+                                }
+                            />
+                        </NewInputGroup>
                     </div>
                 </div>
-
-                <Textarea
-                    {...appointmentFormFields.note}
-                    containerClass="mt-4"
-                    value={state.note}
-                    onChange={handleChange}
-                />
+                <div className="mt-4">
+                    <NewInputGroup>
+                        <NewInputGroup.Label htmlFor="startTime">
+                            {appointmentFormFields.note.label}
+                        </NewInputGroup.Label>
+                        <NewInputGroup.TextArea
+                            rows={4}
+                            value={state.note}
+                            onChange={handleChange}
+                            name={appointmentFormFields.note.name}
+                        />
+                    </NewInputGroup>
+                </div>
 
                 <div className="mt-8 flex justify-end space-x-3">
                     <Button variant="outlined" onClick={onCancel}>

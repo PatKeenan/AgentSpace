@@ -30,6 +30,7 @@ import { trpc } from "utils/trpc";
 
 import { useAppointmentFormStore } from "components-core/appointments/appointments-components";
 import { useAppointmentsUI } from "components-core/appointments";
+import { ErrorBoundary } from "components-core/ErrorBoundary";
 
 const { appointmentFormFields } = AppointmentSingleton;
 
@@ -272,9 +273,17 @@ export const AppointmentDetailContainer = () => {
                     </div>
                     <div className="order-1 mt-4 flex flex-shrink-0 flex-col sm:mt-0 lg:order-2 lg:col-span-6">
                         <div className=" h-[200px] w-full md:h-[300px] lg:h-full">
-                            <AppointmentsMap
-                                appointments={appointment ? [appointment] : []}
-                            />
+                            <ErrorBoundary>
+                                <React.Suspense
+                                    fallback={<div>Loading...</div>}
+                                >
+                                    <AppointmentsMap
+                                        appointments={
+                                            appointment ? [appointment] : []
+                                        }
+                                    />
+                                </React.Suspense>
+                            </ErrorBoundary>
                         </div>
                     </div>
                 </div>
