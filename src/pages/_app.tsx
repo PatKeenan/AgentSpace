@@ -1,6 +1,7 @@
 export { reportWebVitals } from "next-axiom";
 import { ErrorBoundary } from "components-core/ErrorBoundary";
 import { SessionProvider } from "next-auth/react";
+import { Analytics } from "@vercel/analytics/react";
 import { AppProps } from "types/index";
 import { AppType } from "next/app";
 import { trpc } from "utils/trpc";
@@ -52,6 +53,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                     content="initial-scale=1, viewport-fit=cover"
                 />
             </Head>
+            <Analytics />
             <ErrorBoundary>
                 <SessionProvider session={session}>
                     {Component.layout == "dashboard" ? (
