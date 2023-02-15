@@ -104,7 +104,7 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
             order: sort.order,
             field: sort.field,
         },
-        { enabled: typeof contactId == "string" }
+        { enabled: typeof contactId == "string", refetchOnWindowFocus: false }
     );
     const appointments = data && data.length == 2 ? data[0] : [];
     const totalAppointments = data && data.length == 2 ? data[1] : 0;

@@ -10,14 +10,11 @@ import {
     UserGroupIcon,
     TruckIcon,
     ViewColumnsIcon,
-    QuestionMarkCircleIcon,
-    EnvelopeIcon,
 } from "@heroicons/react/24/outline";
 
 import {
     ArrowLeftOnRectangleIcon,
     Cog6ToothIcon,
-    CurrencyDollarIcon,
 } from "@heroicons/react/20/solid";
 
 import * as React from "react";
@@ -33,10 +30,7 @@ type DashboardLayoutProps = {
 };
 
 export const DashboardLayout = (props: DashboardLayoutProps) => {
-    const { status } = useSession({
-        required: true,
-        onUnauthenticated: () => signIn(),
-    });
+    const { status } = useSession();
 
     const { children = false } = props;
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
@@ -72,7 +66,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
         { name: "Settings", href: "/settings", icon: Cog6ToothIcon },
         /*  { name: "Help", href: "/help", icon: QuestionMarkCircleIcon }, */
         {
-            name: "Logout",
+            name: "Sign out",
             href: "/api/auth/signout",
             icon: ArrowLeftOnRectangleIcon,
         },

@@ -86,11 +86,17 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
     const { getAll } = useAppointments();
     const { id } = useWorkspace();
 
-    const { data, isLoading } = getAll({
-        workspaceId: id as string,
-        ...queryParamsState,
-        searchQuery: searchQuery.debounced,
-    });
+    const { data, isLoading } = getAll(
+        {
+            workspaceId: id as string,
+            ...queryParamsState,
+            searchQuery: searchQuery.debounced,
+        },
+        {
+            enabled: typeof id == "string",
+            refetchOnWindowFocus: false,
+        }
+    );
 
     const invalidate = React.useCallback(() => {
         utils.appointment.getAll.invalidate({

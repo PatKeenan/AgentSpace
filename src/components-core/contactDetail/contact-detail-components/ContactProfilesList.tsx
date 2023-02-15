@@ -21,7 +21,7 @@ export const ContactProfilesList = (
 
     const { data: profiles, refetch } = getManyForContact(
         { contactId: contactId as string, take: 5 },
-        { enabled: typeof contactId == "string" }
+        { enabled: typeof contactId == "string", refetchOnWindowFocus: false }
     );
     const { mutate } = update();
 

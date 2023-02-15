@@ -8,7 +8,7 @@ export const ProfilesList = ({ contactId }: { contactId: string }) => {
 
     const { data: profiles } = getManyForContact(
         { contactId: contactId as string, take: 3 },
-        { enabled: typeof contactId == "string" }
+        { enabled: typeof contactId == "string", refetchOnWindowFocus: false }
     );
     const { id } = useWorkspace();
 

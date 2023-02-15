@@ -1,30 +1,98 @@
 import { Loading } from "components-common/Loading";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import * as React from "react";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 import type { NextPageExtended } from "types/index";
-import { trpc } from "utils/trpc";
+import { authOptions } from "./api/auth/[...nextauth]";
+import { prisma } from "../server/db/client";
+
+import { NotAuthorized } from "components-core/NotAuthorized";
 
 const Dashboard: NextPageExtended = () => {
-    const router = useRouter();
-    const { data, isLoading } = trpc.user.getWorkspaceMeta.useQuery();
+    const { status, data: session } = useSession();
 
-    useSession({
-        required: true,
-        onUnauthenticated: () => signIn(),
+    return status == "loading" ? (
+        <Loading />
+    ) : !session ? (
+        <NotAuthorized />
+    ) : null;
+};
+
+export async function getServerSideProps(context: any) {
+    const session = await getServerSession(
+        context.req,
+        context.res,
+        authOptions
+    );
+    if (!session || !session.user) {
+        return {
+            redirect: {
+                destination: "/api/auth/signin",
+                permanent: false,
+            },
+        };
+    }
+
+    const user = await prisma.user.findUnique({
+        where: {
+            id: session.user.id,
+        },
+        select: {
+            workspaceMeta: true,
+            defaultWorkspace: true,
+        },
     });
 
-    // If no user workspace meta, push user to the create page
-    React.useEffect(() => {
-        if (data && data.defaultWorkspace) {
-            router.push(`/workspace/${data.defaultWorkspace}`);
-        }
+    if (user?.defaultWorkspace) {
+        return {
+            redirect: {
+                destination: `/workspace/${user.defaultWorkspace}`,
+                permanent: false,
+            },
+        };
+    }
 
-        if (data && data.workspaceMeta.length == 0) {
-            router.push("/workspace/create");
-        }
-    }, [data, router, data?.defaultWorkspace]);
+    if (!user?.defaultWorkspace && user?.workspaceMeta.length == 0) {
+        const workspace = await prisma.workspace.create({
+            data: {
+                title: "My Workspace",
+                usersOnWorkspace: {
+                    create: {
+                        userId: session.user.id,
+                        role: "ADMIN",
+                    },
+                },
+            },
+            include: {
+                usersOnWorkspace: {
+                    where: { userId: session.user.id },
+                },
+            },
+        });
 
-    return isLoading && !data ? <Loading /> : null;
-};
+        if (workspace) {
+            await prisma.user.update({
+                where: {
+                    id: session.user.id,
+                },
+                data: {
+                    defaultWorkspace: workspace.id,
+                },
+            });
+
+            return {
+                redirect: {
+                    destination: `/workspace/${workspace.id}`,
+                    permanent: false,
+                },
+            };
+        }
+    }
+
+    return {
+        redirect: {
+            destination: `/api/auth/signin`,
+            permanent: false,
+        },
+    };
+}
 export default Dashboard;

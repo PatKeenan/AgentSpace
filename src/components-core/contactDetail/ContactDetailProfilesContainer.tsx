@@ -26,7 +26,7 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
         isLoading,
     } = getManyForContact(
         { contactId: contactId as string, take: 5 },
-        { enabled: typeof contactId == "string" }
+        { enabled: typeof contactId == "string", refetchOnWindowFocus: false }
     );
     const { mutate } = update();
 

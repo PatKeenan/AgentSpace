@@ -22,7 +22,9 @@ export const SettingsGeneral = () => {
                 .invalidate()
                 .then(() => setEditName(false)),
     });
-    const { data, isLoading } = trpc.user.getWorkspaceMeta.useQuery();
+    const { data, isLoading } = trpc.user.getWorkspaceMeta.useQuery(undefined, {
+        refetchOnWindowFocus: false,
+    });
     const { mutate } = trpc.user.setDefaultWorkspace.useMutation();
 
     const handleClick = (activeWorkspaceId: string) => {
@@ -113,7 +115,9 @@ export const SettingsGeneral = () => {
                             Name
                         </dt>
                         <dd className="mt-1 flex text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-                            <span className="flex-grow">{data?.name}</span>
+                            <span className="flex-grow">
+                                {data?.name || "--"}
+                            </span>
                             <span className="ml-4 flex-shrink-0">
                                 <button
                                     type="button"

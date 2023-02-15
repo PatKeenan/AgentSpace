@@ -14,6 +14,8 @@ export const GatedWorkspace = (props: ChildrenPropsObj) => {
     const { data, isLoading } = workspace.getUser(
         { workspaceId: workspace.id as string },
         {
+            refetchInterval: 300000,
+            refetchOnWindowFocus: false,
             enabled: typeof workspace.id == "string",
             onSuccess: (data) => {
                 if (!data) {

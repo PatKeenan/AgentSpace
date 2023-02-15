@@ -90,7 +90,10 @@ export const ContactsContainer: NextPageExtended = () => {
             ...queryParamsState,
             searchQuery: searchQuery.debounced,
         },
-        { enabled: typeof workspace.id == "string" }
+        {
+            enabled: typeof workspace.id == "string",
+            refetchOnWindowFocus: false,
+        }
     );
     const contactsQuery = data && data.length == 2 ? data[0] : [];
     const totalContacts = data && data.length == 2 ? data[1] : 0;

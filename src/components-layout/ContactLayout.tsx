@@ -31,6 +31,7 @@ export const ContactLayout = ({ children }: { children: React.ReactNode }) => {
         { id: router.query.contactId as string },
         {
             enabled: exists(id),
+            refetchOnWindowFocus: false,
         }
     );
     const { mutate } = hardDelete({

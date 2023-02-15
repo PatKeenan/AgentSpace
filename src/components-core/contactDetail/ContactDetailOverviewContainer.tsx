@@ -24,7 +24,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
 
     const { data: contactQuery } = getOne(
         { id: id as string },
-        { enabled: typeof id !== undefined }
+        { enabled: typeof id !== undefined, refetchOnWindowFocus: false }
     );
 
     const handleClickEdit = () => {

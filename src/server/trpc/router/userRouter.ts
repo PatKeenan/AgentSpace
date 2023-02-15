@@ -9,6 +9,7 @@ export const userRouter = t.router({
                 id: ctx.session.user.id,
             },
             select: {
+                email: true,
                 name: true,
             },
         });

@@ -14,6 +14,7 @@ import "../styles/globals.css";
 
 import type { Session } from "next-auth";
 import Head from "next/head";
+import AuthLayout from "components-layout/AuthLayout";
 
 const MyApp: AppType<{ session: Session | null }> = ({
     Component,
@@ -56,11 +57,13 @@ const MyApp: AppType<{ session: Session | null }> = ({
             <Analytics />
             <ErrorBoundary>
                 <SessionProvider session={session}>
-                    {Component.layout == "dashboard" ? (
-                        <DashboardLayout>{getSubLayout()}</DashboardLayout>
-                    ) : (
-                        <Component {...pageProps} />
-                    )}
+                    <AuthLayout>
+                        {Component.layout == "dashboard" ? (
+                            <DashboardLayout>{getSubLayout()}</DashboardLayout>
+                        ) : (
+                            <Component {...pageProps} />
+                        )}
+                    </AuthLayout>
                 </SessionProvider>
             </ErrorBoundary>
         </>

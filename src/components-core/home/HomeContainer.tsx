@@ -25,10 +25,12 @@ import { trpc } from "utils/trpc";
 export const HomeContainer: NextPageExtended = () => {
     const workspace = useWorkspace();
 
-    const { data: user } = trpc.user.getUserInfo.useQuery();
+    const { data: user } = trpc.user.getUserInfo.useQuery(undefined, {
+        refetchOnWindowFocus: false,
+    });
     const { data } = workspace.getDashboard(
         { workspaceId: workspace.id as string },
-        { enabled: exists(workspace.id) }
+        { enabled: exists(workspace.id), refetchOnWindowFocus: false }
     );
     const actions = [
         {
@@ -96,7 +98,9 @@ export const HomeContainer: NextPageExtended = () => {
                                                     Welcome,
                                                 </p>
                                                 <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                                                    {user?.name ?? "User"}
+                                                    {user?.name ||
+                                                        user?.email ||
+                                                        "User"}
                                                 </p>
                                             </div>
                                         </div>

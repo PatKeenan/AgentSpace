@@ -11,7 +11,6 @@ import { useRouter } from "next/router";
 import * as React from "react";
 import dynamic from "next/dynamic";
 import { useAppointments } from "hooks/useAppointments";
-import { GridSectionTitle } from "components-core/contactDetail";
 import { AppointmentSingleton, type AppointmentSingletonType } from "lib";
 import { format } from "date-fns";
 import { formatStringToDate } from "utils/formatDate";
@@ -64,7 +63,10 @@ export const AppointmentDetailContainer = () => {
     const utils = trpc.useContext();
     const { data: appointment } = getOne(
         { id: router.query.appointmentId as string },
-        { enabled: typeof router.query.appointmentId === "string" }
+        {
+            enabled: typeof router.query.appointmentId === "string",
+            refetchOnWindowFocus: false,
+        }
     );
 
     const invalidate = React.useCallback(() => {

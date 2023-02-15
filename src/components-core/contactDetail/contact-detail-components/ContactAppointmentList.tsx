@@ -18,7 +18,7 @@ export const ContactAppointmentList = ({
     const { getAllForContact } = useAppointments();
     const { data } = getAllForContact(
         { contactId: contactId as string, take: 3, page: 1 },
-        { enabled: typeof contactId == "string" }
+        { enabled: typeof contactId == "string", refetchOnWindowFocus: false }
     );
     const appointments = data && data[0];
     const workspace = useWorkspace();

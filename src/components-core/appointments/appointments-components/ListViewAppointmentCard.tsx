@@ -229,7 +229,7 @@ const ResponsiveGroup = ({
                 className,
                 singleItem
                     ? "[&>div:nth-child(odd)]:col-span-5 md:[&>div:nth-child(odd)]:col-span-3"
-                    : "[&>div:nth-child(odd)]:col-span-3 md:[&>div:nth-child(odd)]:col-span-2 [&>div:nth-child(even)]:col-span-2 md:[&>div:nth-child(even)]:col-span-1",
+                    : "[&>div:nth-child(even)]:col-span-2 md:[&>div:nth-child(even)]:col-span-1 [&>div:nth-child(odd)]:col-span-3 md:[&>div:nth-child(odd)]:col-span-2",
                 "mt-4 block grid-cols-5 gap-3 space-y-3 text-sm md:grid md:grid-cols-3 md:space-y-0"
             )}
             {...props}
