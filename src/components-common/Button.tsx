@@ -7,7 +7,6 @@ import {
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import { SVGProps } from "react";
-import { NextLink } from "./NextLink";
 import Link from "next/link";
 
 export const variantStyles = {

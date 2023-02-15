@@ -6,7 +6,6 @@ import * as React from "react";
 import type { Appointment } from "@prisma/client";
 import clsx from "clsx";
 import { Button } from "components-common/Button";
-import { Select } from "components-common/Select";
 
 import { Tag } from "components-common/Tag";
 import Link from "next/link";

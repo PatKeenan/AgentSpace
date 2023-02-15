@@ -193,7 +193,7 @@ export const KabanColumn = ({
 
         if (!activeDragOverItem) {
             // No dragged over item? Then add the task to the end of the column
-            const lastTask = tasks?.at(-1);
+            const lastTask = tasks?.[tasks?.length - 1];
             taskCopy = {
                 ...task,
                 order: Math.round(lastTask?.order || gap) + gap,

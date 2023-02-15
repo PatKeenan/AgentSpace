@@ -15,8 +15,6 @@ import Link from "next/link";
 import { AppointmentSingleton } from "lib";
 import { NewInputGroup } from "components-common/NewInputGroup";
 import { AppointmentFormType } from "./AppointmentForm";
-import { trpc } from "utils/trpc";
-import { dateUtils } from "utils/dateUtils";
 
 const { appointmentFormFields, appointmentStatusOptions } =
     AppointmentSingleton;
@@ -88,7 +86,6 @@ export const MapViewAppointmentCard = (props: {
             defaultData: defaultModalData,
         });
     };
-    const utils = trpc.useContext();
 
     const { mutate } = deleteHard({
         onSuccess: () => {

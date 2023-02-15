@@ -2,7 +2,6 @@ import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { Fragment, SVGProps } from "react";
-import { NextLink } from "./NextLink";
 import Link from "next/link";
 
 type OptionBase = {
