@@ -1,3 +1,4 @@
+import { log } from "next-axiom";
 import { Component, ErrorInfo, ReactNode } from "react";
 
 interface Props {
@@ -19,7 +20,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-        console.error("Uncaught error:", error, errorInfo);
+        log.error("ErrorBoundary", error);
     }
 
     public render() {
