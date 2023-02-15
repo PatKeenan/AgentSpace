@@ -1,13 +1,10 @@
 import {
     Button,
     FieldGroup,
-    OldInputGroup,
     ModalTitle,
     NewInputGroup,
-    Select,
 } from "components-common";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Contact, Profile, PROFILE_TYPES } from "@prisma/client";
 import React from "react";
@@ -20,8 +17,7 @@ import { FormSections } from "types/index";
 
 const { contactFormFields, contactSchemas, subContactSchema } =
     ContactSingleton;
-const { profileSchemas, profileTypeOptions, profileFormFields } =
-    ProfileSingleton;
+const { profileTypeOptions, profileFormFields } = ProfileSingleton;
 
 const { name, firstName, lastName, phoneNumber, email } = contactFormFields;
 
@@ -55,7 +51,6 @@ export const QuickAddContactFrom = (props: QuickAddContactProps) => {
         title = "Quick Add Contact",
         defaultName,
         workspaceId,
-        setName,
         onCancel,
         onSuccessCallback,
     } = props;

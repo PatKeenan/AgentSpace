@@ -1,23 +1,17 @@
-import {
-    Breadcrumb,
-    NoData,
-    PageBody,
-    SectionHeading,
-} from "components-common";
+import { Breadcrumb, PageBody, SectionHeading } from "components-common";
 import { NextPageExtended } from "types/index";
 import { useRouter } from "next/router";
 import { useTasks } from "hooks/useTasks";
 import { Kanban } from "./Kanban";
 import { ErrorBoundary } from "..";
 import { Suspense } from "react";
-import { isEmpty } from "utils/isEmpty";
 
 export const TasksContainer: NextPageExtended = () => {
     const router = useRouter();
 
     const { getAll } = useTasks();
 
-    const { data: tasks, isLoading } = getAll(
+    const { data: tasks } = getAll(
         { workspaceId: router.query.workspaceId as string },
         {
             enabled: typeof router.query.workspaceId !== "undefined",

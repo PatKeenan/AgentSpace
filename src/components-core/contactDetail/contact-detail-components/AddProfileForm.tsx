@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "components-common/Button";
-import { OldInputGroup } from "components-common/OldIInputGroup";
 import { useForm } from "react-hook-form";
 import {
     DefaultProfileDataType,

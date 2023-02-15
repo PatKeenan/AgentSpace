@@ -1,7 +1,6 @@
 import { Breadcrumb, PageBody, SectionHeading } from "components-common";
 import { useWorkspace } from "hooks/useWorkspace";
 import { classNames } from "utils/classNames";
-import { useSession } from "next-auth/react";
 import { exists } from "utils/helpers";
 
 import type { NextPageExtended } from "types/index";
@@ -13,7 +12,6 @@ import {
     ViewColumnsIcon,
 } from "@heroicons/react/20/solid";
 import { SidebarList } from "components-core/contactDetail/contact-detail-components/SidebarList";
-import { useAppointments } from "hooks/useAppointments";
 import { format } from "date-fns";
 import clsx from "clsx";
 import {

@@ -1,14 +1,11 @@
 import React from "react";
 
-import { PencilIcon } from "@heroicons/react/20/solid";
-
 import {
     ContactDetailModal,
     useContactDetailUi,
 } from "components-core/contactDetail";
 import {
     Button,
-    IconButton,
     SectionHeading,
     Breadcrumb,
     PageBody,

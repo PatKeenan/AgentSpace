@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { NextLink } from "components-common/NextLink";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import {

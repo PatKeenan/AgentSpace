@@ -1,14 +1,10 @@
 import { NextPageExtended } from "types/index";
-import { PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { TrashIcon } from "@heroicons/react/20/solid";
 import { Button, Card, NoData, ToggleMenu } from "components-common";
 import { useProfile } from "hooks/useProfile";
 import { useRouter } from "next/router";
 import { useContactDetailUi } from "./useContactDetailUi";
-import {
-    GridCard,
-    DetailsRow,
-    GridSectionTitle,
-} from "./contact-detail-components";
+import { GridSectionTitle } from "./contact-detail-components";
 import clsx from "clsx";
 import { ContactDetailLayout } from "./contact-detail-components/ContactDetailLayout";
 import { isEmpty } from "utils/isEmpty";

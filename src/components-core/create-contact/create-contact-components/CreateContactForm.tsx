@@ -2,7 +2,6 @@ import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { MinusCircleIcon } from "@heroicons/react/24/outline";
 import { Accordion } from "components-common/Accordion";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ContactFormInput } from "./ContactFormInput";
 import { Button, ButtonLink } from "components-common/Button";
 import { useForm } from "react-hook-form";
 import * as React from "react";
@@ -155,7 +154,7 @@ export const CreateContactForm = () => {
                 >
                     {formSections.map((section, idx) => (
                         <FieldGroup key={idx} className="lg:max-w-3xl">
-                            {section.map(({ field, required, className }) => (
+                            {section.map(({ field, required }) => (
                                 <NewInputGroup
                                     key={field.name}
                                     isRequired={required}
