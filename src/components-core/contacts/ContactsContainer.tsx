@@ -527,7 +527,7 @@ export const ContactsContainer: NextPageExtended = () => {
                         </div>
                     ) : isEmpty(contactsQuery) ? (
                         <NoData
-                            className="h-[70vh] flex-grow"
+                            height="h-[70vh]"
                             title="No Contacts"
                             icon={UserGroupIcon}
                             message="Start by adding a new contact."

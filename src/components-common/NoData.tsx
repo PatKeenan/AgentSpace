@@ -17,6 +17,7 @@ export const NoData = (
         message?: string;
         icon?: React.ElementType;
         className?: string;
+        height?: string;
     } & (NoDataBaseProps | NoDataExtendedProps)
 ) => {
     const {
@@ -26,13 +27,15 @@ export const NoData = (
         buttonText,
         icon: Icon,
         className,
+        height = "h-full",
     } = props;
 
     return (
         <div
             className={clsx(
-                "grid h-full w-full place-items-center p-8 text-center",
-                className
+                "grid w-full place-items-center p-8 text-center",
+                className,
+                height
             )}
         >
             <div>

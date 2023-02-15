@@ -71,7 +71,7 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
                             <dl className="grid grid-cols-1 gap-4">
                                 {!isLoading && isEmpty(profiles) ? (
                                     <NoData
-                                        className="h-[60vh] flex-grow"
+                                        height="h-[70vh]"
                                         title="No profiles"
                                         message="Start by adding a new profile."
                                     />

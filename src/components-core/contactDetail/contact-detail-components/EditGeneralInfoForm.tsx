@@ -16,7 +16,7 @@ import type { FormSections } from "types/index";
 type FormType = Pick<ContactSingletonType["contactSchemas"]["base"], "name">;
 
 const { contactFormFields } = ContactSingleton;
-const { name, firstName } = contactFormFields;
+const { name } = contactFormFields;
 
 const formSections: FormSections<FormType>[] = [
     [{ field: name, required: true }],
@@ -61,7 +61,7 @@ export default function EditGeneralInfoForm() {
         <form onSubmit={onSubmit}>
             <fieldset>
                 <ModalTitle>
-                    <legend>Edit General Info</legend>
+                    <legend>Edit Display Name</legend>
                 </ModalTitle>
 
                 <div className="mt-4 space-y-1">

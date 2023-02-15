@@ -105,6 +105,7 @@ export default function AddProfileForm() {
             <ModalTitle>
                 {modal.defaultData ? "Edit" : "Add"} Profile
             </ModalTitle>
+
             <FieldGroup className="mt-4">
                 <NewInputGroup
                     isRequired
@@ -113,7 +114,10 @@ export default function AddProfileForm() {
                     <NewInputGroup.Label htmlFor={profileFormFields.name.label}>
                         {profileFormFields.name.label}
                     </NewInputGroup.Label>
-                    <NewInputGroup.Input {...register("name")} />
+                    <NewInputGroup.Input
+                        {...register("name")}
+                        placeholder="Latest Buyer Profile"
+                    />
                     <NewInputGroup.Error>
                         {errors && errors.name && errors.name.message}
                     </NewInputGroup.Error>
@@ -150,16 +154,22 @@ export default function AddProfileForm() {
                     </NewInputGroup.Error>
                 </NewInputGroup>
             </FieldGroup>
-
-            <div className="max-w-[150px]">
-                <OldInputGroup
-                    direction="row"
-                    type="checkbox"
-                    label={profileFormFields.active.label}
-                    className="h-5 w-5"
-                    containerClass="sm:items-center"
-                    {...register("active")}
-                />
+            <div className="flex">
+                <div className="flex h-5 items-center">
+                    <input
+                        {...register("active")}
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                </div>
+                <div className="ml-3 text-sm">
+                    <label
+                        htmlFor="active"
+                        className="font-medium text-gray-700"
+                    >
+                        {profileFormFields.active.label}
+                    </label>
+                </div>
             </div>
 
             <div className="mt-6 flex justify-end space-x-3">

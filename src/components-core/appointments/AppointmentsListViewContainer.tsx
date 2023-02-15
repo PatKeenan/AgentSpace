@@ -443,7 +443,7 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                 ) : isEmpty(appointments) ? (
                     <NoData
                         icon={TruckIcon}
-                        className="h-[60vh]"
+                        height="h-[60vh]"
                         title="No Appointments"
                         message="Start by adding an appointment."
                     />

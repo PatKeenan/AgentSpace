@@ -133,8 +133,8 @@ const AppointmentsMap = ({
             center={
                 appointments && appointments.length == 1
                     ? {
-                          lat: appointments.at(0)?.latitude || 39.833851,
-                          lng: appointments.at(0)?.longitude || -74.871826,
+                          lat: appointments[0]?.latitude || 39.833851,
+                          lng: appointments[0]?.longitude || -74.871826,
                       }
                     : defaultCenter
             }
