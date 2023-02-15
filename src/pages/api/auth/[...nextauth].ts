@@ -11,6 +11,7 @@ const allowedUsers = [
     "patkeenan.dev@gmail.com",
     "ford.dave7@gmail.com",
     "jwkeenan60@gmail.com",
+    "peter@urbanemu.com",
 ];
 export const authOptions: NextAuthOptions = {
     theme: {
