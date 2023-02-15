@@ -20,7 +20,15 @@ export const authOptions: NextAuthOptions = {
 
     callbacks: {
         async signIn({ user }) {
-            if (user.email && allowedUsers.includes(user.email)) return true;
+            if (user.email) {
+                const userInDb = await prisma.betaUsers.findUnique({
+                    where: { email: user.email },
+                });
+                if (userInDb && user.email == userInDb.email) {
+                    return true;
+                }
+                return false;
+            }
             return false;
         },
         session({ session, user }) {

@@ -10,6 +10,16 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model BlockedUsers {
+    id     String @id @default(cuid())
+    userId String
+}
+
+model BetaUsers {
+    id    String @id @default(cuid())
+    email String @unique
+}
+
 model Task {
     id          String      @id @default(cuid())
     createdAt   DateTime    @default(now())

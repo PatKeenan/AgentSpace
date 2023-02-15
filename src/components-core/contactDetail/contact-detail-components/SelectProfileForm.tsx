@@ -3,6 +3,7 @@ import { useProfile } from "hooks/useProfile";
 import React from "react";
 
 import { AppointmentSingletonType } from "lib";
+import { Loading } from "components-common/Loading";
 
 const SelectProfileForm = ({
     contactId,
@@ -24,7 +25,7 @@ const SelectProfileForm = ({
 
     const { getManyForContact } = useProfile();
 
-    const { data: profiles } = getManyForContact({ contactId });
+    const { data: profiles, isLoading } = getManyForContact({ contactId });
 
     const handleContinue = (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,7 +44,16 @@ const SelectProfileForm = ({
             setSelectedProfile(value);
         }
     };
-    return (
+
+    React.useEffect(() => {
+        if (profiles && profiles.length == 0) {
+            onContinue({ contactId, name: contactName });
+        }
+    }, [profiles, onContinue, contactId, contactName]);
+
+    return !profiles && isLoading ? (
+        <Loading />
+    ) : (
         <form onSubmit={handleContinue}>
             <div>
                 <label className="text-base font-medium text-gray-900">

@@ -7,6 +7,7 @@ import type { NextPageExtended } from "types/index";
 import Link from "next/link";
 import {
     Cog6ToothIcon,
+    ExclamationTriangleIcon,
     TruckIcon,
     UserGroupIcon,
     ViewColumnsIcon,
@@ -64,10 +65,19 @@ export const HomeContainer: NextPageExtended = () => {
 
     return (
         <>
+            <div className="flex items-center bg-red-100 px-4 py-2 text-sm">
+                <ExclamationTriangleIcon className="h-4 w-4" />
+                <p className="ml-2 font-bold">Warning:</p>
+                <p className="ml-2 text-sm text-gray-800">
+                    All data entered into the app during beta has the chance of
+                    being deleted at any point.
+                </p>
+            </div>
             <Breadcrumb
                 isHome
                 items={[{ title: "Home", href: `/workspace/${workspace.id}` }]}
             />
+
             <PageBody>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>

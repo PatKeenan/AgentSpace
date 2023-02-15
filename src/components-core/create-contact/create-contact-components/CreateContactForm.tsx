@@ -44,8 +44,10 @@ const createContactFormSchema = contactSchemas.create.extend({
 
 type CreateContactFormType = z.infer<typeof createContactFormSchema>;
 
-const formSections: FormSections<CreateContactFormType>[] = [
+const generalInfoFromSections: FormSections<CreateContactFormType>[] = [
     [{ field: name, required: true }],
+];
+const formSections: FormSections<CreateContactFormType>[] = [
     [{ field: firstName, required: true }, { field: lastName }],
     [{ field: email }, { field: phoneNumber }],
     [{ field: notes }],
@@ -136,13 +138,11 @@ export const CreateContactForm = () => {
             className="mt-8 space-y-8 divide-y divide-gray-200"
             onSubmit={handleSubmit}
         >
-            <div>
+            <div className="divide-y">
                 <Accordion
                     defaultOpen={true}
-                    label="General Information"
-                    description="This information will be
-                                                displayed publicly so be careful
-                                                what you share."
+                    label="Display Name"
+                    description="Display name is used when searching for this contact."
                     titleContainer={
                         errors["name"] ? (
                             <ExclamationCircleIcon
@@ -151,6 +151,60 @@ export const CreateContactForm = () => {
                             />
                         ) : null
                     }
+                    className="pb-6"
+                >
+                    {generalInfoFromSections.map((section, idx) => (
+                        <FieldGroup key={idx} className="lg:max-w-3xl">
+                            {section.map(({ field, required }) => (
+                                <NewInputGroup
+                                    key={field.name}
+                                    isRequired={required}
+                                    isInvalid={
+                                        errors && errors[field.name]
+                                            ? true
+                                            : false
+                                    }
+                                >
+                                    <NewInputGroup.Label htmlFor={field.name}>
+                                        {field.label}
+                                    </NewInputGroup.Label>
+
+                                    {field.name == "notes" ? (
+                                        <NewInputGroup.TextArea
+                                            placeholder={field.label}
+                                            rows={5}
+                                            {...register(field.name)}
+                                        />
+                                    ) : (
+                                        <NewInputGroup.Input
+                                            placeholder={field.label}
+                                            {...register(field.name)}
+                                        />
+                                    )}
+
+                                    <NewInputGroup.Error>
+                                        {errors &&
+                                            errors[field.name] &&
+                                            errors[field.name]?.message}
+                                    </NewInputGroup.Error>
+                                </NewInputGroup>
+                            ))}
+                        </FieldGroup>
+                    ))}
+                </Accordion>
+                <Accordion
+                    defaultOpen={true}
+                    label="Primary Contact Information"
+                    description="Information about the main point of contact for this contact."
+                    titleContainer={
+                        errors["name"] ? (
+                            <ExclamationCircleIcon
+                                className="h-5 w-5 text-red-500"
+                                aria-hidden="true"
+                            />
+                        ) : null
+                    }
+                    className={"pt-6"}
                 >
                     {formSections.map((section, idx) => (
                         <FieldGroup key={idx} className="lg:max-w-3xl">
@@ -180,14 +234,7 @@ export const CreateContactForm = () => {
                                             {...register(field.name)}
                                         />
                                     )}
-                                    {!errors[field.name] &&
-                                        field.name == "name" && (
-                                            <p>
-                                                Display Name is how the contact
-                                                and secondary contacts will be
-                                                displayed throughout the app
-                                            </p>
-                                        )}
+
                                     <NewInputGroup.Error>
                                         {errors &&
                                             errors[field.name] &&

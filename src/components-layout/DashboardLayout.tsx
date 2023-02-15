@@ -247,6 +247,8 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                             Re
                             <span className=" text-indigo-600">App</span>
                         </h4>
+
+                        <p className="ml-2 text-[12px] ">BETA</p>
                     </div>
                     {/* Sidebar component, swap this element with another sidebar if you like */}
                     <div className="mt-6 flex h-0 flex-1 flex-grow flex-col overflow-y-auto">
