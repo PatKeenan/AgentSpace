@@ -23,6 +23,11 @@ export const serverSchema = z.object({
     EMAIL_SERVER: z.string(),
     EMAIL_FROM: z.string(),
     MAP_BOX_KEY: z.string(),
+    SEND_GRID_HOST: z.string(),
+    SEND_GRID_PORT: z.string(),
+    SEND_GRID_USER: z.string(),
+    SEND_GRID_PASS: z.string(),
+    SEND_GRID_FROM: z.string(),
 });
 
 /**

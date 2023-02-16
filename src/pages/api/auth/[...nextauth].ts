@@ -45,10 +45,24 @@ export const authOptions: NextAuthOptions = {
             clientId: env.GOOGLE_CLIENT_ID as string,
             clientSecret: env.GOOGLE_CLIENT_SECRET as string,
         }),
-        EmailProvider({
-            server: env.EMAIL_SERVER,
-            from: env.EMAIL_FROM,
-        }),
+        EmailProvider(
+            process.env.NODE_ENV == "production"
+                ? {
+                      server: {
+                          host: env.SEND_GRID_HOST,
+                          port: env.SEND_GRID_PORT,
+                          auth: {
+                              user: env.SEND_GRID_USER,
+                              pass: env.SEND_GRID_PASS,
+                          },
+                          from: env.EMAIL_FROM,
+                      },
+                  }
+                : {
+                      server: env.EMAIL_SERVER,
+                      from: env.EMAIL_FROM,
+                  }
+        ),
     ],
 
     debug: process.env.NODE_ENV === "development",

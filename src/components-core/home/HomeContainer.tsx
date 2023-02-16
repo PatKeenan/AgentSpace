@@ -38,6 +38,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/workspace/${workspace.id}/contacts`,
             iconForeground: "text-teal-700",
             iconBackground: "bg-teal-50",
+            text: "Contacts are where you can save information about your clients, vendors, and other agents. A contact can represent more than one person.",
         },
         {
             icon: TruckIcon,
@@ -45,6 +46,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/workspace/${workspace.id}/appointments`,
             iconForeground: "text-purple-700",
             iconBackground: "bg-purple-50",
+            text: "",
         },
 
         {
@@ -53,6 +55,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/workspace/${workspace.id}/tasks`,
             iconForeground: "text-yellow-700",
             iconBackground: "bg-yellow-50",
+            text: "",
         },
         {
             icon: Cog6ToothIcon,
@@ -60,6 +63,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/settings`,
             iconForeground: "text-sky-700",
             iconBackground: "bg-sky-50",
+            text: "",
         },
     ];
 
@@ -69,8 +73,8 @@ export const HomeContainer: NextPageExtended = () => {
                 <ExclamationTriangleIcon className="h-4 w-4" />
                 <p className="ml-2 font-bold">Warning:</p>
                 <p className="ml-2 text-sm text-gray-800">
-                    All data entered into the app during beta has the chance of
-                    being deleted at any point.
+                    All data entered into the app during the beta phase has the
+                    chance of being deleted at any point.
                 </p>
             </div>
             <Breadcrumb
@@ -262,11 +266,7 @@ export const HomeContainer: NextPageExtended = () => {
                                                     </Link>
                                                 </h3>
                                                 <p className="mt-2 text-sm text-gray-500">
-                                                    Doloribus dolores nostrum
-                                                    quia qui natus officia quod
-                                                    et dolorem. Sit repellendus
-                                                    qui ut at blanditiis et quo
-                                                    et molestiae.
+                                                    {action.text}
                                                 </p>
                                             </div>
                                             <span
