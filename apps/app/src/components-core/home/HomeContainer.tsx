@@ -20,7 +20,6 @@ import {
     statusDisplay,
 } from "components-core/appointments/appointments-utils";
 import { trpc } from "utils/trpc";
-import { Button4, Title } from "ui";
 
 export const HomeContainer: NextPageExtended = () => {
     const workspace = useWorkspace();
@@ -82,8 +81,6 @@ export const HomeContainer: NextPageExtended = () => {
                 isHome
                 items={[{ title: "Home", href: `/workspace/${workspace.id}` }]}
             />
-            <Button4 />
-            <Title text="hello" />
             <PageBody>
                 <SectionHeading>
                     <SectionHeading.TitleContainer>
