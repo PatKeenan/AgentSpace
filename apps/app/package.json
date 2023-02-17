@@ -13,8 +13,7 @@
         "check-format": "prettier --check ./src",
         "check-types": "tsc --pretty --noEmit",
         "check-lint": "eslint . --ext ts --ext tsx --ext js",
-        "format": "prettier -w ./src",
-        "prepare": "husky install"
+        "format": "prettier -w ./src"
     },
     "dependencies": {
         "@headlessui/react": "^1.7.3",
@@ -65,7 +64,6 @@
         "eslint": "8.22.0",
         "eslint-config-next": "12.3.1",
         "eslint-config-custom": "workspace:*",
-        "husky": "^8.0.1",
         "postcss": "^8.4.14",
         "prettier": "^2.7.1",
         "prettier-plugin-tailwindcss": "^0.1.13",
