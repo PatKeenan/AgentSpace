@@ -46,7 +46,7 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
                                 ) : null
                             }
                             title="Profiles"
-                            subTitle="Personal details and application."
+                            subTitle="The working relationship(s) associated with this contact."
                             actions={
                                 <Button
                                     variant="primary"
@@ -67,7 +67,7 @@ export const ContactDetailProfilesContainer: NextPageExtended = () => {
                             <dl className="grid grid-cols-1 gap-4">
                                 {!isLoading && isEmpty(profiles) ? (
                                     <NoData
-                                        height="h-[70vh]"
+                                        height="h-[60vh]"
                                         title="No profiles"
                                         message="Start by adding a new profile."
                                     />

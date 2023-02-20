@@ -66,7 +66,7 @@ export const SubContactList = ({
                                 </div>
                             ) : null
                         }
-                        subTitle="People that are associated with each other."
+                        subTitle="Name, email address, and phone number for your secondary contacts."
                         actions={
                             <Button
                                 variant="primary"

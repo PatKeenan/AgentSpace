@@ -22,6 +22,9 @@
     .input-error__message {
         @apply mt-2 min-h-[1.25rem] whitespace-nowrap text-sm text-red-600;
     }
+    .input-help-text {
+        @apply mt-2 min-h-[1.25rem] whitespace-nowrap text-sm text-gray-500;
+    }
     .input-field__container {
         @apply relative w-full rounded-md shadow-sm;
     }

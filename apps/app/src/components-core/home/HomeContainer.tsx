@@ -38,7 +38,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/workspace/${workspace.id}/contacts`,
             iconForeground: "text-teal-700",
             iconBackground: "bg-teal-50",
-            text: "Contacts are where you can save information about your clients, vendors, and other agents. A contact can represent more than one person.",
+            text: "Save information about your clients, vendors, and associates. Record notes, create profiles, and connect contacts to appointments.",
         },
         {
             icon: TruckIcon,
@@ -55,7 +55,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/workspace/${workspace.id}/tasks`,
             iconForeground: "text-yellow-700",
             iconBackground: "bg-yellow-50",
-            text: "Tasks are a great way to keep track of your to-do list. You can create tasks and move them between lists to keep track of your progress.",
+            text: "Create and manage tasks to help stay organized. Update the status of the tasks to track your progress.",
         },
         {
             icon: Cog6ToothIcon,
@@ -63,7 +63,7 @@ export const HomeContainer: NextPageExtended = () => {
             href: `/settings`,
             iconForeground: "text-sky-700",
             iconBackground: "bg-sky-50",
-            text: "Settings are where you can change your account information, change your password, and change your workspace settings.",
+            text: "Settings are where you can change your account information and workspace settings.",
         },
     ];
 

@@ -115,7 +115,7 @@ export default function AddProfileForm() {
                     </NewInputGroup.Label>
                     <NewInputGroup.Input
                         {...register("name")}
-                        placeholder="Latest Buyer Profile"
+                        placeholder="Profile Name"
                     />
                     <NewInputGroup.Error>
                         {errors && errors.name && errors.name.message}
@@ -141,19 +141,27 @@ export default function AddProfileForm() {
             <FieldGroup cols="1">
                 <NewInputGroup
                     isInvalid={errors && errors.notes ? true : false}
+                    hasHelpText
                 >
                     <NewInputGroup.Label
                         htmlFor={profileFormFields.notes.label}
                     >
                         {profileFormFields.notes.label}
                     </NewInputGroup.Label>
-                    <NewInputGroup.TextArea {...register("notes")} rows={3} />
+                    <NewInputGroup.TextArea
+                        placeholder="Notes"
+                        {...register("notes")}
+                        rows={3}
+                    />
+                    <NewInputGroup.HelpText>
+                        Brief description for this profile
+                    </NewInputGroup.HelpText>
                     <NewInputGroup.Error>
                         {errors && errors.notes && errors.notes.message}
                     </NewInputGroup.Error>
                 </NewInputGroup>
             </FieldGroup>
-            <div className="flex">
+            <div className="mt-3 flex">
                 <div className="flex h-5 items-center">
                     <input
                         {...register("active")}

@@ -245,7 +245,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         />
                         <h4 className="ml-4 text-xl font-semibold text-gray-600">
                             Re
-                            <span className=" text-indigo-600">App</span>
+                            <span className=" text-indigo-600">Agent</span>
                         </h4>
 
                         <p className="ml-2 text-[12px] ">BETA</p>

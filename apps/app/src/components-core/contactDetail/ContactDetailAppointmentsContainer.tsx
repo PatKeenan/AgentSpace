@@ -163,7 +163,7 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
                             ) : null
                         }
                         title="Appointments"
-                        subTitle="Personal details and application."
+                        subTitle="Appointments associated with this contact."
                         actions={
                             <Button
                                 variant="primary"

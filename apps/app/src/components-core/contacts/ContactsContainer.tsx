@@ -104,20 +104,20 @@ export const ContactsContainer: NextPageExtended = () => {
         current: boolean;
     }[] = [
         {
-            name: "Name",
+            name: "Display Name",
             value: "name",
             onClick: () => setQueryParamsState({ searchBy: "name", page: 1 }),
             current: queryParamsState.searchBy === "name",
         },
         {
-            name: "Email",
+            name: "Primary Email",
             value: "email",
             onClick: () => setQueryParamsState({ searchBy: "email", page: 1 }),
             current: queryParamsState.searchBy === "email",
         },
 
         {
-            name: "Phone",
+            name: "Primary Phone",
             value: "phoneNumber",
             onClick: () =>
                 setQueryParamsState({ searchBy: "phoneNumber", page: 1 }),
@@ -149,7 +149,7 @@ export const ContactsContainer: NextPageExtended = () => {
     const sortByOptions: { label: string; value: string; current: boolean }[] =
         [
             {
-                label: "Name",
+                label: "Display Name",
                 value: "name",
                 current: queryParamsState.sortBy === "name",
             },
@@ -163,14 +163,14 @@ export const ContactsContainer: NextPageExtended = () => {
                 value: "appointmentsMeta",
                 current: queryParamsState.sortBy === "appointmentsMeta",
             },
-            {
+            /*  {
                 label: "Profiles",
                 value: "profiles",
                 current: queryParamsState.sortBy === "profiles",
-            },
+            }, */
 
             {
-                label: "Updated",
+                label: "Updated At",
                 value: "updatedAt",
                 current: queryParamsState.sortBy === "updatedAt",
             },
@@ -261,12 +261,12 @@ export const ContactsContainer: NextPageExtended = () => {
     };
 
     const tableColumnHeaders: ColumnHeader[] = [
-        { value: "Name" },
-        { value: "Email" },
-        { value: "Phone" },
+        { value: "Display Name" },
+        { value: "Primary Email" },
+        { value: "Primary Phone" },
         { value: "Appointments" },
-        { value: "Secondary Contacts" },
-        { value: "Profiles" },
+        /* { value: "Secondary Contacts" },
+        { value: "Profiles" }, */
         { value: "View", className: "sr-only" },
     ];
 
@@ -570,7 +570,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                                     }
                                                                                 </div>
                                                                             )}
-                                                                            {contact.subContacts &&
+                                                                            {/*  {contact.subContacts &&
                                                                                 contact
                                                                                     .subContacts
                                                                                     .length >
@@ -588,7 +588,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                                                 ", "
                                                                                             )}
                                                                                     </div>
-                                                                                )}
+                                                                                )} */}
                                                                             {contact
                                                                                 ._count
                                                                                 .appointmentsMeta >
@@ -671,7 +671,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                     "---"
                                                                 )}
                                                             </Table.Data>
-                                                            <Table.Data>
+                                                            {/*  <Table.Data>
                                                                 {contact.subContacts
                                                                     .flatMap(
                                                                         (sub) =>
@@ -680,8 +680,8 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                     .join(
                                                                         ", "
                                                                     ) || "---"}
-                                                            </Table.Data>
-                                                            <Table.Data>
+                                                            </Table.Data> */}
+                                                            {/* <Table.Data>
                                                                 {contact
                                                                     .profiles
                                                                     ?.length >
@@ -701,7 +701,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                 ) : (
                                                                     "--"
                                                                 )}
-                                                            </Table.Data>
+                                                            </Table.Data> */}
                                                             <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
                                                                 <NextLink
                                                                     href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}

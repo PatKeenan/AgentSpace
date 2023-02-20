@@ -1,6 +1,7 @@
 export type InputContextType = {
     isInvalid?: boolean;
     isRequired?: boolean;
+    hasHelpText?: boolean;
 };
 
 interface Children {
@@ -10,6 +11,7 @@ interface Children {
 export interface InputGroupProps extends Children {
     isInvalid?: boolean;
     isRequired?: boolean;
+    hasHelpText?: boolean;
 }
 
 export interface InputLabelProps extends Children {

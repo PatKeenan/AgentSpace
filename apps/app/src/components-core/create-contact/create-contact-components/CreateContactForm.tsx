@@ -61,7 +61,7 @@ const subFormSections: FormSections<
 >[] = [
     [{ field: firstName, required: true }, { field: lastName }],
     [{ field: email }, { field: phoneNumber }],
-    [{ field: notes }],
+    /*     [{ field: notes }], */
 ];
 
 export const CreateContactForm = () => {
@@ -141,8 +141,8 @@ export const CreateContactForm = () => {
             <div className="divide-y">
                 <Accordion
                     defaultOpen={true}
-                    label="Display Name"
-                    description="Display name is used to identify this contact and their secondary contacts in your workspace."
+                    label="General Information"
+                    description="Information for your primary and secondary contact(s)."
                     titleContainer={
                         errors["name"] ? (
                             <ExclamationCircleIcon
@@ -158,6 +158,7 @@ export const CreateContactForm = () => {
                             {section.map(({ field, required }) => (
                                 <NewInputGroup
                                     key={field.name}
+                                    hasHelpText
                                     isRequired={required}
                                     isInvalid={
                                         errors && errors[field.name]
@@ -181,6 +182,10 @@ export const CreateContactForm = () => {
                                             {...register(field.name)}
                                         />
                                     )}
+                                    <NewInputGroup.HelpText>
+                                        How this contact will be identified
+                                        within your workspace.
+                                    </NewInputGroup.HelpText>
 
                                     <NewInputGroup.Error>
                                         {errors &&
@@ -195,7 +200,7 @@ export const CreateContactForm = () => {
                 <Accordion
                     defaultOpen={true}
                     label="Primary Contact Information"
-                    description="Information about the main point of contact for this contact."
+                    description="Include full name, email address, phone number, and any other relevant information."
                     titleContainer={
                         errors["name"] ? (
                             <ExclamationCircleIcon
@@ -286,12 +291,12 @@ export const CreateContactForm = () => {
                         label={
                             idx == 0
                                 ? "Secondary Contact"
-                                : `Additional Contact ${idx + 1}`
+                                : `Additional Contact #${idx}`
                         }
                         className="py-6"
                         description={
                             idx == 0
-                                ? "This information will be used for communication and scheduling."
+                                ? "Include full name, email address, phone number, and any other relevant information."
                                 : ""
                         }
                         titleContainer={

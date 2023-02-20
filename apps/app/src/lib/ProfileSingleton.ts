@@ -32,7 +32,7 @@ function errMsg(
 
 // Ensures consistent naming across the app
 const formFields = {
-    name: { name: "name", label: "Unique Name" },
+    name: { name: "name", label: "Profile Name" },
     active: { name: "active", label: "Active" },
     notes: { name: "notes", label: "Notes" },
     type: { name: "type", label: "Type" },

@@ -52,7 +52,7 @@ export const ContactDetailOverviewContainer: NextPageExtended = () => {
                             <div className="w-full">
                                 <GridSectionTitle
                                     title="Primary Information"
-                                    subTitle="People that are associated with each other."
+                                    subTitle="Name, email address, phone number, and notes for your primary contact."
                                     actions={
                                         <Button
                                             variant="outlined"

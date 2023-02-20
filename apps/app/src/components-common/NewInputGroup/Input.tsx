@@ -6,9 +6,14 @@ import { Select } from "./Select";
 import { InputErrorProps, InputGroupProps, InputLabelProps } from "./types";
 
 export const NewInputGroup = (props: InputGroupProps) => {
-    const { isInvalid = false, isRequired = false, children } = props;
+    const {
+        isInvalid = false,
+        isRequired = false,
+        children,
+        hasHelpText,
+    } = props;
     return (
-        <InputContext.Provider value={{ isInvalid, isRequired }}>
+        <InputContext.Provider value={{ isInvalid, isRequired, hasHelpText }}>
             <div className="input-group">{children}</div>
         </InputContext.Provider>
     );
@@ -28,12 +33,25 @@ const InputLabel = (props: InputLabelProps) => {
 };
 
 const InputError = (props: InputErrorProps) => {
-    const { isInvalid } = useInputGroup();
-    return (
+    const { isInvalid, hasHelpText } = useInputGroup();
+    return hasHelpText && !isInvalid ? null : (
         <p
             className={clsx(
                 isInvalid ? "opacity-100" : "opacity-0",
                 "input-error__message"
+            )}
+            {...props}
+        />
+    );
+};
+
+const InputHelpText = (props: InputErrorProps) => {
+    const { isInvalid, hasHelpText } = useInputGroup();
+    return isInvalid ? null : (
+        <p
+            className={clsx(
+                !isInvalid ? "opacity-100" : "opacity-0",
+                "input-help-text"
             )}
             {...props}
         />
@@ -108,3 +126,4 @@ NewInputGroup.Input = Input;
 NewInputGroup.TextArea = TextArea;
 NewInputGroup.Label = InputLabel;
 NewInputGroup.Error = InputError;
+NewInputGroup.HelpText = InputHelpText;
