@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { BetaUsersList } from "./BetaUsersList";
 
 export const SettingsGeneral = () => {
     const [editName, setEditName] = React.useState(false);
@@ -192,6 +193,12 @@ export const SettingsGeneral = () => {
                 <span className="mt-4 text-sm text-gray-700">
                     Coming Soon...
                 </span>
+            </div>
+
+            <div className="mt-8 flex flex-col border-t pt-10">
+                <React.Suspense fallback="Loading..">
+                    <BetaUsersList />
+                </React.Suspense>
             </div>
         </div>
     );

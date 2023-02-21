@@ -16,8 +16,11 @@ model BlockedUsers {
 }
 
 model BetaUsers {
-    id    String @id @default(cuid())
-    email String @unique
+    id         String    @id @default(cuid())
+    email      String    @unique
+    addedBy    User?     @relation(fields: [addedBy_id], references: [id])
+    addedBy_id String?
+    createdAt  DateTime? @default(now())
 }
 
 model Task {
@@ -271,6 +274,7 @@ model User {
     stripeCustomerId      String?                   @unique
     contactOnAppointments ContactOnAppointment[]
     tasks                 Task[]
+    betaUsers             BetaUsers[]
 }
 
 model VerificationToken {
