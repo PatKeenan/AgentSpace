@@ -120,6 +120,7 @@ export const KabanColumn = ({
             const taskTempValues = {
                 ...newTask,
                 archived: false,
+                date: newTask?.date || null,
                 deleted: false,
                 createdById: "temp",
                 createdAt: new Date(),
@@ -148,12 +149,13 @@ export const KabanColumn = ({
         },
     });
 
-    const handleAddTask = (task: string) => {
+    const handleAddTask = (task: string, date?: string) => {
         const lastItemInCol = tasks?.[tasks.length - 1];
         const order = Math.round(lastItemInCol?.order || 0) + gap;
 
         const taskObj = {
             task: task,
+            date: date,
             id: "temp-id",
             order: order,
             status: column.status,

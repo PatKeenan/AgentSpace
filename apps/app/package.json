@@ -6,6 +6,7 @@
         "build": "prisma generate && prisma migrate deploy && next build",
         "vercel-build": "prisma generate && prisma migrate deploy && next build",
         "dev": "next dev",
+        "migrate": "prisma migrate dev",
         "up:db": "docker-compose up -d",
         "postinstall": "prisma generate",
         "lint": "next lint",

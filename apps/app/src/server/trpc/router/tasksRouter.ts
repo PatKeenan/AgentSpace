@@ -44,6 +44,7 @@ export const tasksRouter = t.router({
             return await ctx.prisma.task.create({
                 data: {
                     ...taskData,
+
                     createdById: ctx.session.user.id,
                 },
             });

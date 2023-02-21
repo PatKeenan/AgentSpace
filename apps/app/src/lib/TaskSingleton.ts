@@ -20,6 +20,7 @@ function errMsg(
 
 const formFields = {
     task: { name: "task", label: "Task" },
+    date: { name: "date", label: "Due Date" },
 };
 
 const taskObj = {
@@ -28,6 +29,7 @@ const taskObj = {
         .string()
         .min(4, errMsg("task", "greater", 4))
         .max(300, errMsg("task", "less", 300)),
+    date: z.string().optional(),
     order: z.number().min(0.00004).max(2147483647, "Too many cards in list"),
     archived: z.boolean().optional(),
     status: z.nativeEnum(TASK_STATUS),

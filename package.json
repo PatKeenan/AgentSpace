@@ -8,6 +8,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "db:migrate": "turbo run migrate",
     "postinstall": "turbo run postinstall",
     "check-format": "turbo run check-format",
     "check-types": "turbo run check-types",

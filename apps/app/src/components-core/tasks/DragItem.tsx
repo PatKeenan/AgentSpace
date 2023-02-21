@@ -15,7 +15,7 @@ type DragProps = {
     newTaskStatus?: TASK_STATUS;
     onCancel?: () => void;
     animate?: boolean;
-    handleOnAdd?: (text: string) => void;
+    handleOnAdd?: (text: string, date?: string) => void;
     onDelete?: (taskId: string) => void;
     handleEdit?: (task: Task) => void;
 } & React.ComponentProps<"div">;
@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "utils/trpc";
 import { useWorkspace } from "hooks/useWorkspace";
 import { useTasks } from "hooks/useTasks";
+import { format, parseISO } from "date-fns";
 
 const { taskSchemas } = TaskSingleton;
 
@@ -65,11 +66,13 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
             defaultValues: task
                 ? {
                       order: task.order,
+                      date: task?.date || undefined,
                       task: task.task,
                       status: task.status,
                   }
                 : {
                       order: newTaskOrder || 1024,
+                      date: "",
                       task: "",
                       status: newTaskStatus || "TO_DO",
                   },
@@ -80,6 +83,7 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                 const newTask = {
                     ...task,
                     task: data.task,
+                    date: data?.date || undefined,
                     deleted: task?.deleted || false,
                     archived: task?.archived || false,
                     deletedAt: task?.deletedAt || undefined,
@@ -90,7 +94,7 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                 setEditMode(false);
                 return handleEdit?.(newTask as Task);
             } else {
-                return handleOnAdd?.(data.task);
+                return handleOnAdd?.(data.task, data?.date);
             }
         });
 
@@ -104,7 +108,7 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                 ref={forwardedRed}
                 {...rest}
                 draggable={editMode ? false : true}
-                className="hover:cursor-move"
+                className="flex-shrink-0 hover:cursor-move"
             >
                 <Spacer isVisible={isActiveDragOverItem} />
                 <AnimatePresence>
@@ -118,7 +122,8 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                         exit={{ opacity: 0 }}
                         className={clsx(
                             className,
-                            "relative flex flex-1 rounded-md px-4 py-2 shadow"
+                            editMode ? "px-2" : "px-4",
+                            "relative flex flex-1 rounded-md py-2 shadow"
                         )}
                     >
                         {!editMode && (
@@ -150,27 +155,44 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                         {editMode ? (
                             <form
                                 onSubmit={onSubmit}
-                                className="flex flex-grow flex-col"
+                                className="flex flex-grow flex-col overflow-auto p-1"
                             >
-                                <NewInputGroup
-                                    isInvalid={Boolean(errors && errors.task)}
-                                    isRequired
-                                >
-                                    <NewInputGroup.Label htmlFor="">
-                                        {task ? "Task" : "New Task"}
+                                <NewInputGroup>
+                                    <NewInputGroup.Label htmlFor="date">
+                                        {
+                                            TaskSingleton.taskFormFields.date
+                                                .label
+                                        }
                                     </NewInputGroup.Label>
-                                    <NewInputGroup.TextArea
-                                        autoFocus
-                                        defaultValue={task?.task || ""}
-                                        rows={3}
-                                        {...register("task")}
+                                    <NewInputGroup.Input
+                                        type="datetime-local"
+                                        defaultValue={task?.date || ""}
+                                        {...register("date")}
                                     />
-                                    <NewInputGroup.Error>
-                                        {errors &&
-                                            errors?.task &&
-                                            errors.task.message}
-                                    </NewInputGroup.Error>
                                 </NewInputGroup>
+                                <div className="mt-2">
+                                    <NewInputGroup
+                                        isInvalid={Boolean(
+                                            errors && errors.task
+                                        )}
+                                        isRequired
+                                    >
+                                        <NewInputGroup.Label htmlFor="">
+                                            {task ? "Task" : "New Task"}
+                                        </NewInputGroup.Label>
+                                        <NewInputGroup.TextArea
+                                            autoFocus
+                                            defaultValue={task?.task || ""}
+                                            rows={3}
+                                            {...register("task")}
+                                        />
+                                        <NewInputGroup.Error>
+                                            {errors &&
+                                                errors?.task &&
+                                                errors.task.message}
+                                        </NewInputGroup.Error>
+                                    </NewInputGroup>
+                                </div>
                                 <div className="flex w-full justify-between">
                                     <Button
                                         variant="outlined"
@@ -185,7 +207,14 @@ export const DragItem = React.forwardRef<HTMLDivElement, DragProps>(
                                 </div>
                             </form>
                         ) : (
-                            <div>{task ? task.task : null}</div>
+                            <div className="w-full overflow-auto">
+                                {task?.date ? (
+                                    <p className="mb-1 border-b border-b-gray-300 text-sm text-gray-600">
+                                        {format(new Date(task.date), "PPp")}
+                                    </p>
+                                ) : null}
+                                <div>{task ? task.task : null}</div>
+                            </div>
                         )}
                     </motion.div>
                 </AnimatePresence>

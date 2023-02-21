@@ -28,6 +28,7 @@ model Task {
     updatedAt   DateTime    @updatedAt
     status      TASK_STATUS @default(TO_DO)
     task        String
+    date        String?
     archived    Boolean?    @default(false)
     order       Float
     deleted     Boolean?    @default(false)
