@@ -13,6 +13,7 @@ import { ContactSingleton } from "lib/ContactSingleton";
 import { FormSections } from "types/index";
 import { FieldGroup } from "components-common/FieldGroup";
 import { NewInputGroup } from "components-common/NewInputGroup";
+import { toast } from "react-toastify";
 
 const { contactFormFields, contactSchemas, subContactSchema } =
     ContactSingleton;
@@ -79,11 +80,29 @@ export const CreateContactForm = () => {
         getValues,
         setValue,
         setError,
+        reset,
         handleSubmit: formSubmit,
         formState: { errors },
     } = useForm<CreateContactFormType>({
         defaultValues: initialState,
         resolver: zodResolver(createContactFormSchema),
+    });
+
+    const handleAddAnother = formSubmit(async (data) => {
+        const { subContactFields, ...rest } = data;
+        createContact.mutate(
+            {
+                ...rest,
+                workspaceId: workspace.id as string,
+                subContacts: subContactFields,
+            },
+            {
+                onSuccess: (data) => {
+                    toast("Successfully added contact", { type: "success" });
+                    reset();
+                },
+            }
+        );
     });
 
     const handleSubmit = formSubmit(async (data) => {
@@ -251,38 +270,7 @@ export const CreateContactForm = () => {
                     ))}
                 </Accordion>
             </div>
-            {/* <div>
-                <Accordion
-                    defaultOpen={true}
-                    label="Mailing Address"
-                    description="Use a permanent address where you can
-                                    receive mail."
-                    className={"pt-6"}
-                >
-                    <div className="space-y-6">
-                        <ContactFormInput
-                            label="Street address"
-                            name="streetAddress"
-                            className="max-w-sm"
-                        />
-                        <ContactFormInput
-                            label="City"
-                            name="city"
-                            className="max-w-sm"
-                        />
-                        <ContactFormInput
-                            label="State"
-                            name="state"
-                            className="max-w-[15rem]"
-                        />
-                        <ContactFormInput
-                            label="Zip / Postal code"
-                            name="zip"
-                            className="max-w-[10rem]"
-                        />
-                    </div>
-                </Accordion>
-            </div> */}
+
             <div className="divide-y divide-gray-200">
                 {subContactFields?.map((_, idx) => (
                     <Accordion
@@ -375,67 +363,6 @@ export const CreateContactForm = () => {
                                 ))}
                             </FieldGroup>
                         ))}
-                        {/*  <div className="space-y-6">
-                            <ContactFormInput
-                                label={contactFormFields.firstName.label}
-                                {...register(
-                                    `subContactFields.${idx}.firstName`
-                                )}
-                                className="max-w-xs"
-                                required
-                                errorMessage={
-                                    errors.subContactFields &&
-                                    errors.subContactFields[idx]?.firstName &&
-                                    errors.subContactFields[idx]?.firstName
-                                        ?.message
-                                }
-                            />
-                            <ContactFormInput
-                                label={contactFormFields.lastName.label}
-                                {...register(
-                                    `subContactFields.${idx}.lastName`
-                                )}
-                                className="max-w-xs"
-                                errorMessage={
-                                    errors.subContactFields &&
-                                    errors.subContactFields[idx]?.lastName &&
-                                    errors.subContactFields[idx]?.lastName
-                                        ?.message
-                                }
-                            />
-                            <ContactFormInput
-                                label={contactFormFields.email.label}
-                                {...register(`subContactFields.${idx}.email`, {
-                                    required: false,
-                                })}
-                                className="max-w-lg"
-                                errorMessage={
-                                    errors.subContactFields &&
-                                    errors.subContactFields[idx]?.email &&
-                                    errors.subContactFields[idx]?.email?.message
-                                }
-                            />
-                            <ContactFormInput
-                                label={contactFormFields.phoneNumber.label}
-                                {...register(
-                                    `subContactFields.${idx}.phoneNumber`
-                                )}
-                                type="tel"
-                                className="max-w-xs"
-                                errorMessage={
-                                    errors.subContactFields &&
-                                    errors.subContactFields[idx]?.phoneNumber &&
-                                    errors.subContactFields[idx]?.phoneNumber
-                                        ?.message
-                                }
-                            />
-                            <ContactFormTextArea
-                                label={contactFormFields.notes.label}
-                                className="max-w-lg"
-                                {...register(`subContactFields.${idx}.notes`)}
-                                rows={3}
-                            />
-                        </div> */}
                     </Accordion>
                 ))}
 
@@ -455,16 +382,25 @@ export const CreateContactForm = () => {
             </div>
 
             <div className="pt-5">
-                <div className="flex justify-end space-x-4">
+                <div className="flex justify-between">
                     <ButtonLink
                         href={`/workspace/${workspace.id}/contacts`}
                         variant="outlined"
                     >
                         Cancel
                     </ButtonLink>
-                    <Button variant="primary" type="submit">
-                        Save Contact
-                    </Button>
+                    <div className="flex space-x-4">
+                        <Button
+                            variant="outlined"
+                            type="button"
+                            onClick={handleAddAnother}
+                        >
+                            Save and Add Another
+                        </Button>
+                        <Button variant="primary" type="submit">
+                            Save and Continue
+                        </Button>
+                    </div>
                 </div>
             </div>
         </form>

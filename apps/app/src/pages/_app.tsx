@@ -16,6 +16,8 @@ import "../styles/globals.css";
 import type { Session } from "next-auth";
 import Head from "next/head";
 import AuthLayout from "components-layout/AuthLayout";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
     Component,
@@ -56,6 +58,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
                 />
             </Head>
             <Analytics />
+            <ToastContainer />
             <ErrorBoundary>
                 <SessionProvider session={session}>
                     <AuthLayout>
