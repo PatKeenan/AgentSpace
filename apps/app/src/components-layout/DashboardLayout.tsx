@@ -239,13 +239,13 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                 <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-gray-100 lg:pt-5 lg:pb-4">
                     <div className="flex flex-shrink-0 items-center px-6">
                         <img
-                            className="h-8 w-auto"
+                            className="h-7 w-auto"
                             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                             alt="ReApp"
                         />
                         <h4 className="ml-4 text-xl font-semibold text-gray-600">
-                            Re
-                            <span className=" text-indigo-600">Agent</span>
+                            Agent
+                            <span className=" text-indigo-600">Space</span>
                         </h4>
 
                         <p className="ml-2 text-[12px] ">BETA</p>
