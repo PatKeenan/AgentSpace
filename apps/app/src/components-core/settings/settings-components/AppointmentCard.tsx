@@ -5,6 +5,7 @@ import {
     ChevronRightIcon,
     EnvelopeIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 type AppointmentCardProps = {
     candidate: {
@@ -21,7 +22,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
 
     const workspace = useWorkspace();
     return (
-        <NextLink
+        <Link
             href={`/workspace/${workspace.id}/appointments/dfgd`}
             className="group block"
         >
@@ -65,6 +66,6 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
                     />
                 </div>
             </div>
-        </NextLink>
+        </Link>
     );
 };

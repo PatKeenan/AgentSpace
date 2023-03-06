@@ -246,18 +246,15 @@ export const MapViewAppointmentCard = (props: {
                         >
                             <Link
                                 href={`/workspace/${appointment.workspaceId}/contacts/${contactOnAppointment.contact.id}`}
-                                passHref
                             >
-                                <a>
-                                    <Tag>
-                                        <span className="hover:cursor-pointer hover:underline">
-                                            {contactOnAppointment.contact.name}{" "}
-                                            {contactOnAppointment?.profile
-                                                ? `- ${contactOnAppointment.profile.name}`
-                                                : null}
-                                        </span>
-                                    </Tag>
-                                </a>
+                                <Tag>
+                                    <span className="hover:cursor-pointer hover:underline">
+                                        {contactOnAppointment.contact.name}{" "}
+                                        {contactOnAppointment?.profile
+                                            ? `- ${contactOnAppointment.profile.name}`
+                                            : null}
+                                    </span>
+                                </Tag>
                             </Link>
                         </li>
                     ))}

@@ -34,13 +34,7 @@ export const Tag = ({
                     "truncate"
                 )}
             >
-                {href ? (
-                    <Link href={href} passHref>
-                        <a> {children}</a>
-                    </Link>
-                ) : (
-                    children
-                )}
+                {href ? <Link href={href}>{children}</Link> : children}
             </div>
 
             {onDelete && (

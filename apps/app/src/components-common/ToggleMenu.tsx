@@ -92,10 +92,11 @@ export function ToggleMenu<T extends GenericToggleItem[]>(
                                             {text}
                                         </button>
                                     ) : href && !onClick ? (
-                                        <Link href={href} passHref>
-                                            <a className={sharedClasses}>
-                                                {text}
-                                            </a>
+                                        <Link
+                                            href={href}
+                                            className={sharedClasses}
+                                        >
+                                            {text}
                                         </Link>
                                     ) : (
                                         <>{text}</>

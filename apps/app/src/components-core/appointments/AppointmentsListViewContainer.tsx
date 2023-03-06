@@ -456,31 +456,29 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                         href={`/workspace/${i.workspaceId}/appointments/${i.id}`}
                                         passHref
                                     >
-                                        <a>
-                                            <ListViewAppointmentCard
-                                                key={i.id}
-                                                address={i.address}
-                                                date={i.date}
-                                                time={timeDisplay(
-                                                    i.startTime,
-                                                    i.endTime
-                                                )}
-                                                status={i.status}
-                                                contacts={i.contacts
-                                                    .flatMap((p) =>
-                                                        p.profile
-                                                            ? `${p.contact.name} - ${p.profile.name}`
-                                                            : `${p.contact.name}`
-                                                    )
-                                                    .join(", ")}
-                                                notes={i.note || ""}
-                                                address_2={i.address_2 || ""}
-                                                createdAt={formatDate(
-                                                    i.createdAt,
-                                                    "MM/DD/YYYY"
-                                                )}
-                                            />
-                                        </a>
+                                        <ListViewAppointmentCard
+                                            key={i.id}
+                                            address={i.address}
+                                            date={i.date}
+                                            time={timeDisplay(
+                                                i.startTime,
+                                                i.endTime
+                                            )}
+                                            status={i.status}
+                                            contacts={i.contacts
+                                                .flatMap((p) =>
+                                                    p.profile
+                                                        ? `${p.contact.name} - ${p.profile.name}`
+                                                        : `${p.contact.name}`
+                                                )
+                                                .join(", ")}
+                                            notes={i.note || ""}
+                                            address_2={i.address_2 || ""}
+                                            createdAt={formatDate(
+                                                i.createdAt,
+                                                "MM/DD/YYYY"
+                                            )}
+                                        />
                                     </Link>
                                 </li>
                             ))}
@@ -496,19 +494,16 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                             <Table.Data className="px-3 py-4 pl-4">
                                                 <Link
                                                     href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
-                                                    passHref
+                                                    className="hover:text-indigo-600"
                                                 >
-                                                    <a className="hover:text-indigo-600">
-                                                        {appointment.date
-                                                            ? format(
-                                                                  formatStringToDate(
-                                                                      appointment.date
-                                                                  ) ||
-                                                                      new Date(),
-                                                                  "MM/dd/yyyy"
-                                                              )
-                                                            : "--"}
-                                                    </a>
+                                                    {appointment.date
+                                                        ? format(
+                                                              formatStringToDate(
+                                                                  appointment.date
+                                                              ) || new Date(),
+                                                              "MM/dd/yyyy"
+                                                          )
+                                                        : "--"}
                                                 </Link>
                                             </Table.Data>
                                             <Table.Data>
@@ -531,12 +526,10 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                                 <div className="max-w-sm">
                                                     <Link
                                                         href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
-                                                        passHref
+                                                        className="hover:text-indigo-600"
                                                     >
-                                                        <a className="hover:text-indigo-600">
-                                                            {appointment.address ||
-                                                                "--"}
-                                                        </a>
+                                                        {appointment.address ||
+                                                            "--"}
                                                     </Link>
                                                 </div>
                                             </Table.Data>
@@ -570,13 +563,13 @@ export const AppointmentsListViewContainer: NextPageExtended = () => {
                                                 </div>
                                             </Table.Data>
                                             <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
-                                                <NextLink
+                                                <Link
                                                     href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
                                                     className="flex items-center justify-end text-sm font-medium text-indigo-400 hover:text-indigo-600"
                                                 >
                                                     <span>View</span>
                                                     <ChevronRightIcon className="ml-1 h-4 w-4" />
-                                                </NextLink>
+                                                </Link>
                                             </Table.Data>
                                         </Table.Row>
                                     ))}

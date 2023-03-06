@@ -83,15 +83,19 @@ export function Autocomplete<
                             displayValue={renderValue}
                         />
                         {selected && (
-                            <Combobox.Button
-                                className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
-                                onClick={onClear}
-                            >
-                                <span className="sr-only">Clear address</span>
-                                <XMarkIcon
-                                    className="h-5 w-5 text-gray-400"
-                                    aria-hidden="true"
-                                />
+                            <Combobox.Button as={React.Fragment}>
+                                <button
+                                    className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
+                                    onClick={onClear}
+                                >
+                                    <span className="sr-only">
+                                        Clear address
+                                    </span>
+                                    <XMarkIcon
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                    />
+                                </button>
                             </Combobox.Button>
                         )}
 

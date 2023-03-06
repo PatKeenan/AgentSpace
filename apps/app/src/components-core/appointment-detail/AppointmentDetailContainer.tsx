@@ -248,19 +248,16 @@ export const AppointmentDetailContainer = () => {
                                                                 >
                                                                     <Link
                                                                         href={`/workspace/${appointment.workspaceId}/contacts/${contact.id}`}
-                                                                        passHref
                                                                     >
-                                                                        <a>
-                                                                            <Tag>
-                                                                                <span className="hover:cursor-pointer hover:underline">
-                                                                                    {
-                                                                                        contact.name
-                                                                                    }
-                                                                                    {profile &&
-                                                                                        ` - ${profile.name}`}
-                                                                                </span>
-                                                                            </Tag>
-                                                                        </a>
+                                                                        <Tag>
+                                                                            <span className="hover:cursor-pointer hover:underline">
+                                                                                {
+                                                                                    contact.name
+                                                                                }
+                                                                                {profile &&
+                                                                                    ` - ${profile.name}`}
+                                                                            </span>
+                                                                        </Tag>
                                                                     </Link>
                                                                 </li>
                                                             )
