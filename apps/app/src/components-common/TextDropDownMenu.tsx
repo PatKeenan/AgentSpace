@@ -78,34 +78,35 @@ export function TextDropDownMenu<
                             <Menu.Item key={`${option.id || optionIdx}`}>
                                 {({ active }) => {
                                     return option.href ? (
-                                        <Link
-                                            href={option.href}
-                                            className={clsx(
-                                                option.current
-                                                    ? "font-medium text-gray-900"
-                                                    : "text-gray-500",
-                                                active && "bg-gray-100",
-                                                "block px-4 py-2 text-sm"
-                                            )}
-                                        >
-                                            <div className="flex items-center ">
-                                                {option.icon &&
-                                                    (!option.iconPosition ||
-                                                        option.iconPosition ==
-                                                            "left") && (
-                                                        <option.icon className="mr-2 h-4 w-4 flex-shrink-0" />
-                                                    )}
-                                                <span>
-                                                    {option[displayField]}
-                                                </span>
-                                                {(option.icon &&
-                                                    !option.iconPosition) ||
-                                                    (option.icon &&
-                                                        option.iconPosition ==
-                                                            "right" && (
-                                                            <option.icon className="ml-2 h-4 w-4 flex-shrink-0 " />
-                                                        ))}
-                                            </div>
+                                        <Link href={option.href} passHref>
+                                            <a
+                                                className={clsx(
+                                                    option.current
+                                                        ? "font-medium text-gray-900"
+                                                        : "text-gray-500",
+                                                    active && "bg-gray-100",
+                                                    "block px-4 py-2 text-sm"
+                                                )}
+                                            >
+                                                <div className="flex items-center ">
+                                                    {option.icon &&
+                                                        (!option.iconPosition ||
+                                                            option.iconPosition ==
+                                                                "left") && (
+                                                            <option.icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                                                        )}
+                                                    <span>
+                                                        {option[displayField]}
+                                                    </span>
+                                                    {(option.icon &&
+                                                        !option.iconPosition) ||
+                                                        (option.icon &&
+                                                            option.iconPosition ==
+                                                                "right" && (
+                                                                <option.icon className="ml-2 h-4 w-4 flex-shrink-0 " />
+                                                            ))}
+                                                </div>
+                                            </a>
                                         </Link>
                                     ) : (
                                         <button

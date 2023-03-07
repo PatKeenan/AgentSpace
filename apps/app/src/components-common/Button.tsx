@@ -140,48 +140,53 @@ export const ButtonLink = (props: ButtonLinkProps) => {
     } = props;
     const Icon = actionIcon ? actionIcons[actionIcon] : null;
     return (
-        <Link
-            href={href}
-            className={clsx(
-                className,
-                variantStyles[variant],
-                "rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2",
-                ["primary", "outlined"].includes(variant) &&
-                    "inline-flex items-center border px-4 py-2 shadow-sm"
-            )}
-            {...htmlProps}
-        >
-            {Icon && iconPosition == "left" && (
-                <Icon
-                    className={clsx(
-                        iconSizeOptions[iconSize],
-                        hideChildrenOnMobile
-                            ? "lg:-ml-1 lg:mr-2"
-                            : "-ml-1 mr-2",
-                        variant == "primary" ? "text-white" : "text-gray-400"
-                    )}
-                    aria-hidden
-                />
-            )}
-            <span
+        <Link href={href} passHref>
+            <a
                 className={clsx(
-                    Icon && hideChildrenOnMobile && "hidden lg:block"
+                    className,
+                    variantStyles[variant],
+                    "rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2",
+                    ["primary", "outlined"].includes(variant) &&
+                        "inline-flex items-center border px-4 py-2 shadow-sm"
                 )}
+                {...htmlProps}
             >
-                {children}
-            </span>
-            {Icon && iconPosition == "right" && (
-                <Icon
+                {Icon && iconPosition == "left" && (
+                    <Icon
+                        className={clsx(
+                            iconSizeOptions[iconSize],
+                            hideChildrenOnMobile
+                                ? "lg:-ml-1 lg:mr-2"
+                                : "-ml-1 mr-2",
+                            variant == "primary"
+                                ? "text-white"
+                                : "text-gray-400"
+                        )}
+                        aria-hidden
+                    />
+                )}
+                <span
                     className={clsx(
-                        iconSizeOptions[iconSize],
-                        hideChildrenOnMobile
-                            ? "lg:-mr-1 lg:ml-2"
-                            : "-mr-1 ml-2",
-                        variant == "primary" ? "text-white" : "text-gray-400"
+                        Icon && hideChildrenOnMobile && "hidden lg:block"
                     )}
-                    aria-hidden
-                />
-            )}
+                >
+                    {children}
+                </span>
+                {Icon && iconPosition == "right" && (
+                    <Icon
+                        className={clsx(
+                            iconSizeOptions[iconSize],
+                            hideChildrenOnMobile
+                                ? "lg:-mr-1 lg:ml-2"
+                                : "-mr-1 ml-2",
+                            variant == "primary"
+                                ? "text-white"
+                                : "text-gray-400"
+                        )}
+                        aria-hidden
+                    />
+                )}
+            </a>
         </Link>
     );
 };

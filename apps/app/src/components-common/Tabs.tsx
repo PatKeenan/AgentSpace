@@ -1,7 +1,6 @@
 import React from "react";
 import clsx from "clsx";
 import { NextLink } from "./NextLink";
-import Link from "next/link";
 
 type Tab = {
     title: string;
@@ -83,7 +82,7 @@ export const Tabs = (props: TabProps) => {
                             );
 
                             return tab.href ? (
-                                <Link
+                                <NextLink
                                     key={tab.title}
                                     href={tab.href}
                                     className={sharedContainerStyles}
@@ -102,7 +101,7 @@ export const Tabs = (props: TabProps) => {
                                             {tab.count}
                                         </span>
                                     ) : null}
-                                </Link>
+                                </NextLink>
                             ) : (
                                 <button
                                     key={tab.title}

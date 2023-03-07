@@ -206,32 +206,40 @@ export const ContactDetailAppointmentsContainer: NextPageExtended = () => {
                                     <li key={appointment.id} className="">
                                         <Link
                                             href={`/workspace/${appointment.workspaceId}/appointments/${appointment.id}`}
+                                            passHref
                                         >
-                                            <ListViewAppointmentCard
-                                                key={appointment.id}
-                                                address={appointment.address}
-                                                date={appointment.date}
-                                                time={timeDisplay(
-                                                    appointment.startTime,
-                                                    appointment.endTime
-                                                )}
-                                                status={appointment.status}
-                                                contacts={appointment.contacts
-                                                    .flatMap((p) =>
-                                                        p.profile
-                                                            ? `${p.contact.name} - ${p.profile.name}`
-                                                            : `${p.contact.name}`
-                                                    )
-                                                    .join(", ")}
-                                                notes={appointment.note || ""}
-                                                address_2={
-                                                    appointment.address_2 || ""
-                                                }
-                                                createdAt={formatDate(
-                                                    appointment.createdAt,
-                                                    "MM/DD/YYYY"
-                                                )}
-                                            />
+                                            <a>
+                                                <ListViewAppointmentCard
+                                                    key={appointment.id}
+                                                    address={
+                                                        appointment.address
+                                                    }
+                                                    date={appointment.date}
+                                                    time={timeDisplay(
+                                                        appointment.startTime,
+                                                        appointment.endTime
+                                                    )}
+                                                    status={appointment.status}
+                                                    contacts={appointment.contacts
+                                                        .flatMap((p) =>
+                                                            p.profile
+                                                                ? `${p.contact.name} - ${p.profile.name}`
+                                                                : `${p.contact.name}`
+                                                        )
+                                                        .join(", ")}
+                                                    notes={
+                                                        appointment.note || ""
+                                                    }
+                                                    address_2={
+                                                        appointment.address_2 ||
+                                                        ""
+                                                    }
+                                                    createdAt={formatDate(
+                                                        appointment.createdAt,
+                                                        "MM/DD/YYYY"
+                                                    )}
+                                                />
+                                            </a>
                                         </Link>
                                     </li>
                                 ))}

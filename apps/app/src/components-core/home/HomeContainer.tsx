@@ -120,75 +120,85 @@ export const HomeContainer: NextPageExtended = () => {
                                         <div className="px-6 py-5 text-center text-sm font-medium">
                                             <Link
                                                 href={`/workspace/${workspace.id}/appointments`}
-                                                className="hover:underline"
+                                                passHref
                                             >
-                                                <span className="text-gray-900">
-                                                    {data?._count.appointments}
-                                                </span>{" "}
-                                                <span className="text-gray-600">
-                                                    Appointment
-                                                    <span
-                                                        className={clsx(
-                                                            data?._count &&
-                                                                data._count
-                                                                    ?.appointments >
-                                                                    1
-                                                                ? "opacity-100"
-                                                                : "opacity-0"
-                                                        )}
-                                                    >
-                                                        s
+                                                <a className="hover:underline">
+                                                    <span className="text-gray-900">
+                                                        {
+                                                            data?._count
+                                                                .appointments
+                                                        }
+                                                    </span>{" "}
+                                                    <span className="text-gray-600">
+                                                        Appointment
+                                                        <span
+                                                            className={clsx(
+                                                                data?._count &&
+                                                                    data._count
+                                                                        ?.appointments >
+                                                                        1
+                                                                    ? "opacity-100"
+                                                                    : "opacity-0"
+                                                            )}
+                                                        >
+                                                            s
+                                                        </span>
                                                     </span>
-                                                </span>
+                                                </a>
                                             </Link>
                                         </div>
                                         <div className="px-6 py-5 text-center text-sm font-medium">
                                             <Link
                                                 href={`/workspace/${workspace.id}/contacts`}
-                                                className="hover:underline"
+                                                passHref
                                             >
-                                                <span className="text-gray-900">
-                                                    {data?._count.contacts}
-                                                </span>{" "}
-                                                <span className="text-gray-600">
-                                                    Contact
-                                                    <span
-                                                        className={clsx(
-                                                            data?._count &&
-                                                                data._count
-                                                                    ?.contacts >
-                                                                    1
-                                                                ? "opacity-100"
-                                                                : "opacity-0"
-                                                        )}
-                                                    >
-                                                        s
+                                                <a className="hover:underline">
+                                                    <span className="text-gray-900">
+                                                        {data?._count.contacts}
+                                                    </span>{" "}
+                                                    <span className="text-gray-600">
+                                                        Contact
+                                                        <span
+                                                            className={clsx(
+                                                                data?._count &&
+                                                                    data._count
+                                                                        ?.contacts >
+                                                                        1
+                                                                    ? "opacity-100"
+                                                                    : "opacity-0"
+                                                            )}
+                                                        >
+                                                            s
+                                                        </span>
                                                     </span>
-                                                </span>
+                                                </a>
                                             </Link>
                                         </div>
                                         <div className="px-6 py-5 text-center text-sm font-medium">
                                             <Link
                                                 href={`/workspace/${workspace.id}/tasks`}
-                                                className="hover:underline"
+                                                passHref
                                             >
-                                                <span className="text-gray-900">
-                                                    {data?._count.tasks}
-                                                </span>{" "}
-                                                <span className="text-gray-600">
-                                                    Task
-                                                    <span
-                                                        className={clsx(
-                                                            data?._count &&
-                                                                data._count
-                                                                    ?.tasks > 1
-                                                                ? "opacity-100"
-                                                                : "opacity-0"
-                                                        )}
-                                                    >
-                                                        s
+                                                <a className="hover:underline">
+                                                    <span className="text-gray-900">
+                                                        {data?._count.tasks}
+                                                    </span>{" "}
+                                                    <span className="text-gray-600">
+                                                        Task
+                                                        <span
+                                                            className={clsx(
+                                                                data?._count &&
+                                                                    data._count
+                                                                        ?.tasks >
+                                                                        1
+                                                                    ? "opacity-100"
+                                                                    : "opacity-0"
+                                                            )}
+                                                        >
+                                                            s
+                                                        </span>
                                                     </span>
-                                                </span>
+                                                </a>
                                             </Link>
                                         </div>
                                     </div>
@@ -242,14 +252,16 @@ export const HomeContainer: NextPageExtended = () => {
                                                 <h3 className="text-lg font-medium">
                                                     <Link
                                                         href={action.href}
-                                                        className="focus:outline-none"
+                                                        passHref
                                                     >
-                                                        {/* Extend touch target to entire panel */}
-                                                        <span
-                                                            className="absolute inset-0"
-                                                            aria-hidden="true"
-                                                        />
-                                                        {action.name}
+                                                        <a className="focus:outline-none">
+                                                            {/* Extend touch target to entire panel */}
+                                                            <span
+                                                                className="absolute inset-0"
+                                                                aria-hidden="true"
+                                                            />
+                                                            {action.name}
+                                                        </a>
                                                     </Link>
                                                 </h3>
                                                 <p className="mt-2 text-sm text-gray-500">
@@ -294,27 +306,32 @@ export const HomeContainer: NextPageExtended = () => {
                                 return (
                                     <Link
                                         href={`/workspace/${workspace.id}/appointments/${i.id}`}
+                                        passHref
                                     >
-                                        <div className="relative focus-within:ring-2 focus-within:ring-cyan-500 hover:underline">
-                                            <h3 className="text-sm font-semibold text-gray-800">
-                                                {formattedDate}
-                                                <span
-                                                    className={clsx(
-                                                        i.status &&
-                                                            statusColorsLight[
-                                                                i.status
-                                                            ],
-                                                        "capitalize",
-                                                        "top-0 right-0 rounded-md px-2 py-1 text-xs md:absolute"
-                                                    )}
-                                                >
-                                                    {statusDisplay(i.status)}
-                                                </span>
-                                            </h3>
-                                            <p className="mt-3 text-sm text-gray-600 line-clamp-2">
-                                                {i.address}
-                                            </p>
-                                        </div>
+                                        <a>
+                                            <div className="relative focus-within:ring-2 focus-within:ring-cyan-500 hover:underline">
+                                                <h3 className="text-sm font-semibold text-gray-800">
+                                                    {formattedDate}
+                                                    <span
+                                                        className={clsx(
+                                                            i.status &&
+                                                                statusColorsLight[
+                                                                    i.status
+                                                                ],
+                                                            "capitalize",
+                                                            "top-0 right-0 rounded-md px-2 py-1 text-xs md:absolute"
+                                                        )}
+                                                    >
+                                                        {statusDisplay(
+                                                            i.status
+                                                        )}
+                                                    </span>
+                                                </h3>
+                                                <p className="mt-3 text-sm text-gray-600 line-clamp-2">
+                                                    {i.address}
+                                                </p>
+                                            </div>
+                                        </a>
                                     </Link>
                                 );
                             }}

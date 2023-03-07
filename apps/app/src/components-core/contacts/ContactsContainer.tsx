@@ -543,32 +543,34 @@ export const ContactsContainer: NextPageExtended = () => {
                                                     <li key={contact.id}>
                                                         <Link
                                                             href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
+                                                            passHref
                                                         >
-                                                            <Card className=" pl-6 pt-4 pb-4 text-sm">
-                                                                <div className="flex flex-auto">
-                                                                    <div className="flex-grow space-y-1">
-                                                                        <h3 className="text-md font-semibold text-gray-600">
-                                                                            {
-                                                                                contact.name
-                                                                            }
-                                                                        </h3>
-                                                                        {contact.email && (
-                                                                            <div className="flex items-center text-gray-500">
-                                                                                <EnvelopeIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                            <a>
+                                                                <Card className=" pl-6 pt-4 pb-4 text-sm">
+                                                                    <div className="flex flex-auto">
+                                                                        <div className="flex-grow space-y-1">
+                                                                            <h3 className="text-md font-semibold text-gray-600">
                                                                                 {
-                                                                                    contact.email
+                                                                                    contact.name
                                                                                 }
-                                                                            </div>
-                                                                        )}
-                                                                        {contact.phoneNumber && (
-                                                                            <div className="flex items-center text-gray-500">
-                                                                                <PhoneIcon className="mr-2 h-4 w-4 text-gray-400" />
-                                                                                {
-                                                                                    contact.phoneNumber
-                                                                                }
-                                                                            </div>
-                                                                        )}
-                                                                        {/*  {contact.subContacts &&
+                                                                            </h3>
+                                                                            {contact.email && (
+                                                                                <div className="flex items-center text-gray-500">
+                                                                                    <EnvelopeIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                                    {
+                                                                                        contact.email
+                                                                                    }
+                                                                                </div>
+                                                                            )}
+                                                                            {contact.phoneNumber && (
+                                                                                <div className="flex items-center text-gray-500">
+                                                                                    <PhoneIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                                    {
+                                                                                        contact.phoneNumber
+                                                                                    }
+                                                                                </div>
+                                                                            )}
+                                                                            {/*  {contact.subContacts &&
                                                                                 contact
                                                                                     .subContacts
                                                                                     .length >
@@ -587,27 +589,28 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                                             )}
                                                                                     </div>
                                                                                 )} */}
-                                                                        {contact
-                                                                            ._count
-                                                                            .appointmentsMeta >
-                                                                            0 && (
-                                                                            <div className="flex items-center text-gray-500">
-                                                                                <HomeIcon className="mr-2 h-4 w-4 text-gray-400" />
-                                                                                {
-                                                                                    contact
-                                                                                        ._count
-                                                                                        .appointmentsMeta
-                                                                                }
-                                                                            </div>
-                                                                        )}
+                                                                            {contact
+                                                                                ._count
+                                                                                .appointmentsMeta >
+                                                                                0 && (
+                                                                                <div className="flex items-center text-gray-500">
+                                                                                    <HomeIcon className="mr-2 h-4 w-4 text-gray-400" />
+                                                                                    {
+                                                                                        contact
+                                                                                            ._count
+                                                                                            .appointmentsMeta
+                                                                                    }
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="flex  flex-shrink-0 items-center">
+                                                                            <button>
+                                                                                <ChevronRightIcon className="h-4 w-4 text-gray-500" />
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="flex  flex-shrink-0 items-center">
-                                                                        <button>
-                                                                            <ChevronRightIcon className="h-4 w-4 text-gray-500" />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </Card>
+                                                                </Card>
+                                                            </a>
                                                         </Link>
                                                     </li>
                                                 );
@@ -632,14 +635,14 @@ export const ContactsContainer: NextPageExtended = () => {
                                                             key={contact.id}
                                                         >
                                                             <Table.Data padding="py-4 pl-6">
-                                                                <Link
+                                                                <NextLink
                                                                     href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
                                                                     className="flex items-center justify-start text-sm font-semibold text-gray-600 hover:text-indigo-600"
                                                                 >
                                                                     {
                                                                         contact.name
                                                                     }
-                                                                </Link>
+                                                                </NextLink>
                                                             </Table.Data>
                                                             <Table.Data>
                                                                 {contact?.email ||
@@ -654,13 +657,15 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                     .appointmentsMeta ? (
                                                                     <Link
                                                                         href={`/workspace/${workspace.id}/contacts/${contact.id}/appointments`}
-                                                                        className="text-indigo-600"
+                                                                        passHref
                                                                     >
-                                                                        {
-                                                                            contact
-                                                                                ._count
-                                                                                .appointmentsMeta
-                                                                        }
+                                                                        <a className="text-indigo-600">
+                                                                            {
+                                                                                contact
+                                                                                    ._count
+                                                                                    .appointmentsMeta
+                                                                            }
+                                                                        </a>
                                                                     </Link>
                                                                 ) : (
                                                                     "---"
@@ -683,20 +688,22 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                 0 ? (
                                                                     <Link
                                                                         href={`/workspace/${workspace.id}/contacts/${contact.id}/profiles`}
-                                                                        className="text-indigo-600"
+                                                                        passHref
                                                                     >
+                                                                        <a className="text-indigo-600">
                                                                             {
                                                                                 contact
                                                                                     .profiles
                                                                                     ?.length
                                                                             }
+                                                                        </a>
                                                                     </Link>
                                                                 ) : (
                                                                     "--"
                                                                 )}
                                                             </Table.Data> */}
                                                             <Table.Data className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right sm:pr-6">
-                                                                <Link
+                                                                <NextLink
                                                                     href={`/workspace/${contact.workspaceId}/contacts/${contact.id}`}
                                                                     className="flex items-center justify-end text-sm font-medium text-indigo-400 hover:text-indigo-600"
                                                                 >
@@ -704,7 +711,7 @@ export const ContactsContainer: NextPageExtended = () => {
                                                                         View
                                                                     </span>
                                                                     <ChevronRightIcon className="ml-1 h-4 w-4" />
-                                                                </Link>
+                                                                </NextLink>
                                                             </Table.Data>
                                                         </Table.Row>
                                                     )

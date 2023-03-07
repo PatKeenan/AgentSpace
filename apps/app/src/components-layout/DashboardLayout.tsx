@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-
+import { NextLink } from "components-common/NextLink";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
@@ -24,7 +24,6 @@ import { Loading } from "components-common/Loading";
 
 import { GatedWorkspace } from "./GatedWorkspace";
 import { useWorkspace } from "hooks/useWorkspace";
-import Link from "next/link";
 
 type DashboardLayoutProps = {
     children: React.ReactNode | React.ReactNode[];
@@ -152,7 +151,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                             `/workspace/[workspaceId]/${item.name.toLowerCase()}`
                                                         );
                                                     return (
-                                                        <Link
+                                                        <NextLink
                                                             onClick={() =>
                                                                 setSidebarOpen(
                                                                     false
@@ -182,7 +181,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                                 aria-hidden="true"
                                                             />
                                                             {item.name}
-                                                        </Link>
+                                                        </NextLink>
                                                     );
                                                 })}
                                             </div>
@@ -192,7 +191,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             <ul className="flex w-full flex-col">
                                                 {subNavigation.map(
                                                     (navItem, index) => (
-                                                        <Link
+                                                        <NextLink
                                                             href={navItem.href}
                                                             key={index}
                                                             className={clsx(
@@ -223,7 +222,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                                                 aria-hidden="true"
                                                             />
                                                             {navItem.name}
-                                                        </Link>
+                                                        </NextLink>
                                                     )
                                                 )}
                                             </ul>
@@ -242,7 +241,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         <img
                             className="h-7 w-auto"
                             src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                            alt="AgentSpace"
+                            alt="ReApp"
                         />
                         <h4 className="ml-4 text-xl font-semibold text-gray-600">
                             Agent
@@ -257,7 +256,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         <nav className="mt-6 px-3">
                             <div className="space-y-1">
                                 {navigation.map((item) => (
-                                    <Link
+                                    <NextLink
                                         key={item.name}
                                         href={item.href}
                                         className={clsx(
@@ -291,7 +290,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             aria-hidden="true"
                                         />
                                         {item.name}
-                                    </Link>
+                                    </NextLink>
                                 ))}
                             </div>
                         </nav>
@@ -299,7 +298,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                         <nav className="flex flex-shrink-0 border-t-2 border-t-gray-300/50 px-3 pb-6 pt-4">
                             <ul className="flex w-full flex-col">
                                 {subNavigation.map((navItem, index) => (
-                                    <Link
+                                    <NextLink
                                         href={navItem.href}
                                         key={index}
                                         className={clsx(
@@ -330,7 +329,7 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                                             aria-hidden="true"
                                         />
                                         {navItem.name}
-                                    </Link>
+                                    </NextLink>
                                 ))}
                             </ul>
                         </nav>
@@ -342,9 +341,9 @@ export const DashboardLayout = (props: DashboardLayoutProps) => {
                     <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white lg:hidden">
                         <div className="flex flex-shrink-0 items-center px-4">
                             <img
-                                className="h-7 w-auto"
-                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                alt="AgentSpace"
+                                className="h-8 w-auto"
+                                src="https://tailwindui.com/img/logos/mark.svg?color=purple&shade=500"
+                                alt="Your Company"
                             />
                         </div>
                         <button

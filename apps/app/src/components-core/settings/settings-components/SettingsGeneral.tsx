@@ -144,12 +144,11 @@ export const SettingsGeneral = () => {
                 <div className="flex w-full items-center justify-between">
                     <h3 className="font-bold text-gray-700">Workspaces</h3>
                     <div className="ml-auto">
-                        <Link
-                            href="/workspace/create"
-                            className="flex items-center rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700"
-                        >
-                            <PlusIcon className="h-3 w-3 " aria-hidden />
-                            <span className="mr-2 text-sm ">Add</span>
+                        <Link passHref href="/workspace/create">
+                            <a className="flex items-center rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700">
+                                <PlusIcon className="h-3 w-3 " aria-hidden />
+                                <span className="mr-2 text-sm ">Add</span>
+                            </a>
                         </Link>
                     </div>
                 </div>

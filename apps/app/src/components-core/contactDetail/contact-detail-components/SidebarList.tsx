@@ -2,7 +2,6 @@ import { Button } from "components-common/Button";
 import { NextLink } from "components-common/NextLink";
 import { GridCard } from "./GridCard";
 import { GridSectionTitle } from "./GridSectionTitle";
-import Link from "next/link";
 
 type SidebarListProps<T> = {
     title: string;
@@ -59,12 +58,12 @@ export function SidebarList<T extends { id: string }>(
             )}
 
             {href ? (
-                <Link
+                <NextLink
                     href={href}
                     className="mt-3 inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
                     {buttonTitle}
-                </Link>
+                </NextLink>
             ) : (
                 <Button
                     variant="outlined"
