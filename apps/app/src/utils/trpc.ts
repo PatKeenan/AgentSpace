@@ -14,13 +14,6 @@ const getBaseUrl = () => {
 export const trpc = createTRPCNext<AppRouter>({
     config() {
         return {
-            queryClientConfig: {
-                defaultOptions: {
-                    queries: {
-                        suspense: true,
-                    },
-                },
-            },
             transformer: superjson,
             links: [
                 loggerLink({
@@ -35,7 +28,6 @@ export const trpc = createTRPCNext<AppRouter>({
             ],
         };
     },
-
     ssr: false,
 });
 export type RouterInputs = inferRouterInputs<AppRouter>;
