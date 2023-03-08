@@ -94,6 +94,7 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
         { query: addressInput.debounced },
         {
             ...sharedQueryOptions,
+            suspense: false,
             enabled:
                 (addressInput.state && addressInput.state?.trim().length > 4) ||
                 false,
@@ -139,6 +140,7 @@ export const AppointmentForm = (props: AppointmentFormProps) => {
     const { data: contactOptions, isFetched } = search(
         { query: contactInput.debounced, workspaceId: workspaceId as string },
         {
+            suspense: false,
             enabled:
                 contactInput.debounced.trim().length > 2 &&
                 typeof workspaceId == "string" &&
