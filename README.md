@@ -3,6 +3,8 @@
 ### Overview
 This application was created to help real estate agents stay organized, manage their time, and provide a better customer experience for their clients. 
 
+** This is a live application that requires login credentials. Please send me a message if you would like to demo the app.
+
 #### Features
 - Basic CRM
 - Task management
